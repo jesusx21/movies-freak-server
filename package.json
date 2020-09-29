@@ -1,0 +1,19 @@
+{
+  "name": "horror-movies",
+  "version": "1.0.0",
+  "description": "A collection of horror movies to watch in halloween marathon",
+  "main": "index.js",
+  "scripts": {
+    "test": "yarn test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jesusx21/horror-movies.git"
+  },
+  "author": "Jesus Agustin Peña Meza",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jesusx21/horror-movies/issues"
+  },
+  "homepage": "https://github.com/jesusx21/horror-movies#readme"
+}

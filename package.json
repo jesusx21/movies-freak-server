@@ -4,6 +4,7 @@
   "description": "A collection of horror movies to watch in halloween marathon",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "yarn test"
   },
   "repository": {
@@ -15,5 +16,13 @@
   "bugs": {
     "url": "https://github.com/jesusx21/horror-movies/issues"
   },
-  "homepage": "https://github.com/jesusx21/horror-movies#readme"
+  "homepage": "https://github.com/jesusx21/horror-movies#readme",
+  "dependencies": {
+    "camelcase-keys": "^6.2.2",
+    "knex": "^0.21.6",
+    "pg": "^8.3.3",
+    "prompts": "^2.3.2",
+    "snakecase-keys": "^3.2.0",
+    "verror": "^1.10.0"
+  }
 }

@@ -1,24 +1,34 @@
 const prompts = require('prompts');
 
-const QUESTION = require('./questions');
+const database = require('./src/database');
+const actions = require('./src/actions');
+const controllers = require('./src/controllers');
+
+const {
+  MAIN_QUESTION,
+  PICK_MOVIES_QUESTION
+} = require('./questions');
 
 async function initializeApp() {
-  const {option} = await prompts(QUESTION);
+  const { option } = await prompts(MAIN_QUESTION);
+  const params = { actions, database };
 
   if (option === 'add') {
-    console.info('You choose to add a movie');
+    const response = await controllers.addMovies(params);
+    console.info(response);
   }
 
   if (option === 'choose') {
-    console.info('You choose to choose a movie');
+    await controllers.getMovie(params)
   }
 
   if (option === 'pick') {
-    console.info('You choose to pick movies to choose');
+    const { numberOfMovies } = await prompts(PICK_MOVIES_QUESTION);
+    await controllers.getMovies({ ...params, data: { numberOfMovies } });
   }
 
   if (option === 'finish') {
-    console.info('You choose to finish the app');
+    console.info('You chose to finish the app');
     return
   }
 
@@ -33,8 +43,8 @@ function resolve() {
 }
 
 function reject(error) {
-  console.log('An error occurs');
-  console.error('Error:', error);
+  console.log('An error happens');
+  console.error(`\nError Name: ${error.name}\nError Message: ${error.message}`);
 
   process.exit(1);
 }

@@ -4,7 +4,7 @@
   "description": "A collection of horror movies to watch in halloween marathon",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "NODE_ENV=development node index.js",
     "test": "yarn test"
   },
   "repository": {

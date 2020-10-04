@@ -4,7 +4,7 @@ exports.up = function(knex) {
     table.text('name');
     table.text('synopsis');
     table.uuid('saga_id').references('sagas.id').notNull();
-    table.boolean('watched');
+    table.boolean('watched').defaultTo(false);
     table.integer('number_on_saga');
 
     table.timestamps(true, true);

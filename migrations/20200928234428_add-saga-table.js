@@ -5,9 +5,10 @@ exports.up = function(knex) {
         table.uuid('id').primary().defaultTo(knex.raw('uuid_generate_v4()'));
         table.text('name');
         table.text('synopsis');
-        table.integer('number_of_movies').notNull();
-        table.integer('current_index').notNull();
-        table.boolean('watched');
+        table.text('genre');
+        table.integer('number_of_movies').defaultTo(0);
+        table.integer('current_index').defaultTo(0);
+        table.boolean('watched').defaultTo(false);
 
         table.timestamps(true, true);
       });

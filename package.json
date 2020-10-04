@@ -20,6 +20,7 @@
   "dependencies": {
     "camelcase-keys": "^6.2.2",
     "knex": "^0.21.6",
+    "lodash.isempty": "^4.4.0",
     "pg": "^8.3.3",
     "prompts": "^2.3.2",
     "snakecase-keys": "^3.2.0",

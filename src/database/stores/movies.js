@@ -17,7 +17,7 @@ function buildMovieStore(connection) {
     return camelizeObject(movie);
   }
 
-  const findNotWatched = () => {
+  const findNotWatched = async () => {
     const movies = await connection(TABLE_NAME)
       .where('watched', false)
       .orderBy([{ column: 'saga_id' }, { column: 'number_on_saga' } ])
@@ -26,7 +26,7 @@ function buildMovieStore(connection) {
     return movies.map(camelizeObject);
   };
 
-  const findNotWatchedBySagaId = (sagaId) => {
+  const findNotWatchedBySagaId = async (sagaId) => {
     const movies = await connection(TABLE_NAME)
       .where('watched', false)
       .andWhere('saga_id', sagaId)
@@ -36,7 +36,7 @@ function buildMovieStore(connection) {
     return movies.map(camelizeObject);
   };
 
-  const findWatched = () => {
+  const findWatched = async () => {
     const movies = await connection(TABLE_NAME)
       .where('watched', true)
       .orderBy([{ column: 'saga_id' }, { column: 'number_on_saga' } ])
@@ -45,7 +45,7 @@ function buildMovieStore(connection) {
     return movies.map(camelizeObject);
   };
 
-  const findWatchedBySagaId = (sagaId) => {
+  const findWatchedBySagaId = async (sagaId) => {
     const movies = await connection(TABLE_NAME)
       .where('watched', true)
       .andWhere('saga_id', sagaId)
@@ -55,7 +55,7 @@ function buildMovieStore(connection) {
     return movies.map(camelizeObject);
   };
 
-  const findBySagaId = (sagaId) => {
+  const findBySagaId = async (sagaId) => {
     const movies = await connection(TABLE_NAME)
       .where('saga_id', sagaId)
       .orderBy('number_on_saga', 'ASC')
@@ -64,7 +64,18 @@ function buildMovieStore(connection) {
     return movies.map(camelizeObject);
   };
 
-  const findById = (id) => {
+  const findNextBySagaId = async (sagaId) => {
+    const movie = await connection(TABLE_NAME)
+      .where('saga_id', sagaId)
+      .where('watched', false)
+      .orderBy('number_on_saga', 'ASC')
+      .first()
+      .catch(_onUnexpectedError);
+
+    return camelizeObject(movie);
+  };
+
+  const findById = async (id) => {
     const saga = await connection(TABLE_NAME)
       .where('id', id)
       .first()
@@ -75,7 +86,7 @@ function buildMovieStore(connection) {
     return camelizeObject(saga);
   };
 
-  const markAsWatched = (id) => {
+  const markAsWatched = async (id) => {
     await connection(TABLE_NAME)
       .where('id', id)
       .update('watched', true)
@@ -98,6 +109,7 @@ function buildMovieStore(connection) {
     findNotWatchedBySagaId,
     findWatched,
     findWatchedBySagaId,
+    findNextBySagaId,
     findBySagaId,
     findById,
     markAsWatched

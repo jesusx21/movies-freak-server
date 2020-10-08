@@ -1,30 +1,35 @@
 const prompts = require('prompts');
 
 const database = require('./src/database');
-const actions = require('./src/actions');
+const useCases = require('./src/use-cases');
 const controllers = require('./src/controllers');
-
-const {
-  MAIN_QUESTION,
-  PICK_MOVIES_QUESTION
-} = require('./questions');
+const actions = require('./src/actions');
+const buildQuestions = require('./src/questions');
 
 async function initializeApp() {
-  const { option } = await prompts(MAIN_QUESTION);
-  const params = { actions, database };
+  const questions = buildQuestions();
+
+  const option = await questions.makeMainQuestion();
+  const params = { controllers, questions, useCases, database };
 
   if (option === 'add') {
-    const response = await controllers.addMovies(params);
-    console.info(response);
+    await actions.addMovies(params);
   }
 
   if (option === 'choose') {
-    await controllers.getMovie(params)
+    await actions.getMovie(params)
   }
 
   if (option === 'pick') {
-    const { numberOfMovies } = await prompts(PICK_MOVIES_QUESTION);
-    await controllers.getMovies({ ...params, data: { numberOfMovies } });
+    await actions.getMovies(params);
+  }
+
+  if (option === 'find_by_id') {
+    await actions.findMovieById(params);
+  }
+
+  if (option === 'find_by_name') {
+    await actions.findMovieByName(params);
   }
 
   if (option === 'finish') {
@@ -34,6 +39,8 @@ async function initializeApp() {
 
   await initializeApp()
 }
+
+
 
 function resolve() {
   console.log('Finishin app ...');

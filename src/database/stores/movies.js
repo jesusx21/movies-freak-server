@@ -76,15 +76,24 @@ function buildMovieStore(connection) {
   };
 
   const findById = async (id) => {
-    const saga = await connection(TABLE_NAME)
+    const movie = await connection(TABLE_NAME)
       .where('id', id)
       .first()
       .catch(_onUnexpectedError);
 
-    if (!saga) return _onNotFoundError(id);
+    if (!movie) return _onNotFoundError(id);
 
-    return camelizeObject(saga);
+    return camelizeObject(movie);
   };
+
+  const findByName = async (name) => {
+    const movies = await connection(TABLE_NAME)
+      .whereRaw(`name ILIKE '%${name}%'`)
+      .orderBy('number_on_saga', 'ASC')
+      .catch(_onUnexpectedError);
+
+    return movies.map(camelizeObject);
+  }
 
   const markAsWatched = async (id) => {
     await connection(TABLE_NAME)
@@ -112,6 +121,7 @@ function buildMovieStore(connection) {
     findNextBySagaId,
     findBySagaId,
     findById,
+    findByName,
     markAsWatched
   };
 }

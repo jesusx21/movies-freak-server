@@ -93,6 +93,14 @@ const MAIN_QUESTION = {
     description: 'This option will shows you three movies for you to pick one of them'
   },
   {
+    title: 'Get movie by id',
+    value: 'find_by_id'
+  },
+  {
+    title: 'Get movie by name',
+    value: 'find_by_name'
+  },
+  {
     title: 'Finish',
     value: 'finish',
     description: 'This option will close the app'
@@ -113,6 +121,18 @@ const PICK_MOVIES_QUESTION = {
   message: 'Number of random movies to show'
 };
 
+const FIND_BY_ID_QUESTION = {
+  type: 'text',
+  name: 'movieId',
+  message: 'Id of the movie'
+};
+
+const FIND_BY_NAME_QUESTION = {
+  type: 'text',
+  name: 'movieName',
+  message: 'Name of the movie'
+};
+
 module.exports = {
   ADD_MOVIE_QUESTIONS,
   ADD_MOVIES_QUESTIONS,
@@ -120,5 +140,7 @@ module.exports = {
   ADD_SAGA_QUESTIONS,
   MAIN_QUESTION,
   MARK_AS_WATCHED_QUESTION,
-  PICK_MOVIES_QUESTION
+  PICK_MOVIES_QUESTION,
+  FIND_BY_NAME_QUESTION,
+  FIND_BY_ID_QUESTION
 };

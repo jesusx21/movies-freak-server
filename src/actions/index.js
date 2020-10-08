@@ -1,11 +1,13 @@
-const addSaga = require('./add-saga');
-const addMovie = require('./add-movie')
-const getRandomMovies = require('./get-random-movies');
-const markMovieAsWatched = require('./mark-movie-as-watched');
+const addMovies = require('./add-movies');
+const findMovieById = require('./find-movie-by-id');
+const findMovieByName = require('./find-movie-by-name');
+const getMovie = require('./get-movie');
+const getMovies = require('./get-movies');
 
 module.exports = {
-  addSaga,
-  addMovie,
-  getRandomMovies,
-  markMovieAsWatched
+  addMovies,
+  findMovieById,
+  findMovieByName,
+  getMovie,
+  getMovies
 };

@@ -1,12 +1,11 @@
-const { random } = require('lodash');
+const random = require('lodash.random');
 const FixturesGenerator = require('fixtures-generator');
+
 const SCHEMAS = require('./schemas');
 
 const TEST_CI_ENV = 'test_ci';
 
-const options = {
-  optionalsProbability: getOptionalsProbability()
-};
+const options = { optionalsProbability: getOptionalsProbability() };
 
 function getOptionalsProbability() {
   const env = process.env.NODE_ENV;

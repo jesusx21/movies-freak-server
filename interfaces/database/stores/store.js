@@ -3,7 +3,7 @@ const snakeObject = require('snakecase-keys');
 const omit = require('lodash.omit');
 const isEmpty = require('lodash.isempty');
 
-const { DatabaseError, EntityNotFound } = require('../errors');
+const { DatabaseError, EntityNotFound, InvalidInputData, InvalidId } = require('../errors');
 
 class Store {
   constructor(connection) {
@@ -18,7 +18,7 @@ class Store {
     const [record] = await this._connection(this._tableName)
       .insert(dataToSave)
       .returning('*')
-      .catch(this._onUnexpectedError);
+      .catch((error) => this._onUnexpectedError(error, data));
 
     return this._formatOutputData(record);
   }
@@ -27,7 +27,7 @@ class Store {
     const record = await this._connection(this._tableName)
       .where('id', id)
       .first()
-      .catch(this._onUnexpectedError)
+      .catch((error) => this._onUnexpectedError(error, id));
 
     if (!record) return this._onNotFoundError(id)
 
@@ -35,12 +35,12 @@ class Store {
   }
 
   async update(data) {
-    const dataToSave = this._formatInputData(omit(data, 'id'));
+    const dataToSave = this._formatInputData(omit(data, ['id', 'createdAt']));
 
     await this._connection(this._tableName)
       .where('id', data.id)
-      .update(dataToSave)
-      .catch(this._onUnexpectedError);
+      .update({ ...dataToSave, updated_at: new Date() })
+      .catch((error) => this._onUnexpectedError(error, data));
 
     return this.findById(data.id);
   }
@@ -65,7 +65,13 @@ class Store {
     return camelizeObject(data, { deep: true });
   }
 
-  _onUnexpectedError(error) {
+  _onUnexpectedError(error, data = {}) {
+    if (error.code === '42703') return Promise.reject(new InvalidInputData(error, data));
+    if (error.code === '22P02') {
+      if (error.file === 'uuid.c') return Promise.reject(new InvalidId(data))
+      return Promise.reject(new InvalidInputData(error, data));
+    }
+
     return Promise.reject(new DatabaseError(error));
   }
 

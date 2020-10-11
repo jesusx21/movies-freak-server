@@ -2,7 +2,7 @@ const ROOT_PATH = require('app-root-path');
 const knexCleaner = require('knex-cleaner');
 const VError = require('verror');
 
-const { postgres } = require(`${ROOT_PATH}/src/infrastructure/database/drivers`);
+const { postgres } = require(`${ROOT_PATH}/infrastructure/database/drivers`);
 
 const IGNORE_TABLES = [
   'knex_migrations', 'knex_migrations_lock', 'knex_migrations_id_seq'

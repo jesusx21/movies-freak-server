@@ -5,9 +5,9 @@ const fixtures = require('./fixtures');
 const SAGA_ID = 'e58c4206-aea8-45f7-8efb-a7177aee2b0b';
 const MOVIE_ID = '3f54d840-6e65-4b9d-b98f-cd57bc7a524f';
 
-describe('Interfaces - Database', () => {
+describe.only('Interfaces - Database', () => {
   describe('Stores', () => {
-    describe('Movies Store', () => {
+    describe('Sagas Store', () => {
       let database;
 
       beforeEach(async () => {
@@ -18,62 +18,56 @@ describe('Interfaces - Database', () => {
       });
 
       describe('Create', () => {
-        it('should return the movie created', async () => {
+        it('should return the saga created', async () => {
           const data = {
-            name: 'Movie',
+            name: 'Harry Potter',
             plot: 'This is a movie plot',
-            sagaId: SAGA_ID,
             watched: false,
-            numberOnSaga: 1
+            numberOfMovies: 8
           };
 
-          const movie = await database.movies.create(data);
+          const saga = await database.sagas.create(data);
 
-          expect(movie.id).to.exist;
-          expect(movie.name).to.be.equal(data.name);
-          expect(movie.plot).to.be.equal(data.plot);
-          expect(movie.sagaId).to.be.equal(SAGA_ID);
-          expect(movie.watched).to.be.false;
-          expect(movie.numberOnSaga).to.be.equal(data.numberOnSaga);
-          expect(movie.createdAt).to.be.equalDate(new Date());
-          expect(movie.updatedAt).to.be.equalDate(new Date());
+          expect(saga.id).to.exist;
+          expect(saga.name).to.be.equal(data.name);
+          expect(saga.plot).to.be.equal(data.plot);
+          expect(saga.watched).to.be.false;
+          expect(saga.numberOnSaga).to.be.equal(data.numberOnSaga);
+          expect(saga.createdAt).to.be.equalDate(new Date());
+          expect(saga.updatedAt).to.be.equalDate(new Date());
         });
 
         it('should return error on invalid data', () => {
           const data = {
-            name: 'Movie',
+            name: 'Harry Potter',
             synopsis: 'This is a movie plot',
-            sagaId: SAGA_ID,
-            watched: false,
-            numberOnSaga: 1
+            watched: false
           };
 
-          return database.movies.create(data)
+          return database.sagas.create(data)
             .then(() => Promise.reject(new Error('unexpected path')))
             .catch((error) => expect(error.name).to.be.equal('INVALID_INPUT_DATA'));
         });
       });
 
       describe('Find By Id', () => {
-        it('should return movie by its id', async () => {
-          const movie = await database.movies.findById(MOVIE_ID);
+        it('should return saga by its id', async () => {
+          const saga = await database.sagas.findById(SAGA_ID);
 
-          expect(movie.id).to.be.equal(MOVIE_ID);
-          expect(movie.name).to.be.equal('Just a movie');
-          expect(movie.sagaId).to.be.equal(SAGA_ID);
-          expect(movie.watched).to.be.false;
-          expect(movie.numberOnSaga).to.be.equal(1);
+          expect(saga.id).to.be.equal(SAGA_ID);
+          expect(saga.numberOfMovies).to.be.equal(2);
+          expect(saga.watched).to.be.false;
         });
 
         it('should return error when movie was not found', () => {
           const unexistentMovieId = uuid.v4();
 
-          return database.movies.findById(unexistentMovieId)
+          return database.sagas.findById(unexistentMovieId)
             .then(() => Promise.reject(new Error('unexpected path')))
             .catch((error) => {
               expect(error.name).to.be.equal('ENTITY_NOT_FOUND');
               expect(error.message).to.be.equal(
-                `Movie with id "${unexistentMovieId}" was not found`
+                `Saga with id "${unexistentMovieId}" was not found`
               );
             });
         });
@@ -81,7 +75,7 @@ describe('Interfaces - Database', () => {
         it('should return error when id is invalid', () => {
           const invalidId = 'invalid-id';
 
-          return database.movies.findById(invalidId)
+          return database.sagas.findById(invalidId)
             .then(() => Promise.reject(new Error('unexpected path')))
             .catch((error) => {
               expect(error.name).to.be.equal('INVALID_ID');
@@ -91,43 +85,38 @@ describe('Interfaces - Database', () => {
       });
 
       describe('Update', () => {
-        it('should update the movie', async () => {
+        it('should update the saga', async () => {
           const data = {
-            id: MOVIE_ID,
+            id: SAGA_ID,
             name: 'Movie',
-            plot: 'This is a movie plot',
-            sagaId: SAGA_ID,
-            watched: false,
-            numberOnSaga: 1
+            watched: true,
+            numberOfMovies: 8
           };
 
-          const movie = await database.movies.update(data);
+          const saga = await database.sagas.update(data);
 
-          expect(movie.id).to.exist;
-          expect(movie.name).to.be.equal(data.name);
-          expect(movie.plot).to.be.equal(data.plot);
-          expect(movie.sagaId).to.be.equal(SAGA_ID);
-          expect(movie.watched).to.be.false;
-          expect(movie.numberOnSaga).to.be.equal(data.numberOnSaga);
-          expect(movie.updatedAt).to.be.equalDate(new Date());
+          expect(saga.id).to.be.equal(SAGA_ID);
+          expect(saga.name).to.be.equal(data.name);
+          expect(saga.watched).to.be.true;
+          expect(saga.numberOnSaga).to.be.equal(data.numberOnSaga);
+          expect(saga.updatedAt).to.be.equalDate(new Date());
         });
 
-        it('should return error when movie does not exist', async () => {
+        it('should return error when saga does not exist', async () => {
           const data = {
             id: uuid.v4(),
             name: 'Movie',
-            plot: 'This is a movie plot',
-            sagaId: SAGA_ID,
+            plot: 'This is a saga plot',
             watched: false,
-            numberOnSaga: 1
+            numberOfMovies: 1
           };
 
-          return database.movies.update(data)
+          return database.sagas.update(data)
             .then(() => Promise.reject(new Error('unexpected path')))
             .catch((error) => {
               expect(error.name).to.be.equal('ENTITY_NOT_FOUND');
               expect(error.message).to.be.equal(
-                `Movie with id "${data.id}" was not found`
+                `Saga with id "${data.id}" was not found`
               );
             });
         });

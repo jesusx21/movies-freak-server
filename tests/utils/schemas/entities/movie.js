@@ -1,4 +1,4 @@
-const { UUID, STRING, BOOLEAN, INTEGER, DATE } = require('../types');
+const { OBJECT, UUID, STRING, BOOLEAN, INTEGER, DATE } = require('../types');
 
 const MOVIE_SCHEMA = OBJECT({
   id: UUID,

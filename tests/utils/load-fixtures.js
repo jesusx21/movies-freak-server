@@ -25,7 +25,9 @@ function loadFixtures(fixturesData) {
   const formatFixtures = (fixtures) => {
     const data = {};
 
-    fixtures.forEach((value, key) => {
+    Object.keys(fixtures).forEach((key) => {
+      let value = fixtures[key];
+
       if (isPlainObject(value)) {
         value = formatFixtures(value);
       }

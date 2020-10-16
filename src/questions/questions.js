@@ -101,6 +101,10 @@ const MAIN_QUESTION = {
     value: 'find_by_name'
   },
   {
+    title: 'Get movies watched',
+    value: 'get_watched'
+  },
+  {
     title: 'Finish',
     value: 'finish',
     description: 'This option will close the app'

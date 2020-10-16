@@ -3,6 +3,7 @@ const findMovieById = require('./find-movie-by-id');
 const findMovieByName = require('./find-movie-by-name');
 const getMovie = require('./get-movie');
 const getMovies = require('./get-movies');
+const getMoviesWatched = require('./get-movies-watched');
 const markMovieAsWatched = require('./mark-movie-as-watched');
 
 module.exports = {
@@ -11,5 +12,6 @@ module.exports = {
   findMovieByName,
   getMovie,
   getMovies,
+  getMoviesWatched,
   markMovieAsWatched
 };

@@ -32,6 +32,10 @@ async function initializeApp() {
     await actions.findMovieByName(params);
   }
 
+  if (option === 'get_watched') {
+    await actions.getMoviesWatched(params);
+  }
+
   if (option === 'finish') {
     console.info('You chose to finish the app');
     return
@@ -50,6 +54,7 @@ function resolve() {
 }
 
 function reject(error) {
+  console.log(error)
   console.log('An error happens');
   console.error(`\nError Name: ${error.name}\nError Message: ${error.message}`);
 

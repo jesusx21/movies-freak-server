@@ -2,7 +2,7 @@ const ROOT_PATH = require('app-root-path');
 
 const schema = require('./schema');
 const { validateSchema } = require(`${ROOT_PATH}/utils`);
-const { SagaNotCreated } = require('./errors');
+const { SagaNotCreated } = require('./../errors');
 
 class AddSaga {
   constructor(data, database) {

@@ -2,6 +2,7 @@ const camelizeObject = require('camelcase-keys');
 const snakeObject = require('snakecase-keys');
 const omit = require('lodash.omit');
 const isEmpty = require('lodash.isempty');
+const snakeCase = require('lodash.snakecase');
 
 const { DatabaseError, EntityNotFound, InvalidInputData, InvalidId } = require('../errors');
 
@@ -45,16 +46,31 @@ class Store {
     return this.findById(data.id);
   }
 
-  async _find(query, sortBy = []) {
-    const filter = this._formatInputData(query);
-    const orderBy = isEmpty(sortBy) ? [{ column: 'created_at', order: 'desc'}] : sortBy;
+  async find(query) {
+    const filter = this._formatInputData(query.filter);
+    const orderBy = isEmpty(filter.sort) ? [{ field: 'created_at', order: 'desc'}] : filter.sort;
+    const sort = this._parseSortObject(orderBy);
 
-    const records = await this._connection(this._tableName)
+    const qb = his._connection(this._tableName)
       .where(filter)
-      .orderBy(orderBy)
+      .orderBy(sort);
+
+    if (query.limit) qb.limit(query.limit);
+    if (query.skip) qb.offset(query.skip);
+
+    const records = await qb
       .catch(this._onUnexpectedError)
 
     return records.map(this._formatOutputData);
+  }
+
+  _parseSortObject(sort = []) {
+    return sort.map((item) => {
+      return {
+        column: snakeCase(item.field),
+        order: item.order.toUpperCase()
+      };
+    });
   }
 
   _formatInputData(data) {

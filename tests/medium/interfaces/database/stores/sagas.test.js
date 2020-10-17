@@ -5,7 +5,7 @@ const fixtures = require('./fixtures');
 const SAGA_ID = 'e58c4206-aea8-45f7-8efb-a7177aee2b0b';
 const MOVIE_ID = '3f54d840-6e65-4b9d-b98f-cd57bc7a524f';
 
-describe.only('Interfaces - Database', () => {
+describe('Interfaces - Database', () => {
   describe('Stores', () => {
     describe('Sagas Store', () => {
       let database;

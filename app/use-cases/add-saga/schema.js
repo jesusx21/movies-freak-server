@@ -24,9 +24,10 @@ const schema = Joi.object({
         .max(15)
         .required(),
     })
+  )
     .min(1)
     .max(15)
-  )
+    .required()
 });
 
 module.exports = schema;

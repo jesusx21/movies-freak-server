@@ -1,7 +1,8 @@
 const ROOT_PATH = require('app-root-path');
 
 const schema = require('./schema');
-const validateSchema = require(`${ROOT_PATH}/utils`);
+const { validateSchema } = require(`${ROOT_PATH}/utils`);
+const { SagaNotCreated } = require('./errors');
 
 class AddSaga {
   constructor(data, database) {
@@ -9,8 +10,15 @@ class AddSaga {
     this._database = database;
   }
 
-  execute() {
-    await validateSchema(schema, data)
+  async execute() {
+    await validateSchema(schema, this._data)
+
+    return this._createSaga()
+      .catch(this._onUnexpectedError.bind(this));
+  }
+
+  async _createSaga() {
+    await validateSchema(schema, this._data)
 
     const saga = await this._addSaga();
     const movies = await this._addMovies(saga);
@@ -34,7 +42,6 @@ class AddSaga {
       const movieData = {
         name: movie.name,
         plot: movie.plot || this._data.plot,
-        genre: this._data.genre,
         numberOnSaga: movie.numberOnSaga,
         sagaId: saga.id
       };
@@ -43,6 +50,10 @@ class AddSaga {
     });
 
     return Promise.all(promises);
+  }
+
+  _onUnexpectedError(error) {
+    return Promise.reject(new SagaNotCreated(error, this._data))
   }
 }
 

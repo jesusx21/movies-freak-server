@@ -13,6 +13,17 @@ class ErrorGettingMovies extends VError {
   }
 }
 
+class MoviesToWatchNotFound extends VError {
+  constructor() {
+    const message = 'There is not any movie to watch';
+    const details = {
+      name: 'MOVIES_TO_WATCH_NOT_FOUND'
+    };
+
+    super(details, message);
+  }
+}
+
 class SagaNotCreated extends VError {
   constructor(error, info) {
     const message = 'An error occurs on creating saga';
@@ -28,5 +39,6 @@ class SagaNotCreated extends VError {
 
 module.exports = {
   ErrorGettingMovies,
+  MoviesToWatchNotFound,
   SagaNotCreated
 };

@@ -7,6 +7,10 @@ class SagasStore extends Store {
     this._tableName = 'sagas';
     this._storeName = 'Saga'
   }
+
+  async findUnwatched() {
+    return this.find({ filter: { watched: false } });
+  }
 }
 
 module.exports = SagasStore;

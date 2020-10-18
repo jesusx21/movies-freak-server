@@ -84,6 +84,15 @@ describe('Interfaces - Database', () => {
         })
       });
 
+      describe('Find Unwatched', () => {
+        it('should return sagas not watched', async () => {
+          const sagas = await database.sagas.findUnwatched();
+
+          expect(sagas).to.have.lengthOf(2);
+          sagas.forEach((saga) => expect(saga.watched).to.be.false);
+        });
+      });
+
       describe('Update', () => {
         it('should update the saga', async () => {
           const data = {

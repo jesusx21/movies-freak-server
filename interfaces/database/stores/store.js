@@ -51,7 +51,7 @@ class Store {
     const orderBy = isEmpty(filter.sort) ? [{ field: 'created_at', order: 'desc'}] : filter.sort;
     const sort = this._parseSortObject(orderBy);
 
-    const qb = his._connection(this._tableName)
+    const qb = this._connection(this._tableName)
       .where(filter)
       .orderBy(sort);
 
@@ -62,6 +62,20 @@ class Store {
       .catch(this._onUnexpectedError)
 
     return records.map(this._formatOutputData);
+  }
+
+  async _findOne(query) {
+    const filter = this._formatInputData(query.filter);
+    const orderBy = isEmpty(filter.sort) ? [{ field: 'created_at', order: 'desc'}] : filter.sort;
+    const sort = this._parseSortObject(orderBy);
+
+    const result = await this._connection(this._tableName)
+      .where(filter)
+      .orderBy(sort)
+      .first()
+      .catch(this._onUnexpectedError)
+
+    return this._formatOutputData(result)
   }
 
   _parseSortObject(sort = []) {

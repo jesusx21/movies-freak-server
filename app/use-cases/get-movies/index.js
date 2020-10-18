@@ -16,7 +16,7 @@ class GetMovies {
 
     const filter = pick(this._data, ['sagaId', 'name', 'watched']);
     const movies = await this._database.movies.find({ filter, limit: this._data.limit })
-      .catch();
+      .catch(this._onUnexpectedError.bind(this));
 
     return movies
   }

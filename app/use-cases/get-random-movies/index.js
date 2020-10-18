@@ -1,18 +1,16 @@
-const ROOT_PATH = require('app-root-path');
 const isEmpty = require('lodash.isempty');
 
+const UseCase = require('../use-case');
 const schema = require('./schema');
-const { validateSchema } = require(`${ROOT_PATH}/utils`);
 const { ErrorGettingMovies, MoviesToWatchNotFound } = require('../errors');
 
-class GetRandomMovies {
+class GetRandomMovies extends UseCase {
   constructor(data, database) {
-    this._data = data;
-    this._database = database;
+    super(data, database, schema);
   }
 
   async execute() {
-    await validateSchema(schema, this._data);
+    await super.execute();
 
     const sagas = await this._getSagas();
 

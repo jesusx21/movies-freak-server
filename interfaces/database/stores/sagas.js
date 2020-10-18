@@ -11,6 +11,15 @@ class SagasStore extends Store {
   async findUnwatched() {
     return this.find({ filter: { watched: false } });
   }
+
+  async incrementIndex (id) {
+    await connection(this._tableName)
+      .where('id', id)
+      .increment('current_index', 1)
+      .catch((error) => this._onUnexpectedError(error, { id }));
+
+    return findById(id);
+  };
 }
 
 module.exports = SagasStore;

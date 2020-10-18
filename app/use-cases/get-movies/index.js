@@ -1,18 +1,16 @@
-const ROOT_PATH = require('app-root-path');
 const pick = require('lodash.pick');
 
+const UseCase = require('../use-case');
 const schema = require('./schema');
-const { validateSchema } = require(`${ROOT_PATH}/utils`);
 const { ErrorGettingMovies } = require('../errors');
 
-class GetMovies {
+class GetMovies extends UseCase{
   constructor(data, database) {
-    this._data = data;
-    this._database = database;
+    super(data, database, schema);
   }
 
   async execute() {
-    await validateSchema(schema, this._data);
+    await super.execute();
 
     const filter = pick(this._data, ['sagaId', 'name', 'watched']);
     const movies = await this._database.movies.find({ filter, limit: this._data.limit })

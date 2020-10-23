@@ -61,7 +61,7 @@ describe('Interfaces - Database', () => {
           expect(movie.id).to.be.equal(MOVIE_ID);
           expect(movie.name).to.be.equal('Just a movie');
           expect(movie.sagaId).to.be.equal(SAGA_ID);
-          expect(movie.watched).to.be.false;
+          expect(movie.watched).to.be.true;
           expect(movie.numberOnSaga).to.be.equal(1);
         });
 
@@ -88,6 +88,16 @@ describe('Interfaces - Database', () => {
               expect(error.message).to.be.equal(`Id "${invalidId}" is not a uuid`);
             });
         })
+      });
+
+      describe('Find Next By Saga Id', () => {
+        it('should return the very next movie to watch from a saga', async () => {
+          const sagaId = 'e58c4206-aea8-45f7-8efb-a7177aee2b0b';
+          const movie = await database.movies.findNextBySagaId(sagaId);
+
+          expect(movie.watched).to.be.false;
+          expect(movie.numberOnSaga).to.be.equal(2);
+        });
       });
 
       describe('Update', () => {

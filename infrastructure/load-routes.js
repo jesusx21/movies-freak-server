@@ -28,6 +28,8 @@ function buildHandler(method, database, controller) {
     h.payload = (value) => {
       payload = value;
 
+      if (payload.error) console.log(payload.error);
+
       return h;
     }
 

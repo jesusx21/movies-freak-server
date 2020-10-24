@@ -5,8 +5,8 @@ const ADD_MOVIE_QUESTIONS = [{
 },
 {
   type: 'text',
-  name: 'synopsis',
-  message: 'Type the synopsis of the movie'
+  name: 'plot',
+  message: 'Type the plot of the movie'
 },
 {
   type: 'text',
@@ -43,8 +43,8 @@ const ADD_MOVIE_SAGA_QUESTIONS = [{
 },
 {
   type: 'text',
-  name: 'synopsis',
-  message: 'Type the synopsis of the movie'
+  name: 'plot',
+  message: 'Type the plot of the movie'
 },
 {
   type: 'number',
@@ -59,8 +59,8 @@ const ADD_SAGA_QUESTIONS = [{
 },
 {
   type: 'text',
-  name: 'synopsis',
-  message: 'Type the synopsis of the saga'
+  name: 'plot',
+  message: 'Type the plot of the saga'
 },
 {
   type: 'text',

@@ -8,7 +8,7 @@ function getMovie(params) {
   }
 
   const _onSuccess = async (movie) => {
-    console.log(`\tId: ${movie.id}\n\tTitle: ${movie.name}\n\tPlot: ${movie.synopsis}\n`);
+    console.log(`\tId: ${movie.id}\n\tTitle: ${movie.name}\n\tPlot: ${movie.plot}\n`);
 
     const markAsWatched = await questions.markMovieAsWatched();
 

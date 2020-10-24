@@ -6,37 +6,54 @@ function loadRoutes(server, database) {
   Object.keys(routes)
     .forEach((endpoint) => {
       const [method, path] = endpoint.split(' ');
-      const { controller } = routes[endpoint];
+      const { controller, payloadSchema } = routes[endpoint];
 
       server.route({
         path,
         method,
-        handler: async (request, h) => {
-          const now = new Date();
-          console.log(`${now.toISOString()} - ${method} ${request.url}`);
-
-          request.database = database;
-          let payload;
-          let statusCode;
-
-          h.payload = (value) => {
-            payload = value;
-
-            return h;
-          }
-
-          h.statusCode = (value) => {
-            statusCode = value;
-
-            return h;
-          }
-
-          await controller(request, h);
-
-          return h.response(payload).code(statusCode);
-        }
+        handler: buildHandler(method, database, controller),
+        options: buildOptions(payloadSchema)
       });
     });
+}
+
+function buildHandler(method, database, controller) {
+  return async (request, h) => {
+    const now = new Date();
+
+    request.database = database;
+    let payload;
+    let statusCode;
+
+    h.payload = (value) => {
+      payload = value;
+
+      return h;
+    }
+
+    h.statusCode = (value) => {
+      statusCode = value;
+
+      return h;
+    }
+
+    await controller(request, h);
+
+    console.log(`${now.toISOString()} - ${method} ${request.url} - ${statusCode}`);
+    return h.response(payload).code(statusCode);
+  }
+}
+
+function buildOptions(payloadSchema) {
+  if (!payloadSchema) return {};
+
+  const options = {
+    validate: {
+      payload: payloadSchema
+    }
+  };
+
+  return options;
 }
 
 module.exports = loadRoutes;

@@ -42,7 +42,7 @@ describe('Interfaces - Database', () => {
         it('should return error on invalid data', () => {
           const data = {
             name: 'Movie',
-            synopsis: 'This is a movie plot',
+            plot: 'This is a movie plot',
             sagaId: SAGA_ID,
             watched: false,
             numberOnSaga: 1

@@ -67,7 +67,7 @@ function buildQuestions() {
       return {
         title: `${movie.id} ${movie.name}`,
         value: movie.id,
-        description: movie.synopsis
+        description: movie.plot
       }
     });
 

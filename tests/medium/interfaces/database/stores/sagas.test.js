@@ -40,7 +40,7 @@ describe('Interfaces - Database', () => {
         it('should return error on invalid data', () => {
           const data = {
             name: 'Harry Potter',
-            synopsis: 'This is a movie plot',
+            plot: 'This is a movie plot',
             watched: false
           };
 

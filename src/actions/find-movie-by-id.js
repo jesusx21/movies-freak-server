@@ -9,7 +9,7 @@ function findMovieById(params) {
 
   const _onSuccess = async (movie) => {
     const status = movie.watched ? 'Watched' : 'Not Watched';
-    console.log(`\tId: ${movie.id}\n\tTitle: ${movie.name}\n\tPlot: ${movie.synopsis}\n\t${status}`);
+    console.log(`\tId: ${movie.id}\n\tTitle: ${movie.name}\n\tPlot: ${movie.plot}\n\t${status}`);
 
     if (movie.watched) return;
 

@@ -66,14 +66,16 @@ class Store {
 
   async _findOne(query) {
     const filter = this._formatInputData(query.filter);
-    const orderBy = isEmpty(filter.sort) ? [{ field: 'created_at', order: 'desc'}] : filter.sort;
+    const orderBy = isEmpty(query.sort) ? [{ field: 'created_at', order: 'desc'}] : query.sort;
     const sort = this._parseSortObject(orderBy);
 
-    const result = await this._connection(this._tableName)
+    const qb = this._connection(this._tableName)
       .where(filter)
       .orderBy(sort)
-      .first()
-      .catch(this._onUnexpectedError)
+      .first();
+
+    console.log(qb.toString())
+    const result = await qb.catch(this._onUnexpectedError)
 
     return this._formatOutputData(result)
   }

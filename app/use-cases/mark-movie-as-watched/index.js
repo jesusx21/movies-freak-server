@@ -1,4 +1,5 @@
-const UseCase = require("../use-case");
+const UseCase = require('../use-case');
+const schema = require('./schema');
 
 class MarkMovieAsWatched extends UseCase {
   constructor(data, database) {
@@ -30,3 +31,5 @@ class MarkMovieAsWatched extends UseCase {
     return movie;
   }
 }
+
+module.exports = MarkMovieAsWatched;

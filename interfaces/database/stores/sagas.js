@@ -13,12 +13,12 @@ class SagasStore extends Store {
   }
 
   async incrementIndex (id) {
-    await connection(this._tableName)
+    await this._connection(this._tableName)
       .where('id', id)
       .increment('current_index', 1)
       .catch((error) => this._onUnexpectedError(error, { id }));
 
-    return findById(id);
+    return this.findById(id);
   };
 }
 

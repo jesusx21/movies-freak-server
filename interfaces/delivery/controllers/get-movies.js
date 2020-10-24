@@ -5,7 +5,7 @@ async function getMovies(req, res) {
 
   return useCase.execute()
     .then((movies) => res.payload(movies).statusCode(200))
-    .catch((error) => res.payload(error).statusCode(500));
+    .catch((error) => res.payload({ error }).statusCode(500));
 }
 
 module.exports = getMovies;

@@ -10,6 +10,10 @@ function buildConfig() {
     database: {
       driver: envObject.DB_DRIVER
     },
+    imdb: {
+      host: envObject.IMDB_HOST,
+      apiKey: envObject.IMDB_API_KEY
+    },
     server: {
       host: envObject.SERVER_HOST,
       port: Number(envObject.SERVER_PORT)

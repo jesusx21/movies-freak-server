@@ -19,6 +19,10 @@ const routes = {
     controller: controllers.getRandomMovies
   },
 
+  'GET /halloween-movies/movies/imdb': {
+    controller: controllers.getMoviesFromIMDB
+  },
+
   'GET /halloween-movies/health': {
     controller: controllers.health
   },

@@ -6,7 +6,7 @@
   "scripts": {
     "start": "NODE_ENV=development nodemon index.js",
     "start-shell": "NODE_ENV=development node shell.js",
-    "test": "yarn mocha --recursive -watch tests/index.js tests/**/*.test.js"
+    "test": "NODE_ENV=test yarn mocha --recursive -watch tests/index.js tests/**/*.test.js"
   },
   "repository": {
     "type": "git",

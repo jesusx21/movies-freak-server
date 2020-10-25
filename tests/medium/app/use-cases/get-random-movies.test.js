@@ -1,5 +1,7 @@
-const { GetRandomMovies } = require(`${ROOT_PATH}/app/use-cases`);
 const { expect } = require('chai');
+
+const testUtils = require(`${ROOT_PATH}/tests/utils`);
+const { GetRandomMovies } = require(`${ROOT_PATH}/app/use-cases`);
 const fixtures = require('./fixtures');
 
 describe('App - Use Cases', () => {
@@ -43,7 +45,7 @@ describe('App - Use Cases', () => {
       const getRandomMovies = new GetRandomMovies({}, database);
 
       return getRandomMovies.execute()
-        .then(testUtils.unexpectedPath)
+        .then(testUtils.onUnexpectedPath)
         .catch(testUtils.validateError('VALIDATION_ERROR', expectedMessage));
     });
 
@@ -54,7 +56,7 @@ describe('App - Use Cases', () => {
       const getRandomMovies = new GetRandomMovies({ limit: 5 }, fakeDatabase);
 
       return getRandomMovies.execute()
-        .then(testUtils.unexpectedPath)
+        .then(testUtils.onUnexpectedPath)
         .catch(testUtils.validateError('MOVIES_TO_WATCH_NOT_FOUND', expectedMessage));
     });
 
@@ -68,7 +70,7 @@ describe('App - Use Cases', () => {
       const expectedMessage = 'An error occurs when getting movies: ';
 
       return getRandomMovies.execute()
-        .then(testUtils.unexpectedPath)
+        .then(testUtils.onUnexpectedPath)
         .catch(testUtils.validateError('ERROR_GETTING_MOVIES', expectedMessage));
     });
 
@@ -82,7 +84,7 @@ describe('App - Use Cases', () => {
       const expectedMessage = 'An error occurs when getting movies: ';
 
       return getRandomMovies.execute()
-        .then(testUtils.unexpectedPath)
+        .then(testUtils.onUnexpectedPath)
         .catch(testUtils.validateError('ERROR_GETTING_MOVIES', expectedMessage));
     });
   });

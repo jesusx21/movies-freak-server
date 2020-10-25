@@ -1,3 +1,5 @@
+const testUtils = require(`${ROOT_PATH}/tests/utils`);
+
 const SAGA_RECIPE = [{
   id: 'e58c4206-aea8-45f7-8efb-a7177aee2b0b',
   name: 'A movie',

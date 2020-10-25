@@ -1,6 +1,8 @@
 const omit = require('lodash.omit');
+const { expect } = require('chai');
 
 const { AddSaga } = require(`${ROOT_PATH}/app/use-cases`);
+const testUtils = require(`${ROOT_PATH}/tests/utils`);
 
 const VALIDATION_ERROR = 'VALIDATION_ERROR';
 
@@ -50,7 +52,7 @@ describe('App - Use Cases', () => {
       const expectedMessage = 'Input data invalid: "name" is required';
 
       return addSaga.execute()
-        .then(testUtils.unexpectedPath)
+        .then(testUtils.onUnexpectedPath)
         .catch(testUtils.validateError(VALIDATION_ERROR, expectedMessage));
     });
 
@@ -59,7 +61,7 @@ describe('App - Use Cases', () => {
       const expectedMessage = 'Input data invalid: "movies" is required';
 
       return addSaga.execute()
-        .then(testUtils.unexpectedPath)
+        .then(testUtils.onUnexpectedPath)
         .catch(testUtils.validateError(VALIDATION_ERROR, expectedMessage));
     });
 
@@ -68,7 +70,7 @@ describe('App - Use Cases', () => {
       const expectedMessage = 'Input data invalid: "movies" must contain at least 1 items';
 
       return addSaga.execute()
-        .then(testUtils.unexpectedPath)
+        .then(testUtils.onUnexpectedPath)
         .catch(testUtils.validateError(VALIDATION_ERROR, expectedMessage));
     });
 
@@ -84,7 +86,7 @@ describe('App - Use Cases', () => {
         + 'or equal to 15 items';
 
       return addSaga.execute()
-        .then(testUtils.unexpectedPath)
+        .then(testUtils.onUnexpectedPath)
         .catch(testUtils.validateError(VALIDATION_ERROR, expectedMessage));
     });
 
@@ -97,7 +99,7 @@ describe('App - Use Cases', () => {
       const expectedMessage = 'An error occurs on creating saga: ';
 
       return addSaga.execute()
-        .then(testUtils.unexpectedPath)
+        .then(testUtils.onUnexpectedPath)
         .catch(testUtils.validateError('COULD_NOT_CREATE_SAGA', expectedMessage));
     });
 
@@ -111,7 +113,7 @@ describe('App - Use Cases', () => {
       const expectedMessage = 'An error occurs on creating saga: ';
 
       return addSaga.execute()
-        .then(testUtils.unexpectedPath)
+        .then(testUtils.onUnexpectedPath)
         .catch(testUtils.validateError('COULD_NOT_CREATE_SAGA', expectedMessage));
     });
   });

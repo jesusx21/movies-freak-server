@@ -1,6 +1,8 @@
 const uuid = require('uuid');
+const { expect } = require('chai');
 
 const fixtures = require('./fixtures');
+const testUtils = require(`${ROOT_PATH}/tests/utils`);
 
 const SAGA_ID = 'e58c4206-aea8-45f7-8efb-a7177aee2b0b';
 const MOVIE_ID = '3f54d840-6e65-4b9d-b98f-cd57bc7a524f';
@@ -41,7 +43,7 @@ describe('Interfaces - Database', () => {
           const data = {
             name: 'Harry Potter',
             plot: 'This is a movie plot',
-            watched: false
+            watched: 'invalid'
           };
 
           return database.sagas.create(data)

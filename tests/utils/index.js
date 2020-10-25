@@ -9,7 +9,7 @@ function generateFixtures(type, recipe, quantity) {
   return fixturesGenerator.generate({ type, recipe, quantity });
 }
 
-function unexpectedPath() {
+function onUnexpectedPath() {
   return Promise.reject(new Error('unexpeted path'));
 }
 
@@ -28,6 +28,6 @@ module.exports = {
   generateFixtures,
   loadFixtures,
   resetDatabase,
-  unexpectedPath,
+  onUnexpectedPath,
   validateError
 };

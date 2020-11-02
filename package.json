@@ -4,9 +4,35 @@
   "description": "A collection of horror movies to watch in halloween marathon",
   "main": "index.js",
   "scripts": {
-    "start": "NODE_ENV=development nodemon index.js",
-    "start-shell": "NODE_ENV=development node shell.js",
-    "test": "NODE_ENV=test yarn mocha --recursive -watch tests/index.js tests/**/*.test.js"
+    "start-api": "better-npm-run start-api",
+    "start-shell": "better-npm-run start-shell",
+    "test": "better-npm-run test",
+    "db:create": "node infrastructure/shell/create-database.js",
+    "db:drop": "node infrastructure/shell/drop-database.js",
+    "db:create-migration": "yarn knex migrate:make $1",
+    "db:migrate": "yarn knex migrate:latest",
+    "db:downgrade": "yarn knex migrate:rollback",
+    "db:seed": "yarn knex seed:run"
+  },
+  "betterScripts": {
+    "start-api": {
+      "command": "nodemon index.js",
+      "env": {
+        "NODE_ENV": "development"
+      }
+    },
+    "start-shell": {
+      "command": "nodemon shell.js",
+      "env": {
+        "NODE_ENV": "development"
+      }
+    },
+    "test": {
+      "command": "yarn db:drop && yarn db:create && yarn db:migrate && yarn mocha --recursive -watch tests/index.js tests/**/database/**/*.test.js",
+      "env": {
+        "NODE_ENV": "test"
+      }
+    }
   },
   "repository": {
     "type": "git",
@@ -22,6 +48,7 @@
     "@hapi/hapi": "^20.0.1",
     "app-root-path": "^3.0.0",
     "axios": "^0.21.0",
+    "better-npm-run": "^0.1.1",
     "camelcase-keys": "^6.2.2",
     "dotenv": "^8.2.0",
     "joi": "^17.2.1",
@@ -39,8 +66,8 @@
     "nodemon": "^2.0.6",
     "pg": "^8.3.3",
     "prompts": "^2.3.2",
+    "shelljs": "^0.8.4",
     "snakecase-keys": "^3.2.0",
-    "sqlite3": "^5.0.0",
     "uuid": "^8.3.1",
     "verror": "^1.10.0"
   },

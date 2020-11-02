@@ -4,46 +4,55 @@ const omit = require('lodash.omit');
 const isEmpty = require('lodash.isempty');
 const snakeCase = require('lodash.snakecase');
 
-const { DatabaseError, EntityNotFound, InvalidInputData, InvalidId } = require('../errors');
+const {
+  DatabaseError,
+  EntityNotFound,
+  InputIsNotAnEntity,
+  InvalidInputData,
+  InvalidId
+} = require('../errors');
+const { instance } = require('../../../domain/entities/build-movie/schema');
 
 class Store {
-  constructor(connection) {
+  constructor(connection, buildEntity) {
     this._connection = connection;
+    this._makeEntity = buildEntity;
     this._tableName = null;
     this._storeName = null;
   }
 
-  async create(data) {
-    const dataToSave = this._formatInputData(omit(data, 'id'));
+  async create(entity) {
+    if (!this._isEntity(entity)) return Promise.reject(new InputIsNotAnEntity(entity));
+
+    const dataToSave = omit(
+      this._formatInputData(entity.toJSON()), ['id', 'created_at', 'updated_at']
+    );
 
     const [record] = await this._connection(this._tableName)
       .insert(dataToSave)
       .returning('*')
-      .catch((error) => this._onUnexpectedError(error, data));
+      .catch((error) => this._onUnexpectedError(error, entity.toJSON()));
 
-    return this._formatOutputData(record);
+    return this._buildEntity(record);
   }
 
   async findById(id) {
-    const record = await this._connection(this._tableName)
-      .where('id', id)
-      .first()
-      .catch((error) => this._onUnexpectedError(error, id));
-
-    if (!record) return this._onNotFoundError(id)
-
-    return this._formatOutputData(record);
+    return this._findOne({ filter: { id } });
   }
 
-  async update(data) {
-    const dataToSave = this._formatInputData(omit(data, ['id', 'createdAt']));
+  async update(entity) {
+    if (!this._isEntity(entity)) return Promise.reject(new InputIsNotAnEntity(entity));
+
+    const dataToSave = this._formatInputData(omit(entity.toJSON(), ['id', 'createdAt']));
+
+    dataToSave.updated_at = new Date();
 
     await this._connection(this._tableName)
-      .where('id', data.id)
-      .update({ ...dataToSave, updated_at: new Date() })
-      .catch((error) => this._onUnexpectedError(error, data));
+      .where('id', entity.getId())
+      .update(dataToSave)
+      .catch((error) => this._onUnexpectedError(error, dataToSave));
 
-    return this.findById(data.id);
+    return this.findById(entity.getId());
   }
 
   async find(query) {
@@ -61,7 +70,7 @@ class Store {
     const records = await qb
       .catch(this._onUnexpectedError)
 
-    return records.map(this._formatOutputData);
+    return this._buildEntities(records);
   }
 
   async _findOne(query) {
@@ -69,15 +78,31 @@ class Store {
     const orderBy = isEmpty(query.sort) ? [{ field: 'created_at', order: 'desc'}] : query.sort;
     const sort = this._parseSortObject(orderBy);
 
-    const qb = this._connection(this._tableName)
+    const record = await this._connection(this._tableName)
       .where(filter)
       .orderBy(sort)
-      .first();
+      .first()
+      .catch((error) => this._onUnexpectedError(error, filter));
 
-    console.log(qb.toString())
-    const result = await qb.catch(this._onUnexpectedError)
+    if (!record) return this._onNotFoundError(filter);
 
-    return this._formatOutputData(result)
+    return this._buildEntity(record)
+  }
+
+  async _buildEntity(data) {
+    const result = this._formatOutputData(data);
+
+    return this._makeEntity(result);
+  }
+
+  _isEntity(entity) {
+    return entity.isNew instanceof Function
+  }
+
+  _buildEntities(data) {
+    const promises = data.map(this._buildEntity.bind(this));
+
+    return Promise.all(promises);
   }
 
   _parseSortObject(sort = []) {
@@ -100,7 +125,7 @@ class Store {
   _onUnexpectedError(error, data = {}) {
     if (error.code === '42703') return Promise.reject(new InvalidInputData(error, data));
     if (error.code === '22P02') {
-      if (error.file === 'uuid.c') return Promise.reject(new InvalidId(data))
+      if (error.file === 'uuid.c') return Promise.reject(new InvalidId(data.id))
       return Promise.reject(new InvalidInputData(error, data));
     }
 

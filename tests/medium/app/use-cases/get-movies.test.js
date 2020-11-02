@@ -32,7 +32,7 @@ describe('App - Use Cases', () => {
     });
 
     it('sould get movies by saga id', async () => {
-      const sagaId = 'e58c4206-aea8-45f7-8efb-a7177aee2b0b';
+      const sagaId = '6b699ba0-310a-480a-bf8a-80405cd501eb';
       const getMovies = new GetMovies({ sagaId }, database);
 
       const movies = await getMovies.execute();

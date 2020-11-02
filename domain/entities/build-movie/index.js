@@ -3,7 +3,7 @@ const schema = require('./schema');
 
 async function buildMovieEntity(movieData) {
   const movie = { ...movieData }
-  const entity = await buildEntity(schema, movie);
+  const entity = await buildEntity(schema, movie, 'Movie');
 
   return entity;
 }

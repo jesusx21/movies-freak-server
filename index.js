@@ -2,10 +2,11 @@ const buildApp = require('./infrastructure/app');
 const config = require('./infrastructure/config');
 const drivers = require('./infrastructure/database/drivers');
 const buildDatabase = require('./interfaces/database');
+const entities = require('./domain/entities');
 
 async function initializeServer() {
   const db = drivers[config.database.driver];
-  const database = buildDatabase(db);
+  const database = buildDatabase(db, entities);
 
   const app = buildApp({
     database,

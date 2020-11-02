@@ -1,7 +1,7 @@
 const testUtils = require(`${ROOT_PATH}/tests/utils`);
 
 const SAGA_RECIPE = [{
-  id: 'e58c4206-aea8-45f7-8efb-a7177aee2b0b',
+  id: '6b699ba0-310a-480a-bf8a-80405cd501eb',
   name: 'A movie',
   numberOfMovies: 2,
   watched: false,
@@ -26,13 +26,13 @@ const SAGA_RECIPE = [{
 const MOVIE_RECIPE = [{
   id: '3f54d840-6e65-4b9d-b98f-cd57bc7a524f',
   name: 'Just a movie',
-  sagaId: 'e58c4206-aea8-45f7-8efb-a7177aee2b0b',
+  sagaId: '6b699ba0-310a-480a-bf8a-80405cd501eb',
   watched: true,
   numberOnSaga: 1
 }, {
   id: 'b237ca52-7dae-4f74-a3e4-e3133265f2e0',
   name: 'Just another movie',
-  sagaId: 'e58c4206-aea8-45f7-8efb-a7177aee2b0b',
+  sagaId: '6b699ba0-310a-480a-bf8a-80405cd501eb',
   watched: false,
   numberOnSaga: 1
 }, {

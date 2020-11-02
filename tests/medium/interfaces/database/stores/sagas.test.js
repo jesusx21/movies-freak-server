@@ -3,9 +3,24 @@ const { expect } = require('chai');
 
 const fixtures = require('./fixtures');
 const testUtils = require(`${ROOT_PATH}/tests/utils`);
+const { buildSaga: buildSagaEntity } = require(`${ROOT_PATH}/domain/entities`);
 
-const SAGA_ID = 'e58c4206-aea8-45f7-8efb-a7177aee2b0b';
+const SAGA_ID = '6b699ba0-310a-480a-bf8a-80405cd501eb';
 const MOVIE_ID = '3f54d840-6e65-4b9d-b98f-cd57bc7a524f';
+
+async function createSaga(data, database) {
+  const sagaEntity = await buildSagaEntity(data);
+  const saga = await database.sagas.create(sagaEntity);
+
+  return saga.toJSON();
+}
+
+async function updateSaga(data, database) {
+  const sagaEntity = await buildSagaEntity(data);
+  const saga = await database.sagas.update(sagaEntity);
+
+  return saga.toJSON();
+}
 
 describe('Interfaces - Database', () => {
   describe('Stores', () => {
@@ -28,7 +43,7 @@ describe('Interfaces - Database', () => {
             numberOfMovies: 8
           };
 
-          const saga = await database.sagas.create(data);
+          const saga = await createSaga(data, database);
 
           expect(saga.id).to.exist;
           expect(saga.name).to.be.equal(data.name);
@@ -46,19 +61,20 @@ describe('Interfaces - Database', () => {
             watched: 'invalid'
           };
 
-          return database.sagas.create(data)
+          return createSaga(data, database)
             .then(() => Promise.reject(new Error('unexpected path')))
-            .catch((error) => expect(error.name).to.be.equal('INVALID_INPUT_DATA'));
+            .catch((error) => expect(error.name).to.be.equal('ENTITY_DATA_INVALID'));
         });
       });
 
       describe('Find By Id', () => {
         it('should return saga by its id', async () => {
           const saga = await database.sagas.findById(SAGA_ID);
+          const sagaData = saga.toJSON();
 
-          expect(saga.id).to.be.equal(SAGA_ID);
-          expect(saga.numberOfMovies).to.be.equal(2);
-          expect(saga.watched).to.be.false;
+          expect(sagaData.id).to.be.equal(SAGA_ID);
+          expect(sagaData.numberOfMovies).to.be.equal(2);
+          expect(sagaData.watched).to.be.false;
         });
 
         it('should return error when movie was not found', () => {
@@ -69,7 +85,7 @@ describe('Interfaces - Database', () => {
             .catch((error) => {
               expect(error.name).to.be.equal('ENTITY_NOT_FOUND');
               expect(error.message).to.be.equal(
-                `Saga with id "${unexistentMovieId}" was not found`
+                `Saga with query "{"id":"${unexistentMovieId}"}" was not found`
               );
             });
         });
@@ -91,7 +107,10 @@ describe('Interfaces - Database', () => {
           const sagas = await database.sagas.findUnwatched();
 
           expect(sagas).to.have.lengthOf(2);
-          sagas.forEach((saga) => expect(saga.watched).to.be.false);
+          sagas.forEach((saga) => {
+            const sagaData = saga.toJSON();
+            expect(sagaData.watched).to.be.false;
+          });
         });
       });
 
@@ -104,7 +123,7 @@ describe('Interfaces - Database', () => {
             numberOfMovies: 8
           };
 
-          const saga = await database.sagas.update(data);
+          const saga = await updateSaga(data, database);
 
           expect(saga.id).to.be.equal(SAGA_ID);
           expect(saga.name).to.be.equal(data.name);
@@ -122,14 +141,29 @@ describe('Interfaces - Database', () => {
             numberOfMovies: 1
           };
 
-          return database.sagas.update(data)
+          return updateSaga(data, database)
             .then(() => Promise.reject(new Error('unexpected path')))
             .catch((error) => {
               expect(error.name).to.be.equal('ENTITY_NOT_FOUND');
               expect(error.message).to.be.equal(
-                `Saga with id "${data.id}" was not found`
+                `Saga with query "{"id":"${data.id}"}" was not found`
               );
             });
+        });
+
+        it('should return error when data sent is not an entity', async () => {
+          const data = {
+            id: MOVIE_ID,
+            name: 'Movie',
+            plot: 'This is a movie plot',
+            sagaId: SAGA_ID,
+            watched: false,
+            numberOnSaga: 'invalid-integer'
+          };
+
+          return database.sagas.update(data)
+            .then(() => Promise.reject(new Error('unexpected path')))
+            .catch((error) => expect(error.name).to.be.equal('INPUT_IS_NOT_AN_ENTITY'));
         });
 
         it('should return error on invalid data', async () => {
@@ -142,9 +176,9 @@ describe('Interfaces - Database', () => {
             numberOnSaga: 'invalid-integer'
           };
 
-          return database.movies.update(data)
+          return updateSaga(data, database)
             .then(() => Promise.reject(new Error('unexpected path')))
-            .catch((error) => expect(error.name).to.be.equal('INVALID_INPUT_DATA'));
+            .catch((error) => expect(error.name).to.be.equal('ENTITY_DATA_INVALID'));
         });
       });
     });

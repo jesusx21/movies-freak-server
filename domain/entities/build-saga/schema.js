@@ -2,20 +2,32 @@ const Joi = require('joi');
 
 const schema = Joi.object({
   id: Joi.string()
-    .guid({ version: ['uuidv4'] }),
+    .guid({ version: ['uuidv4'] })
+    .optional(),
   name: Joi.string(),
-  plot: Joi.string(),
+  plot: Joi.string()
+    .optional()
+    .allow(null),
   numberOfMovies: Joi.number()
     .integer()
-    .positive(),
+    .positive()
+    .optional(),
   currentIndex: Joi.number()
-    .integer(),
+    .integer()
+    .optional(),
   lastMovieWatchedId: Joi.string()
-    .guid({ version: ['uuidv4'] }),
-  watched: Joi.boolean(),
-  watchedAt: Joi.date(),
-  createdAt: Joi.date(),
+    .guid({ version: ['uuidv4'] })
+    .optional()
+    .allow(null),
+  watched: Joi.boolean()
+    .optional(),
+  watchedAt: Joi.date()
+    .optional()
+    .allow(null),
+  createdAt: Joi.date()
+    .optional(),
   updatedAt: Joi.date()
+    .optional()
 });
 
 module.exports = schema;

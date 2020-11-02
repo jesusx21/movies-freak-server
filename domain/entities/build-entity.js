@@ -9,10 +9,13 @@ async function buildEntity(schema, data, entityName) {
 
   const isNew = () => Boolean(data.id);
 
+  const getId = () => data.id;
+
   const toJSON = () => data;
 
   return {
     isNew,
+    getId,
     toJSON
   };
 }

@@ -12,7 +12,7 @@ class IMDBGateway {
     this._apiKey = config.imdb.apiKey;
   }
 
-  getMovies(data) {
+  fetchMovies(data) {
     const params = {};
 
     if (data.imdbId) params.i = data.imdbId;

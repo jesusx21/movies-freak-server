@@ -24,6 +24,17 @@ class MoviesToWatchNotFound extends VError {
   }
 }
 
+class MovieAlreadyAdded extends VError {
+  constructor(imdbId) {
+    const message = `Movie with id ${imdbId} on imdb was already added`;
+    const details = {
+      name: 'MOVIES_ALREADY_ADDED'
+    };
+
+    super(details, message);
+  }
+}
+
 class SagaNotCreated extends VError {
   constructor(error, info) {
     const message = 'An error occurs on creating saga';
@@ -39,6 +50,7 @@ class SagaNotCreated extends VError {
 
 module.exports = {
   ErrorGettingMovies,
+  MovieAlreadyAdded,
   MoviesToWatchNotFound,
   SagaNotCreated
 };

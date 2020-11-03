@@ -1,55 +1,51 @@
-const UseCase = require('../use-case');
 const schema = require('./schema');
-const { SagaNotCreated } = require('./../errors');
+const IMDBGateway = require('../../gateways/imdb');
+const buildUseCase = require('../build-use-case');
 
-class AddSaga extends UseCase {
-  constructor(data, database) {
-    super(data, database, schema);
+function addSaga(args) {
+  const self = {
+    _data: args.data,
+    _database: args.database,
+    _entities: args.entities
+  };
+
+  self._imdbGateway = new IMDBGateway();
+  self._useCase = buildUseCase({ schema, data: self._data });
+
+  const execute = async () => {
+    await self._useCase.execute();
+
   }
 
-  async execute() {
-    await super.execute();
-
-    return this._createSaga()
-      .catch(this._onUnexpectedError.bind(this));
-  }
-
-  async _createSaga() {
-    const saga = await this._addSaga();
-    const movies = await this._addMovies(saga);
-
-    return { ...saga, movies };
-  }
-
-  _addSaga() {
-    const sagaData = {
-      name: this._data.name,
-      plot: this._data.plot,
-      genre: this._data.genre,
-      numberOfMovies: this._data.movies.length
-    };
-
-    return this._database.sagas.create(sagaData);
-  }
-
-  _addMovies(saga) {
-    const promises = this._data.movies.map((movie) => {
-      const movieData = {
-        name: movie.name,
-        plot: movie.plot || this._data.plot,
-        numberOnSaga: movie.numberOnSaga,
-        sagaId: saga.id
-      };
-
-      return this._database.movies.create(movieData);
+  const _createSaga = async () => {
+    const saga = await self._entities.buildSaga({
+      name: self._data.name,
+      plot: self._data.plot
     });
 
-    return Promise.all(promises);
+    return self._database.sagas.create(saga);
   }
 
-  _onUnexpectedError(error) {
-    return Promise.reject(new SagaNotCreated(error, this._data))
+  const _addMovies = () => {
+
   }
+
+  const _createMovie = async (movieData) => {
+    if (await _wasMovieAlreadyAdded(movieData)) {
+
+    }
+  }
+
+  const _wasMovieAlreadyAdded = async (movieData) => {
+    const imdb = await _database.imdb.findByIMDBId(movieData.imdbId)
+      .catch((error) => {
+        if (error.name !== 'ENTITY_NOT_FOUND') return Promise.reject(error);
+      });
+
+    return Boolean(imdb);
+  }
+
+  return execute();
 }
 
-module.exports = AddSaga;
+module.exports = addSaga;

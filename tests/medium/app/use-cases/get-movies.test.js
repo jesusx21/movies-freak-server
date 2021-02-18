@@ -1,5 +1,7 @@
-const { GetMovies } = require(`${ROOT_PATH}/app/use-cases`);
 const { expect } = require('chai');
+
+const { GetMovies } = require(`${ROOT_PATH}/app/use-cases`);
+const testUtils = require(`${ROOT_PATH}/tests/utils`);
 const fixtures = require('./fixtures');
 
 describe('App - Use Cases', () => {
@@ -30,7 +32,7 @@ describe('App - Use Cases', () => {
     });
 
     it('sould get movies by saga id', async () => {
-      const sagaId = 'e58c4206-aea8-45f7-8efb-a7177aee2b0b';
+      const sagaId = '6b699ba0-310a-480a-bf8a-80405cd501eb';
       const getMovies = new GetMovies({ sagaId }, database);
 
       const movies = await getMovies.execute();
@@ -83,7 +85,7 @@ describe('App - Use Cases', () => {
       const expectedMessage = 'Input data invalid: "plot" is not allowed';
 
       return getMovies.execute()
-        .then(testUtils.unexpectedPath)
+        .then(testUtils.onUnexpectedPath)
         .catch(testUtils.validateError('VALIDATION_ERROR', expectedMessage));
     });
 
@@ -96,7 +98,7 @@ describe('App - Use Cases', () => {
       const expectedMessage = 'An error occurs when getting movies: ';
 
       return getMovies.execute()
-        .then(testUtils.unexpectedPath)
+        .then(testUtils.onUnexpectedPath)
         .catch(testUtils.validateError('ERROR_GETTING_MOVIES', expectedMessage));
     });
   });

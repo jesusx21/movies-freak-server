@@ -3,21 +3,16 @@ const Joi = require('joi');
 const schema = Joi.object({
   name: Joi.string()
     .required(),
-
   plot: Joi.string()
     .optional(),
-
-  genre: Joi.string()
-    .optional(),
-
   movies: Joi.array().items(
     Joi.object({
-      name: Joi.string()
+      imdbId: Joi.string()
         .required(),
-
+      name: Joi.string()
+        .optional(),
       plot: Joi.string()
         .optional(),
-
       numberOnSaga: Joi.number()
         .integer()
         .min(1)

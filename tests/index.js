@@ -6,14 +6,9 @@ const chaiAsPromised = require('chai-as-promised');
 const sinonChai = require('sinon-chai');
 const chaiDateTime = require('chai-datetime');
 
-const testUtils = require('./utils');
-
 chai.use(sinonChai);
 chai.use(chaiAsPromised);
 chai.use(chaiDateTime);
 chai.should();
 
 global.ROOT_PATH = ROOT_PATH;
-global.expect = chai.expect;
-
-Object.assign(global, { testUtils });

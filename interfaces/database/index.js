@@ -1,7 +1,7 @@
 const buildStores = require('./stores');
 
-function buildDatabase(connection) {
-  return buildStores(connection);
+function buildDatabase(connection, entitiesBuilder) {
+  return buildStores(connection, entitiesBuilder);
 }
 
 module.exports = buildDatabase;

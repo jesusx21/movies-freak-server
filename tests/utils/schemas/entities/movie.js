@@ -6,11 +6,13 @@ const MOVIE_SCHEMA = OBJECT({
   plot: STRING(),
   sagaId: UUID,
   watched: BOOLEAN,
-  numberOnSaga: INTEGER(1, 15),
+  imdbId: STRING({ allowEmpty: false }),
+  numberOnSaga: INTEGER({ min: 1, max: 15 }),
+  watchedAt: DATE,
   createdAt: DATE,
   updatedAt: DATE
 }, [
-  'id', 'name', 'sagaId', 'numberOnSaga', 'createdAt',  'updatedAt'
+  'id', 'name', 'plot', 'sagaId', 'numberOnSaga', 'createdAt',  'updatedAt'
 ]);
 
 module.exports = MOVIE_SCHEMA

@@ -13,7 +13,15 @@ class GetMovies extends UseCase{
     await super.execute();
 
     const filter = pick(this._data, ['sagaId', 'name', 'watched']);
-    const movies = await this._database.movies.find({ filter, limit: this._data.limit })
+    const sort = [];
+
+    if (filter.hasOwnProperty('watched')) sort.push({ field: 'watchedAt', order: 'ASC' });
+    const movies = await this._database.movies.find({
+      filter,
+      sort,
+      limit: this._data.limit,
+      skip: this._data.skip
+    })
       .catch(this._onUnexpectedError.bind(this));
 
     return movies

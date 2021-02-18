@@ -1,3 +1,6 @@
+const postgres = require('./postgres');
+
 module.exports = {
-  postgres: require('./postgres')
+  postgres,
+  postgresql: postgres
 };

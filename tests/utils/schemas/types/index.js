@@ -2,6 +2,7 @@ const BOOLEAN = require('./boolean');
 const DATE = require('./date');
 const EMAIL = require('./email');
 const ENUM = require('./enum');
+const FLOAT = require('./float');
 const INTEGER = require('./integer');
 const OBJECT = require('./object');
 const PHONE = require('./phone');
@@ -15,6 +16,7 @@ module.exports = {
   EMAIL,
   ENUM,
   INTEGER,
+  FLOAT,
   OBJECT,
   PHONE,
   STRING,

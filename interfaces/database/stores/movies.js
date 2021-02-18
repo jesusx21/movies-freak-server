@@ -4,8 +4,8 @@ const isEmpty = require('lodash.isempty');
 const Store = require('./store');
 
 class MoviesStore extends Store {
-  constructor(connection) {
-    super(connection);
+  constructor(connection, buildEntity) {
+    super(connection, buildEntity);
 
     this._tableName = 'movies';
     this._storeName = 'Movie'
@@ -13,7 +13,7 @@ class MoviesStore extends Store {
 
   async find(query) {
     const filter = this._formatInputData(omit(query.filter, ['name']));
-    const orderBy = isEmpty(filter.sort) ? [{ field: 'created_at', order: 'desc'}] : filter.sort;
+    const orderBy = isEmpty(query.sort) ? [{ field: 'created_at', order: 'desc'}] : query.sort;
     const sort = this._parseSortObject(orderBy);
 
     const qb = this._connection(this._tableName)
@@ -29,7 +29,7 @@ class MoviesStore extends Store {
     const records = await qb
       .catch(this._onUnexpectedError)
 
-    return records.map(this._formatOutputData);
+    return this._buildEntities(records);
   }
 
   async findNextBySagaId(sagaId) {

@@ -13,12 +13,24 @@ class DatabaseError extends VError {
   }
 }
 
+class InputIsNotAnEntity extends VError {
+  constructor(data) {
+    const message = 'Input must be an entity';
+    const details = {
+      name: 'INPUT_IS_NOT_AN_ENTITY',
+      info: { data }
+    };
+
+    super(details, message);
+  }
+}
+
 class EntityNotFound extends VError {
-  constructor(entityId, entityName) {
-    const message = `${entityName} with id "${entityId}" was not found`;
+  constructor(query, entityName) {
+    const message = `${entityName} with query "${JSON.stringify(query)}" was not found`;
     const details = {
       name: 'ENTITY_NOT_FOUND',
-      info: { entityId, entityName }
+      info: { query, entityName }
     };
 
     super(details, message);
@@ -50,9 +62,23 @@ class InvalidInputData extends VError {
   }
 }
 
+class StoreFunctionNotImplemented extends VError {
+  constructor(functionName, storeName) {
+    const message = `The function "${functionName}" called has not been implemented on ${storeName}Store`;
+    const details = {
+      name: 'STORE_FUNCTION_NOT_IMPLEMENTED',
+      info: { functionName, storeName }
+    };
+
+    super(details, message);
+  }
+}
+
 module.exports = {
   DatabaseError,
   EntityNotFound,
+  InputIsNotAnEntity,
   InvalidId,
-  InvalidInputData
+  InvalidInputData,
+  StoreFunctionNotImplemented
 };

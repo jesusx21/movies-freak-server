@@ -18,7 +18,7 @@ class Config(ConfigParser):
         port = self.getint('database', 'port', fallback=5432)
         username = self.get('database', 'username')
         password = self.get('database', 'password', fallback=None)
-        database = self.get_database_name()
+        database = self.get('database', 'database')
 
         if password:
             return 'postgresql+%s://%s:%s@%s:%s/%s' % (
@@ -29,5 +29,14 @@ class Config(ConfigParser):
             driver, username, host, port, database
         )
 
-    def get_database_name(self):
-        return self.get('database', 'database')
+    def get_imdb_connection_data(self):
+        return {
+            'url': self.get('imdb', 'url'),
+            'api_key': self.get('imdb', 'api_key')
+        }
+
+    def get_utelly_connection_data(self):
+        return {
+            'url': self.get('utelly', 'url'),
+            'api_key': self.get('utelly', 'api_key')
+        }

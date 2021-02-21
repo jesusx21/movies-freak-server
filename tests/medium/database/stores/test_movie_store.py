@@ -3,9 +3,9 @@ from datetime import datetime
 from unittest.mock import patch
 from sqlalchemy import create_engine
 
-from tests.medium.database import TestCase
+from tests.medium import TestCase
 
-from database.stores.errors import InvalidData, InvalidId, EntityNotFound, UnexpectedDatabaseError
+from database.errors import InvalidData, InvalidId, EntityNotFound, UnexpectedDatabaseError
 from entities.movie import MovieEntity
 
 class TestCreate(TestCase):

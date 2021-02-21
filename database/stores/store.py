@@ -1,7 +1,7 @@
 from sqlalchemy.exc import IntegrityError, DataError
 from contextlib import contextmanager
 
-from database.stores.errors import InvalidData, InvalidId, EntityNotFound, UnexpectedDatabaseError
+from database.errors import InvalidData, InvalidId, EntityNotFound, UnexpectedDatabaseError
 
 
 class Store:
@@ -40,6 +40,24 @@ class Store:
 
         if not result:
             raise EntityNotFound(entity_id)
+
+        return self._deserialize(result)
+
+    def _find_one(self, column=None, value=None):
+        statement = self._table \
+            .select() \
+            .where(column == value)
+
+        try:
+            cursor = self._execute(statement)
+            result = cursor.first()
+        except DataError:
+            raise InvalidData(column, value)
+        except Exception as error:
+            raise UnexpectedDatabaseError(error)
+
+        if not result:
+            raise EntityNotFound(column, value)
 
         return self._deserialize(result)
 

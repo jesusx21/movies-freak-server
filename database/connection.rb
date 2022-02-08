@@ -1,7 +1,5 @@
 require('sequel')
 
-$LOAD_PATH << File.join(File.dirname(__FILE__), '../')
-
 require('config')
 
 module Database
@@ -11,5 +9,3 @@ module Database
     @connection
   end
 end
-
-Database.connection

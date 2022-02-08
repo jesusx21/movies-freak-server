@@ -16,5 +16,3 @@ module Configuration
     Database.config = database_config
   end
 end
-
-Configuration.load_config_file('./config.sample.yml')

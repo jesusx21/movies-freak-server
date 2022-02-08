@@ -1,2 +1,8 @@
 # Environment folder
 .env
+
+# configuration file
+config.yml
+
+.DS_Store
+./**/.DS_Store

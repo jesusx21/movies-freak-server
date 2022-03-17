@@ -25,7 +25,7 @@ module Database
     end
 
     def adapter
-      @config.adapter
+      @config.adapter.to_sym
     end
 
     def username

@@ -1,12 +1,13 @@
 $LOAD_PATH << File.dirname(__FILE__)
 
 require('rake')
+require 'rake/testtask'
 require('sequel')
 
 require('config')
 require('database/connection')
 
-config_file = ENV['CONFIG_FILE'] || 'config.yml'
+config_file = ENV['CONFIG_FILE_PATH'] || 'config.yml'
 
 Configuration.load_config_file(config_file)
 
@@ -27,8 +28,6 @@ namespace :db do
     database_config = Database.config
 
     sh "#{build_postgres_vars(database_config)} createdb #{database_config.database_name}"
-
-    puts("Database #{database_config.database_name} created!")
   end
 
   desc('Drops the database')
@@ -36,7 +35,6 @@ namespace :db do
     database_config = Database.config
 
     sh "#{build_postgres_vars(database_config)} dropdb #{database_config.database_name}"
-    puts("Database #{database_config.database_name} dropped!")
   end
 
   desc('Drops the database')
@@ -56,3 +54,27 @@ namespace :migrate do
     Sequel::Migrator.run(Database.connection, './migrations', column: :migrations)
   end
 end
+
+# Test tasks
+desc('Run SQL tests')
+task :test do
+  Rake::TestTask.new do |t|
+    ENV['ENV'] = 'test'
+    ENV['CONFIG_FILE_PATH'] = 'test/config_sql.yml'
+
+    begin
+      Rake::Task['db:drop'].execute
+    rescue StandardError => error
+      pp error
+    end
+
+    Rake::Task['db:create'].execute
+    Rake::Task['migrate:latest'].execute
+
+    t.libs << 'test'
+    t.libs << './'
+    t.test_files = FileList['test/**/*_test.rb']
+  end
+end
+
+task default: [:test]

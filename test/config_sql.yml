@@ -1,0 +1,10 @@
+---
+database:
+  adapter: postgresql
+  encoding: utf-8
+  host: localhost
+  port: 5432
+  database_name: movies_freak_test
+  username: postgres
+  password:
+  maximum_connections: 20

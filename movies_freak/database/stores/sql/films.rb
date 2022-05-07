@@ -25,7 +25,7 @@ module MoviesFreak
             raise Database::DatabaseError, error
           end
 
-          build_film(result)
+          parse_response(result)
         end
 
         def find_by_id(film_id)
@@ -39,12 +39,12 @@ module MoviesFreak
 
           raise Database::FilmNotFound, film_id if result.nil?
 
-          build_film(result)
+          parse_response(result)
         end
 
         private
 
-        def build_film(data)
+        def parse_response(data)
           MoviesFreak::Entities::Film.new(
             id: data[:id],
             name: data[:name],

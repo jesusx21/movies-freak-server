@@ -9,6 +9,8 @@ module Tests
     def setup
       super
 
+      @db = build_database
+
       @film = MoviesFreak::Entities::Film.new(
         name: 'Spider-Man: Homecoming',
         plot: 'A young man is bitten by a radioactive spider',

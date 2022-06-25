@@ -1,18 +1,8 @@
-require('minitest/autorun')
-require('securerandom')
-
 require('config')
+require('test/test_case')
 
 module Tests
-  Configuration.load_config_file ENV['CONFIG_FILE_PATH']
+  Configuration.load_config_file('test/sql/config.test.yml')
 
-  class TestCase < Minitest::Test
-    def setup
-      @db = MoviesFreak::Database.instance
-    end
-
-    def generate_uuid
-      SecureRandom.uuid
-    end
-  end
+  class SQLTestCase < TestCase; end
 end

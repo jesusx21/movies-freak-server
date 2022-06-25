@@ -60,7 +60,6 @@ desc('Run SQL tests')
 task :test do
   Rake::TestTask.new do |t|
     ENV['ENV'] = 'test'
-    ENV['CONFIG_FILE_PATH'] = 'test/config_sql.yml'
 
     begin
       Rake::Task['db:drop'].execute

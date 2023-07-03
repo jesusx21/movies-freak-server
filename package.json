@@ -2,21 +2,35 @@
   "name": "movies-freak-server",
   "version": "1.0.0",
   "description": "An app to add films, tv shows and create watch lists",
-  "type": "module",
   "main": "index.js",
   "scripts": {
     "lint": "eslint",
-    "test": "NODE_ENV=test yarn mocha --recursive -b -c tests/index.js tests/**/*.test.js"
+    "migrate:make": "knex migrate:make $1",
+    "migrate:latest": "knex migrate:latest && knex migrate:latest --env test",
+    "migrate:rollback": "knex migrate:rollback && knex migrate:rollback --env test",
+    "test": "NODE_ENV=test mocha --require @babel/register --recursive  --exit tests/index.js tests/**/*.test.js"
   },
   "repository": "git@github.com:jesusx21/movies-freak-server.git",
   "author": "Jesús Agustín Peña Meza",
   "license": "MIT",
   "dependencies": {
+    "@babel/cli": "^7.22.5",
+    "@babel/core": "^7.22.5",
+    "@babel/node": "^7.22.5",
+    "@babel/plugin-proposal-private-methods": "^7.18.6",
+    "@babel/preset-env": "^7.22.5",
+    "@babel/register": "^7.22.5",
+    "knex": "^2.4.2",
+    "pg": "^8.11.1",
+    "uuid": "^9.0.0",
     "verror": "^1.10.1"
   },
   "devDependencies": {
     "chai": "^4.3.7",
+    "chai-as-promised": "^7.1.1",
     "eslint": "^8.44.0",
-    "mocha": "^10.2.0"
+    "mocha": "^10.2.0",
+    "sinon": "^15.2.0",
+    "sinon-chai": "^3.7.0"
   }
 }

@@ -1,6 +1,6 @@
 import VError from 'verror';
 
-class SerializerError extends VError {}
+export class SerializerError extends VError {}
 
 export class MissingSchema extends SerializerError {
   constructor() {

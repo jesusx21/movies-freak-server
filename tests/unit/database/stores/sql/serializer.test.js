@@ -2,7 +2,7 @@ import Serializer, {
   field,
   InvalidField,
   MissingSchema
-} from '../../../../../database/stores/sql/serializer.js';
+} from '../../../../../database/stores/sql/serializer';
 
 class FakeEntity {
   constructor(args) {

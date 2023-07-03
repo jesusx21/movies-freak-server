@@ -1,0 +1,22 @@
+{
+  "name": "movies-freak-server",
+  "version": "1.0.0",
+  "description": "An app to add films, tv shows and create watch lists",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint",
+    "test": "NODE_ENV=test yarn mocha --recursive -b -c tests/index.js tests/**/*.test.js"
+  },
+  "repository": "git@github.com:jesusx21/movies-freak-server.git",
+  "author": "Jesús Agustín Peña Meza",
+  "license": "MIT",
+  "dependencies": {
+    "verror": "^1.10.1"
+  },
+  "devDependencies": {
+    "chai": "^4.3.7",
+    "eslint": "^8.44.0",
+    "mocha": "^10.2.0"
+  }
+}

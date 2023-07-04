@@ -2,10 +2,15 @@ import sinon from 'sinon';
 import { v4 as uuid } from 'uuid';
 
 import { Film } from '../app/movies-freak/entities';
+import InMemoryDatabase from '../database/stores/memory';
 
 class SandboxNotInitialized extends Error {}
 
 export default class TestHelper {
+  getDatabase() {
+    return new InMemoryDatabase();
+  }
+
   createSandbox() {
     if (this._sandbox) {
       return this._sandbox;

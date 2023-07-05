@@ -1,5 +1,6 @@
 import Presenters from '../../../../../api/v1/presenters';
 import FilmResource from '../../../../../api/v1/resources/films';
+import DummyGateway from '../../../../../app/imdb/dummyGateway';
 import { HTTPInternalError } from '../../../../../api/httpResponses';
 
 describe('API - V1 - Resources', () => {
@@ -11,8 +12,9 @@ describe('API - V1 - Resources', () => {
       testHelper.createSandbox();
 
       database = testHelper.getDatabase();
+      const imdb = new DummyGateway();
       const presenter = new Presenters();
-      filmResource = new FilmResource(database, presenter);
+      filmResource = new FilmResource(database, imdb, presenter);
     });
 
     afterEach(() => {

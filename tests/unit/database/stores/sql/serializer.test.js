@@ -90,17 +90,15 @@ describe('Database - Stores - SQL', () => {
     });
 
     it('should return error when field is invalid', () => {
-      try {
-        serializer.addSchema(
+      expect(
+        () => serializer.addSchema(
           field('id'),
           field('name'),
           'created_at'
         )
-        throw new Error('invalid path')
-      } catch (error) {
-        expect(error).to.be.instanceOf(InvalidField);
-        expect(error.message).to.be.equal('Invalid field created_at');
-      }
+      )
+        .to.throw(InvalidField)
+        .with.property('message', 'Invalid field created_at');
     });
 
     it('should return error when serializing from json', () => {
@@ -111,13 +109,11 @@ describe('Database - Stores - SQL', () => {
         updated_at: new Date()
       };
 
-      try {
-        serializer.fromJSON(data);
-        throw new Error('invalid path')
-      } catch (error) {
-        expect(error).to.be.instanceOf(MissingSchema);
-        expect(error.message).to.be.equal('Schema has not been provided');
-      }
+      expect(
+        () => serializer.fromJSON(data)
+      )
+        .to.throw(MissingSchema)
+        .with.property('message', 'Schema has not been provided');
     });
 
     it('should return error when serializing to json', () => {
@@ -128,13 +124,11 @@ describe('Database - Stores - SQL', () => {
         updatedAt: new Date()
       });
 
-      try {
-        serializer.toJSON(entity);
-        throw new Error('invalid path')
-      } catch (error) {
-        expect(error).to.be.instanceOf(MissingSchema);
-        expect(error.message).to.be.equal('Schema has not been provided');
-      }
+      expect(
+        () => serializer.toJSON(entity)
+      )
+        .to.throw(MissingSchema)
+        .with.property('message', 'Schema has not been provided');
     });
   });
 });

@@ -1,0 +1,130 @@
+import { ResultIsNotACollection } from './errors';
+
+class Rating {
+  constructor(source, value) {
+    this.source = source;
+    this.value = value;
+  }
+}
+
+export default class OMDBResult {
+  constructor(rawResponse) {
+    this._rawResponse = rawResponse;
+    this._index = 0;
+
+    this._currentResponse = this._isCollection() ? result.Search[this._index] : rawResponse;
+  }
+
+  get title() {
+    return this._currentResponse.Title;
+  }
+
+  get year() {
+    return this._currentResponse.Year;
+  }
+
+  get rated() {
+    return this._currentResponse.Rated;
+  }
+
+  get released() {
+    return this._currentResponse.Released;
+  }
+
+  get runtime() {
+    return this._currentResponse.Runtime;
+  }
+
+  get genre() {
+    return this._currentResponse.Genre.split(',');
+  }
+
+  get director() {
+    return this._currentResponse.Director;
+  }
+
+  get writers() {
+    return this._currentResponse.Writer.split(',');
+  }
+
+  get actors() {
+    return this._currentResponse.Actors.split(',');
+  }
+
+  get plot() {
+    return this._currentResponse.Plot;
+  }
+
+  get language() {
+    return this._currentResponse.Language;
+  }
+
+  get country() {
+    return this._currentResponse.Country;
+  }
+
+  get awards() {
+    return this._currentResponse.Awards;
+  }
+
+  get poster() {
+    return this._currentResponse.Poster;
+  }
+
+  get ratings() {
+    return this._currentResponse.Ratings.map((item) => {
+      return new Rating(item.Source, item.Value);
+    });
+  }
+
+  get imdbId() {
+    return this._currentResponse.imdbID;
+  }
+
+  get type() {
+    return this._currentResponse.Type;
+  }
+
+  get production() {
+    return this._currentResponse.Production;
+  }
+
+  get error() {
+    if (this._error) {
+      return this._error;
+    }
+
+    this._error = this._rawResponse.Error;
+
+    return this._error;
+  }
+
+  isRequestSuccesful() {
+    return JSON.parse(this._rawResponse?.Response?.toLowerCase());
+  }
+
+  next() {
+    if (!this._isCollection()) {
+      throw new ResultIsNotACollection();
+    }
+
+    this._setNextIndex();
+    this._setCursor()
+  }
+
+  _setNextIndex() {
+    this._index += 1;
+  }
+
+  _setCursor() {
+    if (!this._isCollection()) {
+      throw new ResultIsNotACollection();
+    }
+
+    this._currentResponse = this._rawResponse.Search[this._index];
+  }
+
+  _isCollection() {
+    return !!this._rawResponse.Search;
+  }
+}

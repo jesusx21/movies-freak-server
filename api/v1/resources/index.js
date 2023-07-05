@@ -5,11 +5,16 @@ export class MoviesFreakAPI {
   constructor(app) {
     this._app = app;
     this._database = app.getDatabase();
+    this._imdb = app.getIMDBAccess();
     this._presenters = new Presenters();
   }
 
   buildAPI() {
-    const filmsResource = new FilmResource(this._database, this._presenters);
+    const filmsResource = new FilmResource(
+      this._database,
+      this._imdb,
+      this._presenters
+    );
 
     this._app.registerResource(
       'films',

@@ -15,9 +15,11 @@ const RESOURCE_EVENTS_SUPPORTED = [
 ];
 
 export default class MoviesFreakApp {
-  constructor(database) {
+  constructor(database, imdbGateway) {
     this._app = express();
+
     this._database = database;
+    this._imdb = imdbGateway;
 
     this._apiPath = '/movies-freak/api';
     this._router = express.Router();
@@ -49,6 +51,10 @@ export default class MoviesFreakApp {
 
   getDatabase() {
     return this._database;
+  }
+
+  getIMDBAccess() {
+    return this._imdb;
   }
 
   _buildAPI() {

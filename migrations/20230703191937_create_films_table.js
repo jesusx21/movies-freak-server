@@ -1,4 +1,4 @@
-exports.up = function(knex) {
+exports.up = function (knex) {
   return knex.schema.createTable('films', (table) => {
     table.uuid('id').primary().defaultTo(knex.raw('uuid_generate_v4()'));
     table.string('name').notNull();
@@ -8,6 +8,6 @@ exports.up = function(knex) {
   });
 };
 
-exports.down = function(knex) {
+exports.down = function (knex) {
   return knex.schema.dropTable('films');
 };

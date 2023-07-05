@@ -9,7 +9,7 @@ module.exports = {
     connection: {
       database: 'movies_freak_test',
       user: 'postgres'
-    },
+    }
   },
 
   development: {
@@ -17,14 +17,14 @@ module.exports = {
     connection: {
       database: 'movies_freak_dev',
       user: 'postgres'
-    },
+    }
   },
 
   staging: {
     client: 'postgresql',
     connection: {
       database: 'my_db',
-      user:     'username',
+      user: 'username',
       password: 'password'
     },
     pool: {
@@ -40,7 +40,7 @@ module.exports = {
     client: 'postgresql',
     connection: {
       database: 'my_db',
-      user:     'username',
+      user: 'username',
       password: 'password'
     },
     pool: {

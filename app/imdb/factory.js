@@ -4,7 +4,7 @@ import { DriverNotSupported } from './errors';
 
 export default function imdbFactory(driverName, host = null, apiKey = null) {
   if (driverName === 'dummy') {
-    return new DummyGateway()
+    return new DummyGateway();
   }
 
   if (driverName === 'omdb') {

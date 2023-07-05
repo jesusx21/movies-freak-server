@@ -1,4 +1,4 @@
-import { Film } from '../../../app/movies-freak/entities';
+import { Film } from '../../../app/moviesFreak/entities';
 import { SerializerError } from '../../../database/stores/sql/serializer';
 import { FilmSerializer } from '../../../database/stores/sql/serializers';
 import { SQLDatabaseException } from '../../../database/stores/sql/errors';
@@ -7,19 +7,17 @@ import { FilmNotFound } from '../../../database/stores/errors';
 describe('Database - Stores', () => {
   describe('Films', () => {
     let database;
-    let film;
 
     beforeEach(() => {
       databaseTestHelper.createSandbox();
 
       database = databaseTestHelper.getDatabase();
-      film = new Film({});
     });
 
     afterEach(async () => {
       databaseTestHelper.restoreSandbox();
       await databaseTestHelper.cleanDatabase();
-    })
+    });
 
     describe('#create', () => {
       let film;
@@ -31,12 +29,12 @@ describe('Database - Stores', () => {
           title: 'It',
           year: '2017',
           rated: 'pg-13',
-          runtime:'2 horas y media',
+          runtime: '2 horas y media',
           director: 'El Andy Muscchieti',
           poster: 'www.film.com/poster',
           production: 'Warner Bros',
           genre: ['coming out of age', 'thriller', 'horror'],
-          writer: ['I dunno'],
+          writers: ['I dunno'],
           actors: ['Billy', 'Tom', 'Mike'],
           imdbId: '45s4d7fsd',
           imdbRating: '10 out of 10'
@@ -58,7 +56,7 @@ describe('Database - Stores', () => {
         expect(filmCreated.poster).to.be.equal('www.film.com/poster');
         expect(filmCreated.production).to.be.equal('Warner Bros');
         expect(filmCreated.genre).to.be.deep.equal(['coming out of age', 'thriller', 'horror']);
-        expect(filmCreated.writer).to.be.deep.equal(['I dunno']);
+        expect(filmCreated.writers).to.be.deep.equal(['I dunno']);
         expect(filmCreated.actors).to.be.deep.equal(['Billy', 'Tom', 'Mike']);
         expect(filmCreated.imdbId).to.be.equal('45s4d7fsd');
         expect(filmCreated.imdbRating).to.be.equal('10 out of 10');
@@ -75,7 +73,7 @@ describe('Database - Stores', () => {
           'duplicate key value violates unique constraint "films_imdb_id_unique"'
         );
       });
-  
+
       it('should thrown error on serialization error', async () => {
         databaseTestHelper.mockClass(FilmSerializer)
           .expects('fromJSON')
@@ -85,7 +83,7 @@ describe('Database - Stores', () => {
           database.films.create(film)
         ).to.be.rejectedWith(SerializerError);
       });
-  
+
       it('should thrown error on sql exception', async () => {
         databaseTestHelper.stubFunction(database, 'connection')
           .throws(new SerializerError());
@@ -101,8 +99,12 @@ describe('Database - Stores', () => {
 
       beforeEach(async () => {
         await databaseTestHelper.createFilm(database, 'It Chapter I', 'A Horror Movie');
-        film = await databaseTestHelper.createFilm(database, 'It Chapter II', 'Another Horror Movie');
         await databaseTestHelper.createFilm(database, 'It Chapter III', 'A Third Horror Movie');
+        film = await databaseTestHelper.createFilm(
+          database,
+          'It Chapter II',
+          'Another Horror Movie'
+        );
       });
 
       it('should find film by its id', async () => {
@@ -114,7 +116,7 @@ describe('Database - Stores', () => {
         expect(filmFound.plot).to.be.equal('Another Horror Movie');
       });
 
-      it('should throws error when film does not exist', async() => {
+      it('should throws error when film does not exist', async () => {
         await expect(
           database.films.findById(databaseTestHelper.generateUUID())
         ).to.be.rejectedWith(FilmNotFound);

@@ -5,9 +5,29 @@ export class Rating {
     this.source = source;
     this.value = value;
   }
+
+  get type() {
+    if (this.source === 'Internet Movie Database') {
+      return 'imdbRating';
+    }
+
+    if (this.source === 'Rotten Tomatoes') {
+      return 'rottenTomatoes';
+    }
+
+    if (this.source === 'Metacritic') {
+      return 'metacritic';
+    }
+
+    return 'unknown';
+  }
 }
 
 export default class DummyResult {
+  constructor() {
+    this._currentResponse = this._rawResponse;
+  }
+
   setCollection(collection) {
     this._collection = collection;
     this._index = 0;
@@ -96,6 +116,13 @@ export default class DummyResult {
     return this._error;
   }
 
+  get imdbRating() {
+    const ratings = this.ratings.filter((rating) => rating.type === 'imdbRating');
+    const rating = ratings[0];
+
+    return rating.value;
+  }
+
   withError(error) {
     this._error = error;
   }
@@ -110,7 +137,7 @@ export default class DummyResult {
     }
 
     this._setNextIndex();
-    this._setCursor()
+    this._setCursor();
   }
 
   _setNextIndex() {
@@ -122,10 +149,39 @@ export default class DummyResult {
       throw new ResultIsNotACollection();
     }
 
-    this._currentResponse = this._collection[this._index]
+    this._currentResponse = this._collection[this._index];
   }
 
   _isCollection() {
-    return !!this._collection
+    return !!this._collection;
+  }
+
+  get _rawResponse() {
+    return {
+      title: 'The Shawshank Redemption',
+      year: '1994',
+      rated: 'R',
+      released: '14 Oct 1994',
+      runtime: '142 min',
+      genre: ['Drama'],
+      director: 'Frank Darabont',
+      writers: ['Stephen King', 'Frank Darabont'],
+      actors: ['Tim Robbins', 'Morgan Freeman', 'Bob Gunton'],
+      plot: 'Over the course of several years, two convicts form a friendship, '
+        + 'seeking consolation and, eventually, redemption through basic compassion.',
+      language: 'English',
+      country: 'United States',
+      awards: 'Nominated for 7 Oscars. 21 wins & 42 nominations total',
+      poster: 'https://m.media-amazon.com/images/M/MV5BNDE3ODcxYzMtY2YzZC00NmNlLWJ'
+        + 'iNDMtZDViZWM2MzIxZDYwXkEyXkFqcGdeQXVyNjAwNDUxODI@._V1_SX300.jpg',
+      ratings: [
+        new Rating('Internet Movie Database', '9.3/10'),
+        new Rating('Rotten Tomatoes', '91%'),
+        new Rating('Metacritic', '82/100')
+      ],
+      imdbId: 'tt0111161',
+      type: 'movie',
+      production: 'N/A'
+    };
   }
 }

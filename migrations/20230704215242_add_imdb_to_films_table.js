@@ -2,7 +2,7 @@
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-exports.up = function(knex) {
+exports.up = function (knex) {
   return knex.schema.alterTable('films', (table) => {
     table.string('imdb_id').unique();
     table.string('title');
@@ -11,7 +11,7 @@ exports.up = function(knex) {
     table.string('runtime');
     table.string('genre');
     table.string('director');
-    table.string('writer');
+    table.string('writers');
     table.string('actors');
     table.string('poster');
     table.string('imdb_rating');
@@ -23,7 +23,7 @@ exports.up = function(knex) {
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-exports.down = function(knex) {
+exports.down = function (knex) {
   return knex.schema.alterTable('films', (table) => {
     table.dropColumn('imdb_id');
     table.dropColumn('title');
@@ -31,7 +31,7 @@ exports.down = function(knex) {
     table.dropColumn('runtime');
     table.dropColumn('genre');
     table.dropColumn('director');
-    table.dropColumn('writer');
+    table.dropColumn('writers');
     table.dropColumn('actors');
     table.dropColumn('poster');
     table.dropColumn('imdb_rating');

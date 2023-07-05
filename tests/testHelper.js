@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 import { v4 as uuid } from 'uuid';
 
-import { Film } from '../app/movies-freak/entities';
+import { Film } from '../app/moviesFreak/entities';
 import InMemoryDatabase from '../database/stores/memory';
 
 class SandboxNotInitialized extends Error {}
@@ -17,8 +17,8 @@ export default class TestHelper {
     }
 
     this._sandbox = sinon.createSandbox();
-    
-    return this._sandbox
+
+    return this._sandbox;
   }
 
   mockClass(klass) {

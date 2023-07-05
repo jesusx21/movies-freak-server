@@ -3,18 +3,19 @@ import { v4 as uuid } from 'uuid';
 
 import { NotFound } from '../errors';
 
-
 export default class Store {
   constructor() {
     this._items = {};
   }
 
   async create(entity) {
-    entity._id = uuid();
-    entity._createdAt = new Date();
-    entity._updatedAt = new Date();
+    const entityToSave = cloneDeep(entity);
 
-    this._items[entity.id] = cloneDeep(entity);
+    entityToSave._id = uuid();
+    entityToSave._createdAt = new Date();
+    entityToSave._updatedAt = new Date();
+
+    this._items[entity.id] = entityToSave;
 
     return entity;
   }
@@ -26,6 +27,6 @@ export default class Store {
       throw new NotFound(entityId);
     }
 
-    return cloneDeep(entity)
+    return cloneDeep(entity);
   }
 }

@@ -11,14 +11,37 @@ export class MissingSchema extends SerializerError {
 export class InvalidField extends SerializerError {
   constructor(field) {
     super(`Invalid field ${field}`);
-    
+
     this.field = field;
-  } 
+  }
+}
+
+class Schema {
+  constructor() {
+    this._fields = [];
+  }
+
+  addField(field) {
+    this[field.name] = field.options;
+
+    this._fields.push(field.name);
+  }
+
+  forEachField(callback) {
+    this._fields.forEach((field) => callback(field, this[field]));
+  }
+}
+
+class Field {
+  constructor(name, options = {}) {
+    this.name = name;
+    this.options = options;
+  }
 }
 
 class Serializer {
   constructor(target) {
-    this._target = target
+    this._target = target;
   }
 
   static init(target) {
@@ -48,7 +71,7 @@ class Serializer {
 
     this._schema.forEachField((field, options) => {
       const key = options.from || field;
-      let value = data[field]
+      let value = data[field];
 
       value = value && options.as === 'array' ? value?.split(',') : value;
 
@@ -67,7 +90,7 @@ class Serializer {
 
     this._schema.forEachField((field, options) => {
       const key = options.from || field;
-      let value = entity[key]
+      let value = entity[key];
 
       value = value && options.as === 'array' ? value.join(',') : value;
 
@@ -78,31 +101,8 @@ class Serializer {
   }
 }
 
-class Schema {
-  constructor() {
-    this._fields = [];
-  }
-
-  addField(field) {
-    this[field.name] = field.options;
-
-    this._fields.push(field.name);
-  }
-
-  forEachField(callback) {
-    this._fields.forEach((field) => callback(field, this[field]));
-  }
-}
-
-class Field {
-  constructor(name, options = {}) {
-    this.name = name;
-    this.options = options;
-  }
-}
-
 export function field(name, options = {}) {
-  return new Field(name, options)
-};
+  return new Field(name, options);
+}
 
 export default Serializer;

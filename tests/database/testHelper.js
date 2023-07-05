@@ -14,7 +14,7 @@ export default class DatabaseTestHelper extends TestHelper {
 
     await knexCleaner.clean(this._connection);
     this._connection.destroy();
-    
+
     delete this._connection;
     delete this._database;
   }

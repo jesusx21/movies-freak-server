@@ -35,7 +35,7 @@ export default class MoviesFreakApp {
 
     this._app.use('/movies-freak/api', this._router);
     this._app.use(this._setUnexpectedError());
-    
+
     this._app.disable('x-powered-by');
 
     return this;
@@ -43,6 +43,7 @@ export default class MoviesFreakApp {
 
   start(host, port) {
     this._app.listen(port, host, () => {
+      // eslint-disable-next-line no-console
       console.log(`Movies Freak Server listening on ${host}:${port}`);
     });
 
@@ -68,17 +69,17 @@ export default class MoviesFreakApp {
 
     RESOURCE_EVENTS_SUPPORTED.forEach((eventName) => {
       const event = resourceInstance[eventName];
-      const verb = eventName.substring(2).toLowerCase()
+      const verb = eventName.substring(2).toLowerCase();
 
       if (!event) {
         return;
       }
 
       resourceRouter[verb](
-        `/`,
+        '/',
         middlewares,
         this._buildController(event.bind(resourceInstance))
-      )
+      );
     });
 
     this._router.use(`/v1/${resourcePath}`, resourceRouter);
@@ -98,8 +99,8 @@ export default class MoviesFreakApp {
   _setUnexpectedError() {
     return (error, _req, res, next) => {
       if (error instanceof HTTPError) {
-        res.status(error.statusCode).send(error.payload)
-        
+        res.status(error.statusCode).send(error.payload);
+
         return next();
       }
 
@@ -111,7 +112,7 @@ export default class MoviesFreakApp {
 
       res.status(500).send(payload);
 
-      next(error);
+      return next(error);
     };
   }
 
@@ -134,17 +135,17 @@ export default class MoviesFreakApp {
   _buildController(fn) {
     return async (req, res) => {
       let result;
-      
+
       try {
-        result = await fn(req)
+        result = await fn(req);
       } catch (error) {
         result = {
           status: error.statusCode,
           data: error.payload
-        }
+        };
       }
 
       return res.status(result.status).send(result.data);
-    }
+    };
   }
 }

@@ -6,14 +6,15 @@ export class HTTPError extends VError {
   constructor(...args) {
     super();
 
-    let [_code, _cause] = args;
+    let [code, cause] = args;
 
-    if (_code !== 'string') {
-      _cause = args[0]
-      _code = 'UNEXPECTED_ERROR';
+    if (code !== 'string') {
+      [cause] = args;
+      code = 'UNEXPECTED_ERROR';
     }
 
-    Object.assign(this, { _code, _cause });
+    this._code = code;
+    this._cause = cause;
     this._statusCode = 500;
   }
 
@@ -34,7 +35,7 @@ export class HTTPError extends VError {
   }
 
   _isDevelopmentEnv() {
-    return process_params.env.NODE_ENV !== 'production';
+    return process.env.NODE_ENV !== 'production';
   }
 }
 

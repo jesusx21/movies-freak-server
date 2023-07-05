@@ -18,7 +18,7 @@ export default class InMemoryFilmsStore {
         throw new FilmNotFound(filmId);
       }
 
-      throw error
+      throw error;
     }
   }
 }

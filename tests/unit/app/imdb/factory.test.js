@@ -17,7 +17,6 @@ describe('IMDB', () => {
       expect(gateway).to.be.instanceOf(OMDBGateway);
     });
 
-
     it('should throw error on unsupported driver', async () => {
       expect(
         () => imdbFactory('invalid-driver')

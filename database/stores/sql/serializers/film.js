@@ -1,5 +1,5 @@
 import Serializer, { field } from '../serializer';
-import { Film } from '../../../../app/movies-freak/entities';
+import { Film } from '../../../../app/moviesFreak/entities';
 
 const FilmSerializer = Serializer
   .init(Film)
@@ -15,11 +15,10 @@ const FilmSerializer = Serializer
     field('poster'),
     field('production'),
     field('genre', { as: 'array' }),
-    field('writer', { as: 'array' }),
+    field('writers', { as: 'array' }),
     field('actors', { as: 'array' }),
     field('imdb_id', { from: 'imdbId' }),
     field('imdb_rating', { from: 'imdbRating' })
   );
 
 export default FilmSerializer;
-

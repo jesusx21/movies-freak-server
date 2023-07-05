@@ -12,7 +12,7 @@ export default class Presenters {
       poster: film.poster,
       production: film.production,
       genre: film.genre,
-      writer: film.writer,
+      writers: film.writers,
       actors: film.actors,
       imdbId: film.imdbId,
       imdbRating: film.imdbRating

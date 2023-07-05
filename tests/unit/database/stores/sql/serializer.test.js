@@ -33,8 +33,8 @@ describe('Database - Stores - SQL', () => {
         field('id'),
         field('name'),
         field('created_at', { from: 'createdAt' }),
-        field('updated_at', { from: 'updatedAt' }),
-      )
+        field('updated_at', { from: 'updatedAt' })
+      );
 
       expect(serializer._schema.id).to.be.empty;
       expect(serializer._schema.name).to.be.empty;
@@ -47,7 +47,7 @@ describe('Database - Stores - SQL', () => {
         field('id'),
         field('name'),
         field('created_at', { from: 'createdAt' }),
-        field('updated_at', { from: 'updatedAt' }),
+        field('updated_at', { from: 'updatedAt' })
       );
 
       const data = {
@@ -71,7 +71,7 @@ describe('Database - Stores - SQL', () => {
         field('id'),
         field('name'),
         field('created_at', { from: 'createdAt' }),
-        field('updated_at', { from: 'updatedAt' }),
+        field('updated_at', { from: 'updatedAt' })
       );
 
       const entity = new FakeEntity({

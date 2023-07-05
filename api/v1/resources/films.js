@@ -1,4 +1,4 @@
-import { Film } from '../../../app/movies-freak/entities';
+import CreateFilm from '../../../app/moviesFreak/createFilm';
 import { CREATED, HTTPInternalError } from '../../httpResponses';
 
 export default class FilmResource {
@@ -9,16 +9,16 @@ export default class FilmResource {
   }
 
   async onPost({ body }) {
-    const film = new Film(body);
-    
+    const useCase = new CreateFilm(this._database, this._imdb, body.imdbId);
+
     let result;
 
     try {
-      result = await this._database.films.create(film);
+      result = await useCase.execute();
     } catch (error) {
       throw new HTTPInternalError(error);
     }
-    
+
     return {
       status: CREATED,
       data: this._presenter.presentFilm(result)

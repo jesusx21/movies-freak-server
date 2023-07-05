@@ -1,7 +1,7 @@
 import MoviesFreakApp from './api';
 
 import getDatabase from './database/factory';
-import imdbFactory from './app/imdb/factory'
+import imdbFactory from './app/imdb/factory';
 
 const DATABASE_DRIVER = process.env.DATABASE || 'sql';
 const ENVIRONMENT = process.env.NODE_ENV || 'development';

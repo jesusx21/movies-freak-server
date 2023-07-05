@@ -15,11 +15,13 @@ const FAKE_RESPONSE = {
     Director: 'Frank Darabont',
     Writer: 'Stephen King, Frank Darabont',
     Actors: 'Tim Robbins, Morgan Freeman, Bob Gunton',
-    Plot: 'Over the course of several years, two convicts form a friendship, seeking consolation and, eventually, redemption through basic compassion.',
+    Plot: 'Over the course of several years, two convicts form a friendship, '
+      + 'seeking consolation and, eventually, redemption through basic compassion.',
     Language: 'English',
     Country: 'United States',
     Awards: 'Nominated for 7 Oscars. 21 wins & 42 nominations total',
-    Poster: 'https://m.media-amazon.com/images/M/MV5BNDE3ODcxYzMtY2YzZC00NmNlLWJiNDMtZDViZWM2MzIxZDYwXkEyXkFqcGdeQXVyNjAwNDUxODI@._V1_SX300.jpg',
+    Poster: 'https://m.media-amazon.com/images/M/MV5BNDE3ODcxYzMtY2YzZC00NmNlLWJ'
+      + 'iNDMtZDViZWM2MzIxZDYwXkEyXkFqcGdeQXVyNjAwNDUxODI@._V1_SX300.jpg',
     Ratings: [
       { Source: 'Internet Movie Database', Value: '9.3/10' },
       { Source: 'Rotten Tomatoes', Value: '91%' },
@@ -36,7 +38,7 @@ const FAKE_RESPONSE = {
     Website: 'N/A',
     Response: 'True'
   }
-}
+};
 
 describe('IMDB', () => {
   describe('OMDB Gateway', () => {
@@ -58,7 +60,7 @@ describe('IMDB', () => {
         .resolves(FAKE_RESPONSE);
 
       const result = await gateway.fetchFilmById('tt0111161');
-      
+
       expect(result).to.be.instanceOf(OMDBResult);
       expect(result.isRequestSuccesful()).to.be.true;
       expect(result._isCollection()).to.be.false;
@@ -100,17 +102,17 @@ describe('IMDB', () => {
     });
 
     it('should thrown erorr on invalid api key', async () => {
-        const data = { Response: 'False', Error: 'Invalid API key!' }
+      const data = { Response: 'False', Error: 'Invalid API key!' };
 
-        testHelper.mockClass(axios)
-          .expects('get')
-          .rejects({ response: { data } });
+      testHelper.mockClass(axios)
+        .expects('get')
+        .rejects({ response: { data } });
 
-        const error = await expect(
-          gateway.fetchFilmById('tt011161')
-        ).to.be.rejectedWith(IMDBError);
+      const error = await expect(
+        gateway.fetchFilmById('tt011161')
+      ).to.be.rejectedWith(IMDBError);
 
-        expect(error.message).to.be.equal('Invalid API key!');
-      });
+      expect(error.message).to.be.equal('Invalid API key!');
+    });
   });
 });

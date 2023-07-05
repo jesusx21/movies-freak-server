@@ -9,7 +9,7 @@ export default class SQLFilmsStore {
 
   async create(film) {
     const dataToInsert = this._serialize(film);
-    
+
     let result;
 
     try {

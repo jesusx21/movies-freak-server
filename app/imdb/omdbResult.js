@@ -5,6 +5,22 @@ class Rating {
     this.source = source;
     this.value = value;
   }
+
+  get type() {
+    if (this.source === 'Internet Movie Database') {
+      return 'imdbRating';
+    }
+
+    if (this.source === 'Rotten Tomatoes') {
+      return 'rottenTomatoes';
+    }
+
+    if (this.source === 'Metacritic') {
+      return 'metacritic';
+    }
+
+    return 'unknown';
+  }
 }
 
 export default class OMDBResult {
@@ -12,7 +28,7 @@ export default class OMDBResult {
     this._rawResponse = rawResponse;
     this._index = 0;
 
-    this._currentResponse = this._isCollection() ? result.Search[this._index] : rawResponse;
+    this._currentResponse = this._isCollection() ? rawResponse.Search[this._index] : rawResponse;
   }
 
   get title() {
@@ -99,6 +115,12 @@ export default class OMDBResult {
     return this._error;
   }
 
+  get imdbRating() {
+    const ratings = this.ratings.filter((rating) => rating.type === 'imdbRating');
+
+    return ratings[0];
+  }
+
   isRequestSuccesful() {
     return JSON.parse(this._rawResponse?.Response?.toLowerCase());
   }
@@ -109,7 +131,7 @@ export default class OMDBResult {
     }
 
     this._setNextIndex();
-    this._setCursor()
+    this._setCursor();
   }
 
   _setNextIndex() {

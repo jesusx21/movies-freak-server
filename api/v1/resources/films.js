@@ -2,7 +2,7 @@ import { Film } from '../../../app/movies-freak/entities';
 import { CREATED, HTTPInternalError } from '../../httpResponses';
 
 export default class FilmResource {
-  constructor(databas, presenter) {
+  constructor(database, presenter) {
     this._database = database;
     this._presenter = presenter;
   }

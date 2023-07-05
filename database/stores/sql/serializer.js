@@ -48,8 +48,11 @@ class Serializer {
 
     this._schema.forEachField((field, options) => {
       const key = options.from || field;
+      let value = data[field]
 
-      result[key] = data[field];
+      value = value && options.as === 'array' ? value?.split(',') : value;
+
+      result[key] = value;
     });
 
     return new this._target(result);
@@ -64,8 +67,11 @@ class Serializer {
 
     this._schema.forEachField((field, options) => {
       const key = options.from || field;
+      let value = entity[key]
 
-      result[field] = entity[key];
+      value = value && options.as === 'array' ? value.join(',') : value;
+
+      result[field] = value;
     });
 
     return result;

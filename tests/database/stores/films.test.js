@@ -16,8 +16,9 @@ describe('Database - Stores', () => {
       film = new Film({});
     });
 
-    afterEach(() => {
+    afterEach(async () => {
       databaseTestHelper.restoreSandbox();
+      await databaseTestHelper.cleanDatabase();
     })
 
     describe('#create', () => {
@@ -26,7 +27,19 @@ describe('Database - Stores', () => {
       beforeEach(() => {
         film = new Film({
           name: 'It Chapter I',
-          plot: 'Is about a serial clown killer'
+          plot: 'Is about a serial clown killer',
+          title: 'It',
+          year: '2017',
+          rated: 'pg-13',
+          runtime:'2 horas y media',
+          director: 'El Andy Muscchieti',
+          poster: 'www.film.com/poster',
+          production: 'Warner Bros',
+          genre: ['coming out of age', 'thriller', 'horror'],
+          writer: ['I dunno'],
+          actors: ['Billy', 'Tom', 'Mike'],
+          imdbId: '45s4d7fsd',
+          imdbRating: '10 out of 10'
         });
       });
 
@@ -37,6 +50,30 @@ describe('Database - Stores', () => {
         expect(filmCreated.id).to.exist;
         expect(filmCreated.name).to.be.equal('It Chapter I');
         expect(filmCreated.plot).to.be.equal('Is about a serial clown killer');
+        expect(filmCreated.title).to.be.equal('It');
+        expect(filmCreated.year).to.be.equal('2017');
+        expect(filmCreated.rated).to.be.equal('pg-13');
+        expect(filmCreated.runtime).to.be.equal('2 horas y media');
+        expect(filmCreated.director).to.be.equal('El Andy Muscchieti');
+        expect(filmCreated.poster).to.be.equal('www.film.com/poster');
+        expect(filmCreated.production).to.be.equal('Warner Bros');
+        expect(filmCreated.genre).to.be.deep.equal(['coming out of age', 'thriller', 'horror']);
+        expect(filmCreated.writer).to.be.deep.equal(['I dunno']);
+        expect(filmCreated.actors).to.be.deep.equal(['Billy', 'Tom', 'Mike']);
+        expect(filmCreated.imdbId).to.be.equal('45s4d7fsd');
+        expect(filmCreated.imdbRating).to.be.equal('10 out of 10');
+      });
+
+      it('should thrown error when unique field is repeated', async () => {
+        await database.films.create(film);
+
+        const error = await expect(
+          database.films.create(film)
+        ).to.be.rejectedWith(SQLDatabaseException);
+
+        expect(error.message).to.have.string(
+          'duplicate key value violates unique constraint "films_imdb_id_unique"'
+        );
       });
   
       it('should thrown error on serialization error', async () => {

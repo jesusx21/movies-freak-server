@@ -45,7 +45,19 @@ export default class DummyResult {
   }
 
   get year() {
+    if (!this.isMovie()) {
+      return null;
+    }
+
     return this._currentResponse.year;
+  }
+
+  get years() {
+    if (!this.isSerie()) {
+      return {};
+    }
+
+    return this._currentResponse.years;
   }
 
   get rated() {
@@ -54,6 +66,10 @@ export default class DummyResult {
 
   get released() {
     return this._currentResponse.released;
+  }
+
+  get releasedAt() {
+    return this._currentResponse.releasedAt;
   }
 
   get runtime() {
@@ -112,6 +128,14 @@ export default class DummyResult {
     return this._currentResponse.production;
   }
 
+  get totalSeasons() {
+    if (!this.isSerie()) {
+      return '';
+    }
+
+    return this._currentResponse.totalSeasons;
+  }
+
   get error() {
     return this._error;
   }
@@ -138,6 +162,14 @@ export default class DummyResult {
 
     this._setNextIndex();
     this._setCursor();
+  }
+
+  isMovie() {
+    return this._currentResponse.type === 'movie';
+  }
+
+  isSerie() {
+    return this._currentResponse.type === 'series';
   }
 
   _setNextIndex() {

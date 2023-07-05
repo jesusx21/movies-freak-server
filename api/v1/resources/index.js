@@ -10,15 +10,10 @@ export class MoviesFreakAPI {
   }
 
   buildAPI() {
-    const filmsResource = new FilmResource(
-      this._database,
-      this._imdb,
-      this._presenters
-    );
+    const filmsResource = new FilmResource(this._database, this._imdb, this._presenters);
+    const tvSeriesResource = new FilmResource(this._database, this._imdb, this._presenters);
 
-    this._app.registerResource(
-      'films',
-      filmsResource
-    );
+    this._app.registerResource('films', filmsResource);
+    this._app.registerResource('tvSeries', tvSeriesResource);
   }
 }

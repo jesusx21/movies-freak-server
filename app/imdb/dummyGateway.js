@@ -1,8 +1,12 @@
+/* eslint-disable no-unused-vars */
 import DummyResult from './dummyResult';
 
 export default class DummyGateway {
-  // eslint-disable-next-line no-unused-vars
   fetchFilmById(_imdbId) {
+    return new DummyResult();
+  }
+
+  fetchTVSerieById(_imdbId) {
     return new DummyResult();
   }
 }

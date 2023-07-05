@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 import { v4 as uuid } from 'uuid';
 
-import { Film } from '../app/moviesFreak/entities';
+import { Film, TVSerie } from '../app/moviesFreak/entities';
 import InMemoryDatabase from '../database/stores/memory';
 
 class SandboxNotInitialized extends Error {}
@@ -53,5 +53,11 @@ export default class TestHelper {
     const film = new Film({ name, plot });
 
     return db.films.create(film);
+  }
+
+  createTVSerie(db, name, plot, totalSeasons = 5) {
+    const tvSerie = new TVSerie({ name, plot, totalSeasons });
+
+    return db.tvSeries.create(tvSerie);
   }
 }

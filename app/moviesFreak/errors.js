@@ -9,3 +9,11 @@ export class CouldNotCreateFilm extends MoviesFreakError {
     this.cause = cause;
   }
 }
+
+export class CouldNotCreateTVSerie extends MoviesFreakError {
+  constructor(cause) {
+    super();
+
+    this.cause = cause;
+  }
+}

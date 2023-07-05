@@ -1,40 +1,36 @@
 import Entity from './entity';
 
-export default class Film extends Entity {
+export default class TVSerie extends Entity {
   constructor({
     id,
+    imdbId,
     name,
     plot,
-    title,
-    year,
+    years,
     rated,
-    runtime,
-    director,
-    poster,
-    production,
     genre,
     writers,
     actors,
-    imdbId,
+    poster,
     imdbRating,
+    totalSeasons,
+    releasedAt,
     createdAt,
     updatedAt
   }) {
     super(id, createdAt, updatedAt);
 
+    this.imdbId = imdbId;
     this.name = name;
     this.plot = plot;
-    this.title = title;
-    this.year = year;
+    this.years = years;
     this.rated = rated;
-    this.runtime = runtime;
-    this.director = director;
-    this.poster = poster;
-    this.production = production;
     this.genre = genre;
     this.writers = writers;
     this.actors = actors;
-    this.imdbId = imdbId;
+    this.poster = poster;
     this.imdbRating = imdbRating;
+    this.totalSeasons = totalSeasons;
+    this.releasedAt = releasedAt;
   }
 }

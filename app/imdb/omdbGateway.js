@@ -18,6 +18,15 @@ export default class OMDBGateway {
     return this._request(query);
   }
 
+  fetchTVSerieById(imdbId) {
+    const query = {
+      type: 'series',
+      i: imdbId
+    };
+
+    return this._request(query);
+  }
+
   async _request(query) {
     const params = Object.keys(query)
       .map((key) => `${key}=${query[key]}`)

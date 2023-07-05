@@ -1,4 +1,5 @@
 import SQLFilmsStore from './films';
+import SQLTVSeriesStore from './tvSeries';
 
 export default class SQLDatabase {
   constructor(connection) {
@@ -7,5 +8,9 @@ export default class SQLDatabase {
 
   get films() {
     return new SQLFilmsStore(this.connection);
+  }
+
+  get tvSeries() {
+    return new SQLTVSeriesStore(this.connection);
   }
 }

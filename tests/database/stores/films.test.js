@@ -74,7 +74,7 @@ describe('Database - Stores', () => {
         );
       });
 
-      it('should thrown error on serialization error', async () => {
+      it('should throw error on serialization error', async () => {
         databaseTestHelper.mockClass(FilmSerializer)
           .expects('fromJSON')
           .throws(new SerializerError());
@@ -84,7 +84,7 @@ describe('Database - Stores', () => {
         ).to.be.rejectedWith(SerializerError);
       });
 
-      it('should thrown error on sql exception', async () => {
+      it('should throw error on sql exception', async () => {
         databaseTestHelper.stubFunction(database, 'connection')
           .throws(new SerializerError());
 

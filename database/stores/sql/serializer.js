@@ -73,7 +73,11 @@ class Serializer {
       const key = options.from || field;
       let value = data[field];
 
-      value = value && options.as === 'array' ? value?.split(',') : value;
+      if (options.as === 'array') {
+        value = value?.split(',');
+      } else if (options.as === 'json') {
+        value = value && JSON.parse(value);
+      }
 
       result[key] = value;
     });
@@ -92,7 +96,11 @@ class Serializer {
       const key = options.from || field;
       let value = entity[key];
 
-      value = value && options.as === 'array' ? value.join(',') : value;
+      if (options.as === 'array') {
+        value = value?.join(',');
+      } else if (options.as === 'json') {
+        value = value && JSON.stringify(value);
+      }
 
       result[field] = value;
     });

@@ -18,4 +18,22 @@ export default class Presenters {
       imdbRating: film.imdbRating
     };
   }
+
+  presentTVSerie(tvSerie) {
+    return {
+      id: tvSerie.id,
+      imdbId: tvSerie.imdbId,
+      name: tvSerie.name,
+      plot: tvSerie.plot,
+      years: tvSerie.years,
+      rated: tvSerie.rated,
+      genre: tvSerie.genre,
+      writers: tvSerie.writers,
+      actors: tvSerie.actors,
+      poster: tvSerie.poster,
+      imdbRating: tvSerie.imdbRating,
+      totalSeasons: tvSerie.totalSeasons,
+      releasedAt: tvSerie.releasedAt
+    };
+  }
 }

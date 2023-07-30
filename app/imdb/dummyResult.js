@@ -24,8 +24,9 @@ export class Rating {
 }
 
 export default class DummyResult {
-  constructor() {
+  constructor(type = 'film') {
     this._currentResponse = this._rawResponse;
+    this._currentResponse.type = type;
   }
 
   setCollection(collection) {
@@ -165,11 +166,11 @@ export default class DummyResult {
   }
 
   isMovie() {
-    return this._currentResponse.type === 'movie';
+    return this._currentResponse.type === 'film';
   }
 
   isSerie() {
-    return this._currentResponse.type === 'series';
+    return this._currentResponse.type === 'tvSerie';
   }
 
   _setNextIndex() {
@@ -192,8 +193,10 @@ export default class DummyResult {
     return {
       title: 'The Shawshank Redemption',
       year: '1994',
+      years: { from: '1994', to: '1995' },
       rated: 'R',
       released: '14 Oct 1994',
+      releasedAt: new Date(2015, 6, 23),
       runtime: '142 min',
       genre: ['Drama'],
       director: 'Frank Darabont',
@@ -212,7 +215,7 @@ export default class DummyResult {
         new Rating('Metacritic', '82/100')
       ],
       imdbId: 'tt0111161',
-      type: 'movie',
+      totalSeasons: 10,
       production: 'N/A'
     };
   }

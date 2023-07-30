@@ -66,7 +66,10 @@ export default class OMDBResult {
   }
 
   get genre() {
-    return this._currentResponse.Genre.split(',');
+    return this._currentResponse
+      .Genre
+      .split(',')
+      .map(genre => genre.trim());
   }
 
   get director() {
@@ -74,11 +77,17 @@ export default class OMDBResult {
   }
 
   get writers() {
-    return this._currentResponse.Writer.split(',');
+    return this._currentResponse
+      .Writer
+      .split(',')
+      .map(writer => writer.trim());
   }
 
   get actors() {
-    return this._currentResponse.Actors.split(',');
+    return this._currentResponse
+      .Actors
+      .split(',')
+      .map(actor => actor.trim());
   }
 
   get plot() {

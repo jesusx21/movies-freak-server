@@ -8,7 +8,7 @@ import IMDB_TV_SERIE_RESPONSE from '../../data/imdbTVSerieResponse';
 
 const IMDB_ID = 'tt0212671';
 
-describe.only('Movies Freak', () => {
+describe('Movies Freak', () => {
   describe('Create TV Serie', () => {
     let useCase;
 
@@ -40,12 +40,12 @@ describe.only('Movies Freak', () => {
       );
       expect(tvSerie.years).to.be.deep.equal({ from: '2000', to: '2006' });
       expect(tvSerie.rated).to.be.equal('TV-PG');
-      expect(tvSerie.genre).to.be.deep.equal(['Comedy', ' Family']);
+      expect(tvSerie.genre).to.be.deep.equal(['Comedy', 'Family']);
       expect(tvSerie.writers).to.be.deep.equal(
-        ['Linwood Boomer', ' Michael Glouberman', ' Gary Murphy']
+        ['Linwood Boomer', 'Michael Glouberman', 'Gary Murphy']
       );
       expect(tvSerie.actors).to.be.deep.equal(
-        ['Frankie Muniz', ' Bryan Cranston', ' Justin Berfield']
+        ['Frankie Muniz', 'Bryan Cranston', 'Justin Berfield']
       );
       expect(tvSerie.poster).to.be.equal(
         'https://m.media-amazon.com/images/M/MV5BNTc2MzM2N2YtZDdiOS00M2'

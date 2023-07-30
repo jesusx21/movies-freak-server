@@ -96,8 +96,10 @@ class Serializer {
       const key = options.from || field;
       let value = entity[key];
 
-      if (options.as === 'array') {
-        value = value?.join(',');
+      if (!value) {
+        value = undefined;
+      } else if (options.as === 'array') {
+        value = value.join(',');
       } else if (options.as === 'json') {
         value = value && JSON.stringify(value);
       }

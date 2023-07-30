@@ -8,6 +8,8 @@ import TestHelper from './testHelper';
 chai.use(chaiAsPromised);
 chai.use(sinonChai);
 
+process.env.NODE_ENV ||= 'test';
+
 globalThis.databaseTestHelper = new DatabaseTestHelper();
 globalThis.testHelper = new TestHelper();
 globalThis.expect = expect;

@@ -1,6 +1,10 @@
 import VError from 'verror';
 
-export class MoviesFreakError extends VError {}
+export class MoviesFreakError extends VError {
+  get name() {
+    return this.constructor.name;
+  }
+}
 
 export class CouldNotCreateFilm extends MoviesFreakError {
   constructor(cause) {

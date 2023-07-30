@@ -3,10 +3,15 @@ import { v4 as uuid } from 'uuid';
 
 import { Film, TVSerie } from '../app/moviesFreak/entities';
 import InMemoryDatabase from '../database/stores/memory';
+import buildFixtureGenerator from './fixtures';
 
 class SandboxNotInitialized extends Error {}
 
 export default class TestHelper {
+  constructor() {
+    this._fixturesGenerator = buildFixtureGenerator();
+  }
+
   getDatabase() {
     return new InMemoryDatabase();
   }
@@ -49,14 +54,24 @@ export default class TestHelper {
     return uuid();
   }
 
-  createFilm(db, name, plot) {
-    const film = new Film({ name, plot });
+  createFilm(db, data = {}) {
+    const [filmData] = this._fixturesGenerator.generate({
+      type: 'film',
+      recipe: [data]
+    });
+
+    const film = new Film(filmData);
 
     return db.films.create(film);
   }
 
-  createTVSerie(db, name, plot, totalSeasons = 5) {
-    const tvSerie = new TVSerie({ name, plot, totalSeasons });
+  createTVSerie(db, data = {}) {
+    const [tvSerieData] = this._fixturesGenerator.generate({
+      type: 'tvSerie',
+      recipe: [data]
+    });
+
+    const tvSerie = new TVSerie(tvSerieData);
 
     return db.tvSeries.create(tvSerie);
   }

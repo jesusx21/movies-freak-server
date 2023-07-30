@@ -10,9 +10,9 @@ exports.up = function (knex) {
     table.text('plot');
     table.string('years');
     table.string('rated');
-    table.string('genre');
-    table.string('writers');
-    table.string('actors');
+    table.text('genre');
+    table.text('writers');
+    table.text('actors');
     table.string('poster');
     table.string('imdb_rating');
     table.date('released_at');

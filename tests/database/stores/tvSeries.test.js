@@ -88,7 +88,7 @@ describe('Database - Stores', () => {
       });
 
       it('should throw error on unexpected sql exception', async () => {
-        databaseTestHelper.stubFunction(database, 'connection')
+        databaseTestHelper.stubFunction(database.tvSeries, '_connection')
           .throws(new SerializerError());
 
         await expect(
@@ -101,12 +101,17 @@ describe('Database - Stores', () => {
       let tvSerie;
 
       beforeEach(async () => {
-        await databaseTestHelper.createTVSerie(database, 'Steven Universe', 'A Stone Kid');
-        await databaseTestHelper.createTVSerie(database, 'Adventure Time', 'A Stoned Kid');
+        await databaseTestHelper.createTVSerie(
+          database,
+          { name: 'Steven Universe', plot: 'A Stone Kid' }
+        );
+        await databaseTestHelper.createTVSerie(
+          database,
+          { name: 'Adventure Time', plot: 'A Stoned Kid' }
+        );
         tvSerie = await databaseTestHelper.createTVSerie(
           database,
-          'Gravity Falls',
-          'Another Stoned Kids'
+          { name: 'Gravity Falls', plot: 'Another Stoned Kids' }
         );
       });
 
@@ -126,7 +131,7 @@ describe('Database - Stores', () => {
       });
 
       it('should throws error on unexpected error', async () => {
-        databaseTestHelper.stubFunction(database, 'connection')
+        databaseTestHelper.stubFunction(database.tvSeries, '_connection')
           .throws(new SerializerError());
 
         await expect(

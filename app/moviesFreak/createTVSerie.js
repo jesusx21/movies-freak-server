@@ -12,7 +12,7 @@ export default class CreateTVSerie {
     let imdbResult;
 
     try {
-      imdbResult = await this._imdb.fetchTVSerieById(this._imdb);
+      imdbResult = await this._imdb.fetchTVSerieById(this._imdbId);
     } catch (error) {
       throw new CouldNotCreateTVSerie(error);
     }

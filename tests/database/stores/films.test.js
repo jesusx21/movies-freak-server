@@ -85,7 +85,7 @@ describe('Database - Stores', () => {
       });
 
       it('should throw error on sql exception', async () => {
-        databaseTestHelper.stubFunction(database, 'connection')
+        databaseTestHelper.stubFunction(database.films, '_connection')
           .throws(new SerializerError());
 
         await expect(
@@ -98,12 +98,17 @@ describe('Database - Stores', () => {
       let film;
 
       beforeEach(async () => {
-        await databaseTestHelper.createFilm(database, 'It Chapter I', 'A Horror Movie');
-        await databaseTestHelper.createFilm(database, 'It Chapter III', 'A Third Horror Movie');
+        await databaseTestHelper.createFilm(
+          database,
+          { name: 'It Chapter I', plot: 'A Horror Movie' }
+        );
+        await databaseTestHelper.createFilm(
+          database,
+          { name: 'It Chapter III', plot: 'A Third Horror Movie' }
+        );
         film = await databaseTestHelper.createFilm(
           database,
-          'It Chapter II',
-          'Another Horror Movie'
+          { name: 'It Chapter II', plot: 'Another Horror Movie' }
         );
       });
 
@@ -123,7 +128,7 @@ describe('Database - Stores', () => {
       });
 
       it('should throws error on unexpected error', async () => {
-        databaseTestHelper.stubFunction(database, 'connection')
+        databaseTestHelper.stubFunction(database.films, '_connection')
           .throws(new SerializerError());
 
         await expect(

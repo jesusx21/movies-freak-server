@@ -39,8 +39,10 @@ describe('IMDB', () => {
       expect(result.runtime).to.be.equal(data.Runtime);
       expect(result.genre).to.be.deep.equal(data.Genre.split(','));
       expect(result.director).to.be.equal(data.Director);
-      expect(result.writers).to.be.deep.equal(data.Writer.split(','));
-      expect(result.actors).to.be.deep.equal(data.Actors.split(','));
+      expect(result.writers).to.be.deep.equal(['Stephen King', 'Frank Darabont']);
+      expect(result.actors).to.be.deep.equal(
+        ['Tim Robbins', 'Morgan Freeman', 'Bob Gunton']
+      );
       expect(result.plot).to.be.equal(data.Plot);
       expect(result.language).to.be.equal(data.Language);
       expect(result.country).to.be.equal(data.Country);
@@ -73,10 +75,14 @@ describe('IMDB', () => {
       expect(result.rated).to.be.equal(data.Rated);
       expect(result.released).to.be.equal(data.Released);
       expect(result.runtime).to.be.equal(data.Runtime);
-      expect(result.genre).to.be.deep.equal(data.Genre.split(','));
+      expect(result.genre).to.be.deep.equal(['Comedy', 'Family']);
       expect(result.director).to.be.equal(data.Director);
-      expect(result.writers).to.be.deep.equal(data.Writer.split(','));
-      expect(result.actors).to.be.deep.equal(data.Actors.split(','));
+      expect(result.writers).to.be.deep.equal(
+        ['Linwood Boomer', 'Michael Glouberman', 'Gary Murphy']
+      );
+      expect(result.actors).to.be.deep.equal(
+        ['Frankie Muniz', 'Bryan Cranston', 'Justin Berfield']
+      );
       expect(result.plot).to.be.equal(data.Plot);
       expect(result.language).to.be.equal(data.Language);
       expect(result.country).to.be.equal(data.Country);

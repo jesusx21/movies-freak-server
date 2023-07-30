@@ -23,6 +23,18 @@ export default class SQLTVSeriesStore {
     return this._deserialize(result);
   }
 
+  async find() {
+    let result;
+
+    try {
+      result = await this._connection('tv_series');
+    } catch (error) {
+      throw new SQLDatabaseException(error);
+    }
+
+    return result.map(this._deserialize.bind(this));
+  }
+
   findById(tvSerieId) {
     return this._findOne('id', tvSerieId);
   }

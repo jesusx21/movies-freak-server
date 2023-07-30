@@ -3,6 +3,7 @@ import OMDBResult from '../../../../app/imdb/omdbResult';
 import CreateTVSerie from '../../../../app/moviesFreak/createTVSerie';
 import { TVSerie } from '../../../../app/moviesFreak/entities';
 import { CouldNotCreateTVSerie } from '../../../../app/moviesFreak/errors';
+import TestHelper from '../../../testHelper';
 
 import IMDB_TV_SERIE_RESPONSE from '../../data/imdbTVSerieResponse';
 
@@ -10,10 +11,13 @@ const IMDB_ID = 'tt0212671';
 
 describe('Movies Freak', () => {
   describe('Create TV Serie', () => {
+    let testHelper;
     let useCase;
 
     beforeEach(() => {
+      testHelper = new TestHelper();
       testHelper.createSandbox();
+      testHelper.buildDatabase();
 
       const database = testHelper.getDatabase();
       const imdb = new DummyGateway();

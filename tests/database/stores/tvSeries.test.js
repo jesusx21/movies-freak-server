@@ -3,20 +3,24 @@ import { TVSerieNotFound } from '../../../database/stores/errors';
 import { SQLDatabaseException } from '../../../database/stores/sql/errors';
 import { SerializerError } from '../../../database/stores/sql/serializer';
 import { TVSerieSerializer } from '../../../database/stores/sql/serializers';
+import DatabaseTestHelper from '../testHelper';
 
 describe('Database - Stores', () => {
   describe('TV Series', () => {
     let database;
+    let testHelper;
 
     beforeEach(() => {
-      databaseTestHelper.createSandbox();
+      testHelper = new DatabaseTestHelper();
+      testHelper.createSandbox();
+      testHelper.buildDatabase();
 
-      database = databaseTestHelper.getDatabase();
+      database = testHelper.getDatabase();
     });
 
     afterEach(async () => {
-      databaseTestHelper.restoreSandbox();
-      await databaseTestHelper.cleanDatabase();
+      testHelper.restoreSandbox();
+      await testHelper.cleanDatabase();
     });
 
     describe('#create', () => {
@@ -78,7 +82,7 @@ describe('Database - Stores', () => {
       });
 
       it('should throw error on serialization error', async () => {
-        databaseTestHelper.mockClass(TVSerieSerializer, 'static')
+        testHelper.mockClass(TVSerieSerializer, 'static')
           .expects('fromJSON')
           .throws(new SerializerError());
 
@@ -88,7 +92,7 @@ describe('Database - Stores', () => {
       });
 
       it('should throw error on unexpected sql exception', async () => {
-        databaseTestHelper.stubFunction(database.tvSeries, '_connection')
+        testHelper.stubFunction(database.tvSeries, '_connection')
           .throws(new SerializerError());
 
         await expect(
@@ -97,19 +101,45 @@ describe('Database - Stores', () => {
       });
     });
 
+    describe('#find', () => {
+      it('should get tv series', async () => {
+        await testHelper.createTVSeries({ quantity: 5 });
+
+        const tvSeries = await database.tvSeries.find();
+
+        expect(tvSeries).to.have.lengthOf(5);
+        tvSeries.forEach(film => expect(film).to.be.instanceOf(TVSerie));
+      });
+
+      it('should get empty array when there is no films', async () => {
+        const tvSeries = await database.tvSeries.find();
+
+        expect(tvSeries).to.be.empty;
+      });
+
+      it('should throws error on unexpected error', async () => {
+        testHelper.stubFunction(database, 'connection')
+          .throws(new SerializerError());
+
+        await expect(
+          database.tvSeries.find()
+        ).to.be.rejectedWith(SQLDatabaseException);
+      });
+    });
+
     describe('#findById', () => {
       let tvSerie;
 
       beforeEach(async () => {
-        await databaseTestHelper.createTVSerie(
+        await testHelper.createTVSerie(
           database,
           { name: 'Steven Universe', plot: 'A Stone Kid' }
         );
-        await databaseTestHelper.createTVSerie(
+        await testHelper.createTVSerie(
           database,
           { name: 'Adventure Time', plot: 'A Stoned Kid' }
         );
-        tvSerie = await databaseTestHelper.createTVSerie(
+        tvSerie = await testHelper.createTVSerie(
           database,
           { name: 'Gravity Falls', plot: 'Another Stoned Kids' }
         );
@@ -126,12 +156,12 @@ describe('Database - Stores', () => {
 
       it('should throws error when tv serie does not exist', async () => {
         await expect(
-          database.tvSeries.findById(databaseTestHelper.generateUUID())
+          database.tvSeries.findById(testHelper.generateUUID())
         ).to.be.rejectedWith(TVSerieNotFound);
       });
 
       it('should throws error on unexpected error', async () => {
-        databaseTestHelper.stubFunction(database.tvSeries, '_connection')
+        testHelper.stubFunction(database.tvSeries, '_connection')
           .throws(new SerializerError());
 
         await expect(

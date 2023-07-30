@@ -7,37 +7,36 @@ import SQLDatabase from '../../database/stores/sql';
 import TestHelper from '../testHelper';
 
 export default class DatabaseTestHelper extends TestHelper {
+  async buildDatabase() {
+    const connection = this._buildDatabaseConnection();
+    this._database = new SQLDatabase(connection);
+  }
+
   async cleanDatabase() {
-    if (!this._connection) {
+    if (!this._databaseConnection) {
       return;
     }
 
-    await knexCleaner.clean(this._connection);
-    this._connection.destroy();
+    await knexCleaner.clean(this._databaseConnection);
+    this._databaseConnection.destroy();
 
-    delete this._connection;
+    delete this._databaseConnection;
     delete this._database;
   }
 
-  getDatabaseConnection() {
-    if (this._connection) {
-      return this._connection;
+  getDatabase() {
+    return this._database;
+  }
+
+  _buildDatabaseConnection() {
+    if (this._databaseConnection) {
+      return this._databaseConnection;
     }
 
     const { test: config } = knexfile;
-    this._connection = knex(config);
 
-    return this._connection;
-  }
+    this._databaseConnection = knex(config);
 
-  getDatabase() {
-    if (this._database) {
-      return this._database;
-    }
-
-    const connection = this.getDatabaseConnection();
-    this._database = new SQLDatabase(connection);
-
-    return this._database;
+    return this._databaseConnection;
   }
 }

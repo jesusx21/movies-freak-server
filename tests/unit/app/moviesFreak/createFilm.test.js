@@ -2,14 +2,18 @@ import DummyGateway from '../../../../app/imdb/dummyGateway';
 import CreateFilm from '../../../../app/moviesFreak/createFilm';
 import { Film } from '../../../../app/moviesFreak/entities';
 import { CouldNotCreateFilm } from '../../../../app/moviesFreak/errors';
+import TestHelper from '../../../testHelper';
 
 const IMDB_ID = 'tt0111161';
 
 describe('Movies Freak', () => {
   describe('Create Film', () => {
+    let testHelper;
     let useCase;
 
     beforeEach(() => {
+      testHelper = new TestHelper();
+      testHelper.buildDatabase();
       testHelper.createSandbox();
 
       const database = testHelper.getDatabase();

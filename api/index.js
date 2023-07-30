@@ -4,7 +4,7 @@ import morgan from 'morgan';
 import 'express-async-errors';
 
 import { MoviesFreakAPI } from './v1/resources';
-import { HTTPError } from './httpResponses';
+import { HTTPError, HTTPInternalError } from './httpResponses';
 
 const RESOURCE_EVENTS_SUPPORTED = [
   'onPost',
@@ -13,6 +13,8 @@ const RESOURCE_EVENTS_SUPPORTED = [
   'onPatch',
   'onDelete'
 ];
+
+const ENDPOINTS = {};
 
 export default class MoviesFreakApp {
   constructor(database, imdbGateway) {
@@ -32,6 +34,7 @@ export default class MoviesFreakApp {
     this._app.use(this._setRequestLogger());
 
     this._buildAPI();
+    this._buildEndpoints();
 
     this._app.use('/movies-freak/api', this._router);
     this._app.use(this._setUnexpectedError());
@@ -58,6 +61,10 @@ export default class MoviesFreakApp {
     return this._imdb;
   }
 
+  getExpressApp() {
+    return this._app;
+  }
+
   _buildAPI() {
     const moviesFreakAPI = new MoviesFreakAPI(this);
 
@@ -65,24 +72,43 @@ export default class MoviesFreakApp {
   }
 
   registerResource(resourcePath, resourceInstance, middlewares = []) {
-    const resourceRouter = express.Router();
+    const [resource, path = ''] = resourcePath.split('/');
 
-    RESOURCE_EVENTS_SUPPORTED.forEach((eventName) => {
-      const event = resourceInstance[eventName];
-      const verb = eventName.substring(2).toLowerCase();
+    if (!ENDPOINTS[resource]) {
+      ENDPOINTS[resource] = [];
+    }
 
-      if (!event) {
-        return;
-      }
-
-      resourceRouter[verb](
-        '/',
-        middlewares,
-        this._buildController(event.bind(resourceInstance))
-      );
+    ENDPOINTS[resource].push({
+      path,
+      resourceInstance,
+      middlewares
     });
+  }
 
-    this._router.use(`/v1/${resourcePath}`, resourceRouter);
+  _buildEndpoints() {
+    Object.keys(ENDPOINTS).forEach((resource) => {
+      const resourceRouter = express.Router();
+      const endpoints = ENDPOINTS[resource];
+
+      endpoints.forEach(({ path, resourceInstance, middlewares }) => {
+        RESOURCE_EVENTS_SUPPORTED.forEach((eventName) => {
+          const event = resourceInstance[eventName];
+          const verb = eventName.substring(2).toLowerCase();
+
+          if (!event) {
+            return;
+          }
+
+          resourceRouter[verb](
+            `/${path}`,
+            middlewares,
+            this._buildController(event.bind(resourceInstance))
+          );
+        });
+      });
+
+      this._router.use(`/v1/${resource}`, resourceRouter);
+    });
   }
 
   _setHeaders() {
@@ -106,8 +132,10 @@ export default class MoviesFreakApp {
 
       const payload = { code: 'UNEXPECTED_ERROR' };
 
-      if (this.isTestEnv()) {
+      if (this._isTestEnv()) {
         payload.error = error;
+        // eslint-disable-next-line no-console
+        console.error(error);
       }
 
       res.status(500).send(payload);
@@ -139,6 +167,11 @@ export default class MoviesFreakApp {
       try {
         result = await fn(req);
       } catch (error) {
+        if (!(error instanceof HTTPError)) {
+          // eslint-disable-next-line no-ex-assign
+          error = new HTTPInternalError(error);
+        }
+
         result = {
           status: error.statusCode,
           data: error.payload

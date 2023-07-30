@@ -1,9 +1,10 @@
+import knexCleaner from 'knex-cleaner';
 import sinon from 'sinon';
 import { v4 as uuid } from 'uuid';
 
-import { Film, TVSerie } from '../app/moviesFreak/entities';
-import InMemoryDatabase from '../database/stores/memory';
 import buildFixtureGenerator from './fixtures';
+import SQLDatabase from '../database/stores/sql';
+import { Film, TVSerie } from '../app/moviesFreak/entities';
 
 class SandboxNotInitialized extends Error {
   get name() {
@@ -16,8 +17,30 @@ export default class TestHelper {
     this._fixturesGenerator = buildFixtureGenerator();
   }
 
+  // buildDatabase() {
+  //   delete this._database;
+
+  //   this._database = getDatabase(this._dbDriver, this._env);
+  // }
+
+  buildDatabase() {
+    const connection = this._buildDatabaseConnection();
+    this._database = new SQLDatabase(connection);
+  }
+
+  async cleanDatabase() {
+    if (!this._databaseConnection) {
+      return;
+    }
+
+    await knexCleaner.clean(this._databaseConnection);
+
+    delete this._databaseConnection;
+    delete this._database;
+  }
+
   getDatabase() {
-    return new InMemoryDatabase();
+    return this._database;
   }
 
   createSandbox() {
@@ -54,6 +77,14 @@ export default class TestHelper {
     }
 
     return this._sandbox.stub(target, fn);
+  }
+
+  spyFunction(target, fn) {
+    if (!this._sandbox) {
+      throw new SandboxNotInitialized();
+    }
+
+    return this._sandbox.spy(target, fn);
   }
 
   generateUUID() {

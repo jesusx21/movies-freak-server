@@ -20,6 +20,10 @@ export default class Store {
     return entity;
   }
 
+  find() {
+    return cloneDeep(Object.values(this._items));
+  }
+
   async findById(entityId) {
     const entity = this._items[entityId];
 

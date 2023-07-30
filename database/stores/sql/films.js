@@ -23,6 +23,18 @@ export default class SQLFilmsStore {
     return this._deserialize(result);
   }
 
+  async find() {
+    let result;
+
+    try {
+      result = await this._connection('films');
+    } catch (error) {
+      throw new SQLDatabaseException(error);
+    }
+
+    return result.map(this._deserialize.bind(this));
+  }
+
   findById(filmId) {
     return this._findOne('id', filmId);
   }

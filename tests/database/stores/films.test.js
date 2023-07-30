@@ -1,3 +1,4 @@
+import DatabaseTestHelper from '../testHelper';
 import { Film } from '../../../app/moviesFreak/entities';
 import { SerializerError } from '../../../database/stores/sql/serializer';
 import { FilmSerializer } from '../../../database/stores/sql/serializers';
@@ -7,16 +8,19 @@ import { FilmNotFound } from '../../../database/stores/errors';
 describe('Database - Stores', () => {
   describe('Films', () => {
     let database;
+    let testHelper;
 
     beforeEach(() => {
-      databaseTestHelper.createSandbox();
+      testHelper = new DatabaseTestHelper();
+      testHelper.createSandbox();
+      testHelper.buildDatabase();
 
-      database = databaseTestHelper.getDatabase();
+      database = testHelper.getDatabase();
     });
 
     afterEach(async () => {
-      databaseTestHelper.restoreSandbox();
-      await databaseTestHelper.cleanDatabase();
+      testHelper.restoreSandbox();
+      await testHelper.cleanDatabase();
     });
 
     describe('#create', () => {
@@ -75,7 +79,7 @@ describe('Database - Stores', () => {
       });
 
       it('should throw error on serialization error', async () => {
-        databaseTestHelper.mockClass(FilmSerializer, 'static')
+        testHelper.mockClass(FilmSerializer, 'static')
           .expects('fromJSON')
           .throws(new SerializerError());
 
@@ -85,7 +89,7 @@ describe('Database - Stores', () => {
       });
 
       it('should throw error on sql exception', async () => {
-        databaseTestHelper.stubFunction(database.films, '_connection')
+        testHelper.stubFunction(database.films, '_connection')
           .throws(new SerializerError());
 
         await expect(
@@ -94,19 +98,45 @@ describe('Database - Stores', () => {
       });
     });
 
+    describe('#find', () => {
+      it('should get films', async () => {
+        await testHelper.createFilms({ quantity: 5 });
+
+        const films = await database.films.find();
+
+        expect(films).to.have.lengthOf(5);
+        films.forEach(film => expect(film).to.be.instanceOf(Film));
+      });
+
+      it('should get empty array when there is no films', async () => {
+        const films = await database.films.find();
+
+        expect(films).to.be.empty;
+      });
+
+      it('should throws error on unexpected error', async () => {
+        testHelper.stubFunction(database, 'connection')
+          .throws(new SerializerError());
+
+        await expect(
+          database.films.find()
+        ).to.be.rejectedWith(SQLDatabaseException);
+      });
+    });
+
     describe('#findById', () => {
       let film;
 
       beforeEach(async () => {
-        await databaseTestHelper.createFilms(
+        await testHelper.createFilms(
           database,
           { name: 'It Chapter I', plot: 'A Horror Movie' }
         );
-        await databaseTestHelper.createFilm(
+        await testHelper.createFilm(
           database,
           { name: 'It Chapter III', plot: 'A Third Horror Movie' }
         );
-        film = await databaseTestHelper.createFilm(
+        film = await testHelper.createFilm(
           database,
           { name: 'It Chapter II', plot: 'Another Horror Movie' }
         );
@@ -123,12 +153,12 @@ describe('Database - Stores', () => {
 
       it('should throws error when film does not exist', async () => {
         await expect(
-          database.films.findById(databaseTestHelper.generateUUID())
+          database.films.findById(testHelper.generateUUID())
         ).to.be.rejectedWith(FilmNotFound);
       });
 
       it('should throws error on unexpected error', async () => {
-        databaseTestHelper.stubFunction(database.films, '_connection')
+        testHelper.stubFunction(database.films, '_connection')
           .throws(new SerializerError());
 
         await expect(

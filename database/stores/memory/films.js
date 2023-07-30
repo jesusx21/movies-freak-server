@@ -10,6 +10,10 @@ export default class InMemoryFilmsStore {
     return this._store.create(film);
   }
 
+  find() {
+    return this._store.find();
+  }
+
   async findById(filmId) {
     try {
       return await this._store.findById(filmId);

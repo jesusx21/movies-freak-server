@@ -2,16 +2,24 @@ import axios from 'axios';
 
 import IMDB_FILM_RESPONSE from '../../data/imdbFilmResponse';
 import IMDB_TV_SERIE_RESPONSE from '../../data/imdbTVSerieResponse';
+import TestHelper from '../../../testHelper';
 
 import OMDBGateway from '../../../../app/imdb/omdbGateway';
 import OMDBResult from '../../../../app/imdb/omdbResult';
 import { IMDBError } from '../../../../app/imdb/errors';
 
+function splitString(str) {
+  return str.split(',')
+    .map(item => item.trim());
+}
+
 describe('IMDB', () => {
   describe('OMDB Gateway', () => {
     let gateway;
+    let testHelper;
 
     beforeEach(() => {
+      testHelper = new TestHelper();
       gateway = new OMDBGateway();
 
       testHelper.createSandbox();
@@ -37,7 +45,7 @@ describe('IMDB', () => {
       expect(result.rated).to.be.equal(data.Rated);
       expect(result.released).to.be.equal(data.Released);
       expect(result.runtime).to.be.equal(data.Runtime);
-      expect(result.genre).to.be.deep.equal(data.Genre.split(','));
+      expect(result.genre).to.be.deep.equal(splitString(data.Genre));
       expect(result.director).to.be.equal(data.Director);
       expect(result.writers).to.be.deep.equal(['Stephen King', 'Frank Darabont']);
       expect(result.actors).to.be.deep.equal(

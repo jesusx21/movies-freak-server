@@ -1,7 +1,7 @@
 import CreateFilm from '../../../app/moviesFreak/createFilm';
 import { CREATED, HTTPInternalError } from '../../httpResponses';
 
-export default class FilmResource {
+export default class FilmsResource {
   constructor(database, imdb, presenter) {
     this._database = database;
     this._imdb = imdb;

@@ -1,7 +1,7 @@
 import CreateTVSerie from '../../../app/moviesFreak/createTVSerie';
 import { CREATED, HTTPInternalError } from '../../httpResponses';
 
-export default class TVSeries {
+export default class TVSeriesResource {
   constructor(database, imdb, presenter) {
     this._database = database;
     this._imdb = imdb;

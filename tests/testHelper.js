@@ -26,12 +26,14 @@ export default class TestHelper {
     return this._sandbox;
   }
 
-  mockClass(klass) {
+  mockClass(klass, functionType = 'instance') {
     if (!this._sandbox) {
       throw new SandboxNotInitialized();
     }
 
-    return this._sandbox.mock(klass);
+    const target = functionType === 'instance' ? klass.prototype : klass;
+
+    return this._sandbox.mock(target);
   }
 
   restoreSandbox() {
@@ -54,7 +56,7 @@ export default class TestHelper {
     return uuid();
   }
 
-  createFilm(db, data = {}) {
+  async createFilm(db, data = {}) {
     const [filmData] = this._fixturesGenerator.generate({
       type: 'film',
       recipe: [data]

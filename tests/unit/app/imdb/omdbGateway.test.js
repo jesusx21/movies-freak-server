@@ -22,7 +22,7 @@ describe('IMDB', () => {
     });
 
     it('should request for a film by imdb id', async () => {
-      testHelper.mockClass(axios)
+      testHelper.mockClass(axios, 'static')
         .expects('get')
         .resolves(IMDB_FILM_RESPONSE);
 
@@ -60,7 +60,7 @@ describe('IMDB', () => {
     });
 
     it('should request for a film by imdb id', async () => {
-      testHelper.mockClass(axios)
+      testHelper.mockClass(axios, 'static')
         .expects('get')
         .resolves(IMDB_TV_SERIE_RESPONSE);
 
@@ -96,7 +96,7 @@ describe('IMDB', () => {
     });
 
     it('should thrown erorr on incorrect imdb id', async () => {
-      testHelper.mockClass(axios)
+      testHelper.mockClass(axios, 'static')
         .expects('get')
         .resolves({ data: { Response: 'False', Error: 'Incorrect IMDb ID.' } });
 
@@ -110,7 +110,7 @@ describe('IMDB', () => {
     it('should thrown erorr on invalid api key', async () => {
       const data = { Response: 'False', Error: 'Invalid API key!' };
 
-      testHelper.mockClass(axios)
+      testHelper.mockClass(axios, 'static')
         .expects('get')
         .rejects({ response: { data } });
 

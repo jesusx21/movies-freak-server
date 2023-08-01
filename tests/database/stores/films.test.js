@@ -75,7 +75,7 @@ describe('Database - Stores', () => {
       });
 
       it('should throw error on serialization error', async () => {
-        databaseTestHelper.mockClass(FilmSerializer)
+        databaseTestHelper.mockClass(FilmSerializer, 'static')
           .expects('fromJSON')
           .throws(new SerializerError());
 

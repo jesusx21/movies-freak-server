@@ -17,6 +17,7 @@ module.exports = {
   globals: {
     expect: 'readonly',
     testHelper: 'readonly',
+    apiTestHelper: 'readonly',
     databaseTestHelper: 'readonly'
   },
   rules: {
@@ -36,7 +37,7 @@ module.exports = {
     'no-global-assign': [
       'error',
       {
-        exceptions: ['expect', 'testHelper', 'databaseTestHelper']
+        exceptions: ['expect', 'testHelper', 'apiTestHelper', 'databaseTestHelper']
       }
     ],
     'comma-dangle': [

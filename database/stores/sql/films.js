@@ -27,6 +27,43 @@ export default class SQLFilmsStore {
     return this._findOne('id', filmId);
   }
 
+  async find(options = {}) {
+    let items;
+
+    try {
+      const query = this._connection('films');
+
+      if (options.skip) {
+        query.offset(options.skip);
+      }
+
+      if (options.limit) {
+        query.limit(options.limit);
+      }
+
+      items = await query.orderBy('created_at');
+    } catch (error) {
+      throw new SQLDatabaseException(error);
+    }
+
+    return {
+      items: items.map(this._deserialize.bind(this)),
+      totalItems: await this.count()
+    };
+  }
+
+  async count() {
+    try {
+      const { count } = await this._connection('films')
+        .count()
+        .first();
+
+      return Number(count);
+    } catch (error) {
+      throw new SQLDatabaseException(error);
+    }
+  }
+
   async _findOne(...args) {
     let result;
 

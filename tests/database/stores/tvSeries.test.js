@@ -139,5 +139,95 @@ describe('Database - Stores', () => {
         ).to.be.rejectedWith(SQLDatabaseException);
       });
     });
+
+    describe('#find', () => {
+      it('should find all tv series stored', async () => {
+        await databaseTestHelper.createTVSeries(database, 5);
+
+        const { totalItems, items: tvSeries } = await database.tvSeries.find();
+
+        expect(tvSeries).to.have.lengthOf(5);
+        expect(totalItems).to.be.equal(5);
+        tvSeries.forEach((tvSerie) => expect(tvSerie).to.be.instanceOf(TVSerie));
+      });
+
+      it('should get items with skip', async () => {
+        await databaseTestHelper.createTVSeries(
+          database,
+          [
+            { name: 'How I Met Your Mother' },
+            { name: 'How I Met Your Father' },
+            { name: 'Star Wars: Clone Wars' },
+            { name: 'Star Wars: Rebels' },
+            { name: 'Friends' }
+          ]
+        );
+
+        const { totalItems, items: tvSeries } = await database.tvSeries.find({ skip: 2 });
+
+        expect(tvSeries).to.have.lengthOf(3);
+        expect(totalItems).to.be.equal(5);
+        expect(tvSeries[0].name).to.be.equal('Star Wars: Clone Wars');
+        expect(tvSeries[1].name).to.be.equal('Star Wars: Rebels');
+        expect(tvSeries[2].name).to.be.equal('Friends');
+      });
+
+      it('should get items with limit', async () => {
+        await databaseTestHelper.createTVSeries(
+          database,
+          [
+            { name: 'How I Met Your Mother' },
+            { name: 'How I Met Your Father' },
+            { name: 'Star Wars: Clone Wars' },
+            { name: 'Star Wars: Rebels' },
+            { name: 'Friends' }
+          ]
+        );
+
+        const { totalItems, items: tvSeries } = await database.tvSeries.find({ limit: 3 });
+
+        expect(tvSeries).to.have.lengthOf(3);
+        expect(totalItems).to.be.equal(5);
+        expect(tvSeries[0].name).to.be.equal('How I Met Your Mother');
+        expect(tvSeries[1].name).to.be.equal('How I Met Your Father');
+        expect(tvSeries[2].name).to.be.equal('Star Wars: Clone Wars');
+      });
+
+      it('should get items with skip and limit', async () => {
+        await databaseTestHelper.createTVSeries(
+          database,
+          [
+            { name: 'How I Met Your Mother' },
+            { name: 'How I Met Your Father' },
+            { name: 'Star Wars: Clone Wars' },
+            { name: 'Star Wars: Rebels' },
+            { name: 'Friends' }
+          ]
+        );
+
+        const { totalItems, items: tvSeries } = await database.tvSeries.find({ limit: 2, skip: 1 });
+
+        expect(tvSeries).to.have.lengthOf(2);
+        expect(totalItems).to.be.equal(5);
+        expect(tvSeries[0].name).to.be.equal('How I Met Your Father');
+        expect(tvSeries[1].name).to.be.equal('Star Wars: Clone Wars');
+      });
+
+      it('should return empty array when there is no tv series', async () => {
+        const { totalItems, items: tvSeries } = await database.tvSeries.find();
+
+        expect(tvSeries).to.be.empty;
+        expect(totalItems).to.be.equal(0);
+      });
+
+      it('should return handled error on unexpected error', async () => {
+        databaseTestHelper.stubFunction(database.tvSeries, '_connection')
+          .throws(new SerializerError());
+
+        await expect(
+          database.tvSeries.find()
+        ).to.be.rejectedWith(SQLDatabaseException);
+      });
+    });
   });
 });

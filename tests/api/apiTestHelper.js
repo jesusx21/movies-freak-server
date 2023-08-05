@@ -24,4 +24,19 @@ export default class APITestHelper extends TestHelper {
 
     return body;
   }
+
+  async simulateGet(params) {
+    const {
+      path,
+      query = {},
+      statusCode = 200
+    } = params;
+
+    const { body } = await request(this._app._app)
+      .get(`/movies-freak/api/v1${path}`)
+      .query(query)
+      .expect(statusCode);
+
+    return body;
+  }
 }

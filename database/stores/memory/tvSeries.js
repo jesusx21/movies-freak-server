@@ -21,4 +21,8 @@ export default class InMemoryTVSeriesStore {
       throw error;
     }
   }
+
+  find(options = {}) {
+    return this._store.find(options);
+  }
 }

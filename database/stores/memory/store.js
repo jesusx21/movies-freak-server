@@ -29,4 +29,20 @@ export default class Store {
 
     return cloneDeep(entity);
   }
+
+  async find(options = {}) {
+    const items = Object.values(this._items);
+    const skip = options.skip || 0;
+    const limit = skip + (options.limit || items.length - 1);
+
+    return {
+      items: cloneDeep(items.slice(skip, limit)),
+      totalItems: await this.count()
+    };
+  }
+
+  async count() {
+    return Object.values(this._items)
+      .length;
+  }
 }

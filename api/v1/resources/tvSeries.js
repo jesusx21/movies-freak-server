@@ -1,5 +1,5 @@
 import CreateTVSerie from '../../../app/moviesFreak/createTVSerie';
-import { CREATED, HTTPInternalError } from '../../httpResponses';
+import { CREATED, HTTPInternalError, OK } from '../../httpResponses';
 
 export default class TVSeriesResource {
   constructor(database, imdb, presenter) {
@@ -22,6 +22,29 @@ export default class TVSeriesResource {
     return {
       status: CREATED,
       data: this._presenter.presentTVSerie(result)
+    };
+  }
+
+  async onGet({ query }) {
+    const skip = Number(query.skip || 0);
+    const limit = Number(query.limit || 25);
+
+    let result;
+
+    try {
+      result = await this._database.tvSeries.find({ skip, limit });
+    } catch (error) {
+      throw new HTTPInternalError(error);
+    }
+
+    return {
+      status: OK,
+      data: {
+        skip,
+        limit,
+        totalItems: result.totalItems,
+        items: this._presenter.presentTVSeries(result.items)
+      }
     };
   }
 }

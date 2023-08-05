@@ -18,7 +18,9 @@ const FilmSerializer = Serializer
     field('writers', { as: 'array' }),
     field('actors', { as: 'array' }),
     field('imdb_id', { from: 'imdbId' }),
-    field('imdb_rating', { from: 'imdbRating' })
+    field('imdb_rating', { from: 'imdbRating' }),
+    field('created_at', { from: 'createdAt' }),
+    field('updated_at', { from: 'updatedAt' })
   );
 
 export default FilmSerializer;

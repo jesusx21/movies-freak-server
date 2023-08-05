@@ -19,6 +19,10 @@ export default class Presenters {
     };
   }
 
+  presentFilms(films) {
+    return films.map(this.presentFilm.bind(this));
+  }
+
   presentTVSerie(tvSerie) {
     return {
       id: tvSerie.id,
@@ -35,5 +39,9 @@ export default class Presenters {
       totalSeasons: tvSerie.totalSeasons,
       releasedAt: tvSerie.releasedAt
     };
+  }
+
+  presentTVSeries(tvSeries) {
+    return tvSeries.map(this.presentTVSerie.bind(this));
   }
 }

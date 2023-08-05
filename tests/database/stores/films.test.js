@@ -98,7 +98,7 @@ describe('Database - Stores', () => {
       let film;
 
       beforeEach(async () => {
-        await databaseTestHelper.createFilm(
+        await databaseTestHelper.createFilms(
           database,
           { name: 'It Chapter I', plot: 'A Horror Movie' }
         );
@@ -133,6 +133,96 @@ describe('Database - Stores', () => {
 
         await expect(
           database.films.findById(film.id)
+        ).to.be.rejectedWith(SQLDatabaseException);
+      });
+    });
+
+    describe('#find', () => {
+      it('should find all films stored', async () => {
+        await databaseTestHelper.createFilms(database, 5);
+
+        const { totalItems, items: films } = await database.films.find();
+
+        expect(films).to.have.lengthOf(5);
+        expect(totalItems).to.be.equal(5);
+        films.forEach((film) => expect(film).to.be.instanceOf(Film));
+      });
+
+      it('should get items with skip', async () => {
+        await databaseTestHelper.createFilms(
+          database,
+          [
+            { name: 'Midsomar' },
+            { name: 'Nimona' },
+            { name: '10 Things I Hate about You' },
+            { name: 'The Perks of Being a Wallflower' },
+            { name: 'Predestination' }
+          ]
+        );
+
+        const { totalItems, items: films } = await database.films.find({ skip: 2 });
+
+        expect(films).to.have.lengthOf(3);
+        expect(totalItems).to.be.equal(5);
+        expect(films[0].name).to.be.equal('10 Things I Hate about You');
+        expect(films[1].name).to.be.equal('The Perks of Being a Wallflower');
+        expect(films[2].name).to.be.equal('Predestination');
+      });
+
+      it('should get items with limit', async () => {
+        await databaseTestHelper.createFilms(
+          database,
+          [
+            { name: 'Midsomar' },
+            { name: 'Nimona' },
+            { name: '10 Things I Hate about You' },
+            { name: 'The Perks of Being a Wallflower' },
+            { name: 'Predestination' }
+          ]
+        );
+
+        const { totalItems, items: films } = await database.films.find({ limit: 3 });
+
+        expect(films).to.have.lengthOf(3);
+        expect(totalItems).to.be.equal(5);
+        expect(films[0].name).to.be.equal('Midsomar');
+        expect(films[1].name).to.be.equal('Nimona');
+        expect(films[2].name).to.be.equal('10 Things I Hate about You');
+      });
+
+      it('should get items with skip and limit', async () => {
+        await databaseTestHelper.createFilms(
+          database,
+          [
+            { name: 'Midsomar' },
+            { name: 'Nimona' },
+            { name: '10 Things I Hate about You' },
+            { name: 'The Perks of Being a Wallflower' },
+            { name: 'Predestination' }
+          ]
+        );
+
+        const { totalItems, items: films } = await database.films.find({ limit: 2, skip: 1 });
+
+        expect(films).to.have.lengthOf(2);
+        expect(totalItems).to.be.equal(5);
+        expect(films[0].name).to.be.equal('Nimona');
+        expect(films[1].name).to.be.equal('10 Things I Hate about You');
+      });
+
+      it('should return empty array when there is no films', async () => {
+        const { totalItems, items: films } = await database.films.find();
+
+        expect(films).to.be.empty;
+        expect(totalItems).to.be.equal(0);
+      });
+
+      it('should return handled error on unexpected error', async () => {
+        databaseTestHelper.stubFunction(database.films, '_connection')
+          .throws(new SerializerError());
+
+        await expect(
+          database.films.find()
         ).to.be.rejectedWith(SQLDatabaseException);
       });
     });

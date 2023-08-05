@@ -27,6 +27,43 @@ export default class SQLTVSeriesStore {
     return this._findOne('id', tvSerieId);
   }
 
+  async find(options = {}) {
+    let items;
+
+    try {
+      const query = this._connection('tv_series');
+
+      if (options.skip) {
+        query.offset(options.skip);
+      }
+
+      if (options.limit) {
+        query.limit(options.limit);
+      }
+
+      items = await query.orderBy('created_at');
+    } catch (error) {
+      throw new SQLDatabaseException(error);
+    }
+
+    return {
+      items: items.map(this._deserialize.bind(this)),
+      totalItems: await this.count()
+    };
+  }
+
+  async count() {
+    try {
+      const { count } = await this._connection('tv_series')
+        .count()
+        .first();
+
+      return Number(count);
+    } catch (error) {
+      throw new SQLDatabaseException(error);
+    }
+  }
+
   async _findOne(...args) {
     let result;
 

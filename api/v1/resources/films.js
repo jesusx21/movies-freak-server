@@ -1,5 +1,5 @@
 import CreateFilm from '../../../app/moviesFreak/createFilm';
-import { CREATED, HTTPInternalError } from '../../httpResponses';
+import { CREATED, HTTPInternalError, OK } from '../../httpResponses';
 
 export default class FilmsResource {
   constructor(database, imdb, presenter) {
@@ -22,6 +22,29 @@ export default class FilmsResource {
     return {
       status: CREATED,
       data: this._presenter.presentFilm(result)
+    };
+  }
+
+  async onGet({ query }) {
+    const skip = Number(query.skip || 0);
+    const limit = Number(query.limit || 25);
+
+    let result;
+
+    try {
+      result = await this._database.films.find({ skip, limit });
+    } catch (error) {
+      throw new HTTPInternalError(error);
+    }
+
+    return {
+      status: OK,
+      data: {
+        skip,
+        limit,
+        totalItems: result.totalItems,
+        items: this._presenter.presentFilms(result.items)
+      }
     };
   }
 }

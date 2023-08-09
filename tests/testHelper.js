@@ -1,9 +1,16 @@
+import chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
+import sinonChai from 'sinon-chai';
 import { v4 as uuid } from 'uuid';
 
-import { Film, TVSerie } from '../app/moviesFreak/entities';
-import InMemoryDatabase from '../database/stores/memory';
+import * as Classpuccino from '../classpuccino';
 import buildFixtureGenerator from './fixtures';
+import { Film, TVSerie } from '../app/moviesFreak/entities';
+import getDatabase from '../database/factory';
+
+chai.use(chaiAsPromised);
+chai.use(sinonChai);
 
 class SandboxNotInitialized extends Error {
   get name() {
@@ -11,13 +18,27 @@ class SandboxNotInitialized extends Error {
   }
 }
 
-export default class TestHelper {
+export default class TestCase extends Classpuccino.TestCase {
   constructor() {
+    super(...arguments);
+
     this._fixturesGenerator = buildFixtureGenerator();
   }
 
+  setUp() {
+    super.setUp();
+
+    this.createSandbox();
+  }
+
+  tearDown() {
+    super.tearDown();
+
+    this.restoreSandbox();
+  }
+
   getDatabase() {
-    return new InMemoryDatabase();
+    return getDatabase('memory');
   }
 
   createSandbox() {
@@ -40,12 +61,21 @@ export default class TestHelper {
     return this._sandbox.mock(target);
   }
 
-  restoreSandbox() {
+  mockFunction(instance, functionName) {
     if (!this._sandbox) {
       throw new SandboxNotInitialized();
     }
 
-    return this._sandbox.restore();
+    return this._sandbox.mock(instance)
+      .expects(functionName);
+  }
+
+  restoreSandbox() {
+    if (!this._sandbox) {
+      return;
+    }
+
+    this._sandbox.restore();
   }
 
   stubFunction(target, fn) {

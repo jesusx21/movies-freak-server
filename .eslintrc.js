@@ -14,12 +14,6 @@ module.exports = {
     ecmaVersion: 'latest',
     sourceType: 'module'
   },
-  globals: {
-    expect: 'readonly',
-    testHelper: 'readonly',
-    apiTestHelper: 'readonly',
-    databaseTestHelper: 'readonly'
-  },
   rules: {
     'max-classes-per-file': 'off',
     'arrow-body-style': 'off',
@@ -34,12 +28,6 @@ module.exports = {
     'max-len': ['error', { code: 100 }],
     'arrow-parens': 0,
     'mocha-no-only/mocha-no-only': ['error'],
-    'no-global-assign': [
-      'error',
-      {
-        exceptions: ['expect', 'testHelper', 'apiTestHelper', 'databaseTestHelper']
-      }
-    ],
     'comma-dangle': [
       'error',
       {

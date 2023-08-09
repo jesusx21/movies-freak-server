@@ -4,9 +4,9 @@ import knexCleaner from 'knex-cleaner';
 import knexfile from '../../knexfile';
 
 import SQLDatabase from '../../database/stores/sql';
-import TestHelper from '../testHelper';
+import TestCase from '../testHelper';
 
-export default class DatabaseTestHelper extends TestHelper {
+export default class SQLTestCase extends TestCase {
   async cleanDatabase() {
     if (!this._connection) {
       return;

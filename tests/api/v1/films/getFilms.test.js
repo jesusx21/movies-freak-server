@@ -1,132 +1,128 @@
-describe('API - v1', () => {
-  describe('Get Films', () => {
-    let database;
+import { expect } from 'chai';
 
-    beforeEach(() => {
-      database = apiTestHelper.getDatabase();
-      apiTestHelper.buildTestApp(database);
+import APITestCase from '../../apiTestHelper';
 
-      apiTestHelper.createSandbox();
+export default class GetFilmsTest extends APITestCase {
+  setUp() {
+    super.setUp();
+
+    this._database = this.getDatabase();
+    this.buildTestApp(this._database);
+  }
+
+  async testGetFilms() {
+    await this.createFilms(this._database, 5);
+
+    const result = await this.simulateGet({
+      path: '/films'
     });
 
-    afterEach(() => {
-      apiTestHelper.restoreSandbox();
+    expect(result.items).to.have.lengthOf(5);
+    expect(result.totalItems).to.be.equal(5);
+    expect(result.skip).to.be.equal(0);
+    expect(result.limit).to.be.equal(25);
+  }
+
+  async testGetFilmsWithSkip() {
+    await this.createFilms(
+      this._database,
+      [
+        { name: 'Midsomar' },
+        { name: 'Nimona' },
+        { name: '10 Things I Hate about You' },
+        { name: 'The Perks of Being a Wallflower' },
+        { name: 'Predestination' }
+      ]
+    );
+
+    const result = await this.simulateGet({
+      path: '/films',
+      query: { skip: 2 }
     });
 
-    it('should get films', async () => {
-      await databaseTestHelper.createFilms(database, 5);
+    expect(result.items).to.have.lengthOf(3);
+    expect(result.totalItems).to.be.equal(5);
+    expect(result.skip).to.be.equal(2);
+    expect(result.limit).to.be.equal(25);
 
-      const result = await apiTestHelper.simulateGet({
-        path: '/films'
-      });
+    expect(result.items[0].name).to.be.equal('10 Things I Hate about You');
+    expect(result.items[1].name).to.be.equal('The Perks of Being a Wallflower');
+    expect(result.items[2].name).to.be.equal('Predestination');
+  }
 
-      expect(result.items).to.have.lengthOf(5);
-      expect(result.totalItems).to.be.equal(5);
-      expect(result.skip).to.be.equal(0);
-      expect(result.limit).to.be.equal(25);
+  async testGetFilmsWithLimit() {
+    await this.createFilms(
+      this._database,
+      [
+        { name: 'Midsomar' },
+        { name: 'Nimona' },
+        { name: '10 Things I Hate about You' },
+        { name: 'The Perks of Being a Wallflower' },
+        { name: 'Predestination' }
+      ]
+    );
+
+    const result = await this.simulateGet({
+      path: '/films',
+      query: { limit: 3 }
     });
 
-    it('should get films with skip', async () => {
-      await databaseTestHelper.createFilms(
-        database,
-        [
-          { name: 'Midsomar' },
-          { name: 'Nimona' },
-          { name: '10 Things I Hate about You' },
-          { name: 'The Perks of Being a Wallflower' },
-          { name: 'Predestination' }
-        ]
-      );
+    expect(result.items).to.have.lengthOf(3);
+    expect(result.totalItems).to.be.equal(5);
+    expect(result.skip).to.be.equal(0);
+    expect(result.limit).to.be.equal(3);
 
-      const result = await apiTestHelper.simulateGet({
-        path: '/films',
-        query: { skip: 2 }
-      });
+    expect(result.items[0].name).to.be.equal('Midsomar');
+    expect(result.items[1].name).to.be.equal('Nimona');
+    expect(result.items[2].name).to.be.equal('10 Things I Hate about You');
+  }
 
-      expect(result.items).to.have.lengthOf(3);
-      expect(result.totalItems).to.be.equal(5);
-      expect(result.skip).to.be.equal(2);
-      expect(result.limit).to.be.equal(25);
+  async testGetFilmsWithSkipAndLimit() {
+    await this.createFilms(
+      this._database,
+      [
+        { name: 'Midsomar' },
+        { name: 'Nimona' },
+        { name: '10 Things I Hate about You' },
+        { name: 'The Perks of Being a Wallflower' },
+        { name: 'Predestination' }
+      ]
+    );
 
-      expect(result.items[0].name).to.be.equal('10 Things I Hate about You');
-      expect(result.items[1].name).to.be.equal('The Perks of Being a Wallflower');
-      expect(result.items[2].name).to.be.equal('Predestination');
+    const result = await this.simulateGet({
+      path: '/films',
+      query: { skip: 1, limit: 2 }
     });
 
-    it('should get films with limit', async () => {
-      await databaseTestHelper.createFilms(
-        database,
-        [
-          { name: 'Midsomar' },
-          { name: 'Nimona' },
-          { name: '10 Things I Hate about You' },
-          { name: 'The Perks of Being a Wallflower' },
-          { name: 'Predestination' }
-        ]
-      );
+    expect(result.items).to.have.lengthOf(2);
+    expect(result.totalItems).to.be.equal(5);
+    expect(result.skip).to.be.equal(1);
+    expect(result.limit).to.be.equal(2);
 
-      const result = await apiTestHelper.simulateGet({
-        path: '/films',
-        query: { limit: 3 }
-      });
+    expect(result.items[0].name).to.be.equal('Nimona');
+    expect(result.items[1].name).to.be.equal('10 Things I Hate about You');
+  }
 
-      expect(result.items).to.have.lengthOf(3);
-      expect(result.totalItems).to.be.equal(5);
-      expect(result.skip).to.be.equal(0);
-      expect(result.limit).to.be.equal(3);
-
-      expect(result.items[0].name).to.be.equal('Midsomar');
-      expect(result.items[1].name).to.be.equal('Nimona');
-      expect(result.items[2].name).to.be.equal('10 Things I Hate about You');
+  async testGetEmptyListWhenThereIsNotFilms() {
+    const result = await this.simulateGet({
+      path: '/films'
     });
 
-    it('should get films with skip and limit', async () => {
-      await databaseTestHelper.createFilms(
-        database,
-        [
-          { name: 'Midsomar' },
-          { name: 'Nimona' },
-          { name: '10 Things I Hate about You' },
-          { name: 'The Perks of Being a Wallflower' },
-          { name: 'Predestination' }
-        ]
-      );
+    expect(result.items).to.empty;
+    expect(result.totalItems).to.be.equal(0);
+    expect(result.skip).to.be.equal(0);
+    expect(result.limit).to.be.equal(25);
+  }
 
-      const result = await apiTestHelper.simulateGet({
-        path: '/films',
-        query: { skip: 1, limit: 2 }
-      });
+  async testReturnErrorHandlerOnUnexpectedError() {
+    this.stubFunction(this._database.films, 'find')
+      .throws(new Error());
 
-      expect(result.items).to.have.lengthOf(2);
-      expect(result.totalItems).to.be.equal(5);
-      expect(result.skip).to.be.equal(1);
-      expect(result.limit).to.be.equal(2);
-
-      expect(result.items[0].name).to.be.equal('Nimona');
-      expect(result.items[1].name).to.be.equal('10 Things I Hate about You');
+    const result = await this.simulateGet({
+      path: '/films',
+      statusCode: 500
     });
 
-    it('should return empty when there is no films', async () => {
-      const result = await apiTestHelper.simulateGet({
-        path: '/films'
-      });
-
-      expect(result.items).to.empty;
-      expect(result.totalItems).to.be.equal(0);
-      expect(result.skip).to.be.equal(0);
-      expect(result.limit).to.be.equal(25);
-    });
-
-    it('should return handled error on unexpected error', async () => {
-      apiTestHelper.stubFunction(database.films, 'find')
-        .throws(new Error());
-
-      const result = await apiTestHelper.simulateGet({
-        path: '/films',
-        statusCode: 500
-      });
-
-      expect(result.code).to.be.equal('UNEXPECTED_ERROR');
-    });
-  });
-});
+    expect(result.code).to.be.equal('UNEXPECTED_ERROR');
+  }
+}

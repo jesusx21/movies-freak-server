@@ -9,7 +9,7 @@
     "migrate:make": "knex migrate:make $1",
     "migrate:latest": "knex migrate:latest && knex migrate:latest --env test",
     "migrate:rollback": "knex migrate:rollback && knex migrate:rollback --env test",
-    "test": "NODE_ENV=test mocha --require @babel/register --recursive  --exit tests/index.js tests/**/*.test.js"
+    "test": "NODE_ENV=test yarn babel-node classpuccino/cli ./tests"
   },
   "repository": "git@github.com:jesusx21/movies-freak-server.git",
   "author": "Jesús Agustín Peña Meza",
@@ -36,16 +36,15 @@
   "devDependencies": {
     "chai": "^4.3.7",
     "chai-as-promised": "^7.1.1",
+    "colors": "^1.4.0",
     "eslint": "^8.44.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-plugin-chai-expect": "^3.0.0",
     "eslint-plugin-chai-friendly": "^0.7.2",
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-jsx-a11y": "^6.7.1",
-    "eslint-plugin-mocha-no-only": "^1.1.1",
     "fixtures-generator": "^1.0.3",
     "knex-cleaner": "^1.3.1",
-    "mocha": "^10.2.0",
     "nodemon": "^3.0.1",
     "sinon": "^15.2.0",
     "sinon-chai": "^3.7.0",

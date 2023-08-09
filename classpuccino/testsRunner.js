@@ -2,6 +2,7 @@
 /* eslint-disable no-console */
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { AssertionError } from 'chai';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import colors from 'colors';
 import fs from 'fs';
 import path from 'path';
@@ -22,9 +23,19 @@ export default class TestRunner {
 
     // eslint-disable-next-line no-restricted-syntax
     for (const testFileDir of testFilesPath) {
-      const Test = this._loadFile(testFileDir);
-      // eslint-disable-next-line no-await-in-loop
-      await this._runTest(Test);
+      // eslint-disable-next-line import/no-dynamic-require, global-require
+      const TestClases = require(testFileDir);
+
+      // eslint-disable-next-line no-restricted-syntax
+      for (const Test of Object.values(TestClases)) {
+        const testModule = testFileDir.split('../')[1]
+          .split('.')[0]
+          .split('/')
+          .join('.');
+
+        // eslint-disable-next-line no-await-in-loop
+        await this._runTest(Test, testModule);
+      }
     }
 
     Object.keys(this.errorAndFails).forEach((testClassName) => {
@@ -49,16 +60,21 @@ export default class TestRunner {
     console.error(`Error on tests: ${this.totalErrors}`.red);
   }
 
-  async _runTest(Test) {
+  async _runTest(Test, testModule) {
     colors.enable;
 
     const test = new Test();
     const testClassName = test.constructor.name;
+
+    if (!testClassName.endsWith('Test')) {
+      return;
+    }
+
     const functions = Object.getOwnPropertyNames(Test.prototype);
 
     this.errorAndFails[testClassName] = {};
 
-    console.log(`\n${test.constructor.name}`.gray.bold);
+    console.log(`\n${testModule}.${test.constructor.name}`.gray.bold);
     // eslint-disable-next-line no-restricted-syntax
     for (const functionName of functions) {
       if (!functionName.startsWith('test')) {
@@ -121,12 +137,5 @@ export default class TestRunner {
     }
 
     return testFiles;
-  }
-
-  _loadFile(testFileDir) {
-    // eslint-disable-next-line import/no-dynamic-require, global-require
-    const TestFile = require(testFileDir);
-
-    return TestFile.default ? TestFile.default : TestFile;
   }
 }

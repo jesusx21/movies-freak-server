@@ -1,233 +1,232 @@
+import { expect } from 'chai';
+
+import SQLTestCase from '../testHelper';
+
 import { TVSerie } from '../../../app/moviesFreak/entities';
 import { TVSerieNotFound } from '../../../database/stores/errors';
 import { SQLDatabaseException } from '../../../database/stores/sql/errors';
 import { SerializerError } from '../../../database/stores/sql/serializer';
 import { TVSerieSerializer } from '../../../database/stores/sql/serializers';
 
-describe('Database - Stores', () => {
-  describe('TV Series', () => {
-    let database;
+class TVStoreTest extends SQLTestCase {
+  setUp() {
+    super.setUp();
 
-    beforeEach(() => {
-      databaseTestHelper.createSandbox();
+    this._database = this.getDatabase();
+  }
 
-      database = databaseTestHelper.getDatabase();
+  async tearDown() {
+    super.tearDown();
+
+    await this.cleanDatabase();
+  }
+}
+
+export class CreateTVSerieTest extends TVStoreTest {
+  setUp() {
+    super.setUp();
+
+    this.tvSerie = new TVSerie({
+      imdbId: 'tt0212671',
+      name: 'Malcolm in the Middle',
+      plot: 'An offbeat, laugh track-lacking sitcom about a bizarrely dysfunctional family, '
+        + 'the center of which is Malcolm, the middle of the two brothers '
+        + 'who still live at home. His eldest (and favorite) sibling, Francis, '
+        + 'boards at military school because his parents believe it will reform him and '
+        + 'keep him out of trouble. Malcolm often has a hard time coping '
+        + 'with his family life, but he has more troubles to contend with when he starts '
+        + 'receiving special treatment at school after being diagnosed as an intellectually '
+        + 'advanced genius.',
+      years: { from: '2000', to: '2006' },
+      rated: 'TV-PG',
+      genre: ['Comedy', 'Family'],
+      writers: ['Linwood Boomer', 'Michael Glouberman', 'Gary Murphy'],
+      actors: ['Frankie Muniz', 'Bryan Cranston', 'Justin Berfield'],
+      poster: 'https://m.media-amazon.com/images/M/MV5BNTc2MzM2N2YtZDdiOS00M2I2LWFjOGItMDM3'
+        + 'OTA3YjUwNjAxXkEyXkFqcGdeQXVyNzA5NjUyNjM@._V1_SX300.jpg',
+      imdbRating: '8.2/10',
+      totalSeasons: 7,
+      releasedAt: new Date(2000, 1, 9)
     });
+  }
 
-    afterEach(async () => {
-      databaseTestHelper.restoreSandbox();
-      await databaseTestHelper.cleanDatabase();
-    });
+  async testCreateTVSerie() {
+    const tvSerieCreated = await this._database.tvSeries.create(this.tvSerie);
 
-    describe('#create', () => {
-      let tvSerie;
+    expect(tvSerieCreated).to.be.an.instanceOf(TVSerie);
+    expect(tvSerieCreated.id).to.exist;
+    expect(tvSerieCreated.name).to.be.equal('Malcolm in the Middle');
+    expect(tvSerieCreated.plot).to.be.equal(this.tvSerie.plot);
+    expect(tvSerieCreated.years).to.be.deep.equal({ from: '2000', to: '2006' });
+    expect(tvSerieCreated.rated).to.be.equal('TV-PG');
+    expect(tvSerieCreated.genre).to.be.deep.equal(['Comedy', 'Family']);
+    expect(tvSerieCreated.writers).to.be.deep.equal(this.tvSerie.writers);
+    expect(tvSerieCreated.actors).to.be.deep.equal(this.tvSerie.actors);
+    expect(tvSerieCreated.poster).to.be.equal(this.tvSerie.poster);
+    expect(tvSerieCreated.imdbRating).to.be.equal('8.2/10');
+    expect(tvSerieCreated.totalSeasons).to.be.equal(7);
+    expect(tvSerieCreated.releasedAt).to.be.deep.equal(this.tvSerie.releasedAt);
+  }
 
-      beforeEach(() => {
-        tvSerie = new TVSerie({
-          imdbId: 'tt0212671',
-          name: 'Malcolm in the Middle',
-          plot: 'An offbeat, laugh track-lacking sitcom about a bizarrely dysfunctional family, '
-            + 'the center of which is Malcolm, the middle of the two brothers '
-            + 'who still live at home. His eldest (and favorite) sibling, Francis, '
-            + 'boards at military school because his parents believe it will reform him and '
-            + 'keep him out of trouble. Malcolm often has a hard time coping '
-            + 'with his family life, but he has more troubles to contend with when he starts '
-            + 'receiving special treatment at school after being diagnosed as an intellectually '
-            + 'advanced genius.',
-          years: { from: '2000', to: '2006' },
-          rated: 'TV-PG',
-          genre: ['Comedy', 'Family'],
-          writers: ['Linwood Boomer', 'Michael Glouberman', 'Gary Murphy'],
-          actors: ['Frankie Muniz', 'Bryan Cranston', 'Justin Berfield'],
-          poster: 'https://m.media-amazon.com/images/M/MV5BNTc2MzM2N2YtZDdiOS00M2I2LWFjOGItMDM3'
-            + 'OTA3YjUwNjAxXkEyXkFqcGdeQXVyNzA5NjUyNjM@._V1_SX300.jpg',
-          imdbRating: '8.2/10',
-          totalSeasons: 7,
-          releasedAt: new Date(2000, 1, 9)
-        });
-      });
+  async testThrowErrorWhenUniqueFieldIsRepeated() {
+    await this._database.tvSeries.create(this.tvSerie);
 
-      it('should create a tv serie', async () => {
-        const tvSerieCreated = await database.tvSeries.create(tvSerie);
+    const error = await expect(
+      this._database.tvSeries.create(this.tvSerie)
+    ).to.be.rejectedWith(SQLDatabaseException);
 
-        expect(tvSerieCreated).to.be.an.instanceOf(TVSerie);
-        expect(tvSerieCreated.id).to.exist;
-        expect(tvSerieCreated.name).to.be.equal('Malcolm in the Middle');
-        expect(tvSerieCreated.plot).to.be.equal(tvSerie.plot);
-        expect(tvSerieCreated.years).to.be.deep.equal({ from: '2000', to: '2006' });
-        expect(tvSerieCreated.rated).to.be.equal('TV-PG');
-        expect(tvSerieCreated.genre).to.be.deep.equal(['Comedy', 'Family']);
-        expect(tvSerieCreated.writers).to.be.deep.equal(tvSerie.writers);
-        expect(tvSerieCreated.actors).to.be.deep.equal(tvSerie.actors);
-        expect(tvSerieCreated.poster).to.be.equal(tvSerie.poster);
-        expect(tvSerieCreated.imdbRating).to.be.equal('8.2/10');
-        expect(tvSerieCreated.totalSeasons).to.be.equal(7);
-        expect(tvSerieCreated.releasedAt).to.be.deep.equal(tvSerie.releasedAt);
-      });
+    expect(error.message).to.have.string(
+      'duplicate key value violates unique constraint "tv_series_imdb_id_unique"'
+    );
+  }
 
-      it('should throw error when unique field is repeated', async () => {
-        await database.tvSeries.create(tvSerie);
+  async testThrowErrorOnSerializationError() {
+    this.mockClass(TVSerieSerializer, 'static')
+      .expects('fromJSON')
+      .throws(new SerializerError());
 
-        const error = await expect(
-          database.tvSeries.create(tvSerie)
-        ).to.be.rejectedWith(SQLDatabaseException);
+    await expect(
+      this._database.tvSeries.create(this.tvSerie)
+    ).to.be.rejectedWith(SerializerError);
+  }
 
-        expect(error.message).to.have.string(
-          'duplicate key value violates unique constraint "tv_series_imdb_id_unique"'
-        );
-      });
+  async testThrowErrorOnSQLException() {
+    this.stubFunction(this._database.tvSeries, '_connection')
+      .throws(new SerializerError());
 
-      it('should throw error on serialization error', async () => {
-        databaseTestHelper.mockClass(TVSerieSerializer, 'static')
-          .expects('fromJSON')
-          .throws(new SerializerError());
+    await expect(
+      this._database.tvSeries.create(this.tvSerie)
+    ).to.be.rejectedWith(SQLDatabaseException);
+  }
+}
 
-        await expect(
-          database.tvSeries.create(tvSerie)
-        ).to.be.rejectedWith(SerializerError);
-      });
+export class FindByIdTest extends TVStoreTest {
+  async setUp() {
+    super.setUp();
 
-      it('should throw error on unexpected sql exception', async () => {
-        databaseTestHelper.stubFunction(database.tvSeries, '_connection')
-          .throws(new SerializerError());
+    this.tvSeries = await this.createTVSeries(
+      this._database,
+      [
+        { name: 'Steven Universe', plot: 'A Stone Kid' },
+        { name: 'Adventure Time', plot: 'A Stoned Kid' },
+        { name: 'Gravity Falls', plot: 'Another Stoned Kids' }
+      ]
+    );
+  }
 
-        await expect(
-          database.tvSeries.create(tvSerie)
-        ).to.be.rejectedWith(SQLDatabaseException);
-      });
-    });
+  async testFindTVSerieById() {
+    const tvSerieFound = await this._database.tvSeries.findById(this.tvSeries[2].id);
 
-    describe('#findById', () => {
-      let tvSerie;
+    expect(tvSerieFound).to.be.instanceOf(TVSerie);
+    expect(tvSerieFound.id).to.be.equal(this.tvSeries[2].id);
+    expect(tvSerieFound.name).to.be.equal('Gravity Falls');
+    expect(tvSerieFound.plot).to.be.equal('Another Stoned Kids');
+  }
 
-      beforeEach(async () => {
-        await databaseTestHelper.createTVSerie(
-          database,
-          { name: 'Steven Universe', plot: 'A Stone Kid' }
-        );
-        await databaseTestHelper.createTVSerie(
-          database,
-          { name: 'Adventure Time', plot: 'A Stoned Kid' }
-        );
-        tvSerie = await databaseTestHelper.createTVSerie(
-          database,
-          { name: 'Gravity Falls', plot: 'Another Stoned Kids' }
-        );
-      });
+  async testThrowsErrorWhenTVSerieIsNotFound() {
+    await expect(
+      this._database.tvSeries.findById(this.generateUUID())
+    ).to.be.rejectedWith(TVSerieNotFound);
+  }
 
-      it('should find tv serie by its id', async () => {
-        const tvSerieFound = await database.tvSeries.findById(tvSerie.id);
+  async testThrowsErrorOnUnexpectedError() {
+    this.stubFunction(this._database.tvSeries, '_connection')
+      .throws(new SerializerError());
 
-        expect(tvSerieFound).to.be.instanceOf(TVSerie);
-        expect(tvSerieFound.id).to.be.equal(tvSerie.id);
-        expect(tvSerieFound.name).to.be.equal('Gravity Falls');
-        expect(tvSerieFound.plot).to.be.equal('Another Stoned Kids');
-      });
+    await expect(
+      this._database.tvSeries.findById(this.tvSeries[2].id)
+    ).to.be.rejectedWith(SQLDatabaseException);
+  }
+}
 
-      it('should throws error when tv serie does not exist', async () => {
-        await expect(
-          database.tvSeries.findById(databaseTestHelper.generateUUID())
-        ).to.be.rejectedWith(TVSerieNotFound);
-      });
+export class FindTest extends TVStoreTest {
+  async testFindAllTVSeries() {
+    await this.createTVSeries(this._database, 5);
 
-      it('should throws error on unexpected error', async () => {
-        databaseTestHelper.stubFunction(database.tvSeries, '_connection')
-          .throws(new SerializerError());
+    const { totalItems, items: tvSeries } = await this._database.tvSeries.find();
 
-        await expect(
-          database.tvSeries.findById(tvSerie.id)
-        ).to.be.rejectedWith(SQLDatabaseException);
-      });
-    });
+    expect(tvSeries).to.have.lengthOf(5);
+    expect(totalItems).to.be.equal(5);
+    tvSeries.forEach((tvSerie) => expect(tvSerie).to.be.instanceOf(TVSerie));
+  }
 
-    describe('#find', () => {
-      it('should find all tv series stored', async () => {
-        await databaseTestHelper.createTVSeries(database, 5);
+  async testFindWithSkip() {
+    await this.createTVSeries(
+      this._database,
+      [
+        { name: 'How I Met Your Mother' },
+        { name: 'How I Met Your Father' },
+        { name: 'Star Wars: Clone Wars' },
+        { name: 'Star Wars: Rebels' },
+        { name: 'Friends' }
+      ]
+    );
 
-        const { totalItems, items: tvSeries } = await database.tvSeries.find();
+    const { totalItems, items: tvSeries } = await this._database.tvSeries.find({ skip: 2 });
 
-        expect(tvSeries).to.have.lengthOf(5);
-        expect(totalItems).to.be.equal(5);
-        tvSeries.forEach((tvSerie) => expect(tvSerie).to.be.instanceOf(TVSerie));
-      });
+    expect(tvSeries).to.have.lengthOf(3);
+    expect(totalItems).to.be.equal(5);
+    expect(tvSeries[0].name).to.be.equal('Star Wars: Clone Wars');
+    expect(tvSeries[1].name).to.be.equal('Star Wars: Rebels');
+    expect(tvSeries[2].name).to.be.equal('Friends');
+  }
 
-      it('should get items with skip', async () => {
-        await databaseTestHelper.createTVSeries(
-          database,
-          [
-            { name: 'How I Met Your Mother' },
-            { name: 'How I Met Your Father' },
-            { name: 'Star Wars: Clone Wars' },
-            { name: 'Star Wars: Rebels' },
-            { name: 'Friends' }
-          ]
-        );
+  async testFindWithLimit() {
+    await this.createTVSeries(
+      this._database,
+      [
+        { name: 'How I Met Your Mother' },
+        { name: 'How I Met Your Father' },
+        { name: 'Star Wars: Clone Wars' },
+        { name: 'Star Wars: Rebels' },
+        { name: 'Friends' }
+      ]
+    );
 
-        const { totalItems, items: tvSeries } = await database.tvSeries.find({ skip: 2 });
+    const { totalItems, items: tvSeries } = await this._database.tvSeries.find({ limit: 3 });
 
-        expect(tvSeries).to.have.lengthOf(3);
-        expect(totalItems).to.be.equal(5);
-        expect(tvSeries[0].name).to.be.equal('Star Wars: Clone Wars');
-        expect(tvSeries[1].name).to.be.equal('Star Wars: Rebels');
-        expect(tvSeries[2].name).to.be.equal('Friends');
-      });
+    expect(tvSeries).to.have.lengthOf(3);
+    expect(totalItems).to.be.equal(5);
+    expect(tvSeries[0].name).to.be.equal('How I Met Your Mother');
+    expect(tvSeries[1].name).to.be.equal('How I Met Your Father');
+    expect(tvSeries[2].name).to.be.equal('Star Wars: Clone Wars');
+  }
 
-      it('should get items with limit', async () => {
-        await databaseTestHelper.createTVSeries(
-          database,
-          [
-            { name: 'How I Met Your Mother' },
-            { name: 'How I Met Your Father' },
-            { name: 'Star Wars: Clone Wars' },
-            { name: 'Star Wars: Rebels' },
-            { name: 'Friends' }
-          ]
-        );
+  async testFindWithSkipAndLimit() {
+    await this.createTVSeries(
+      this._database,
+      [
+        { name: 'How I Met Your Mother' },
+        { name: 'How I Met Your Father' },
+        { name: 'Star Wars: Clone Wars' },
+        { name: 'Star Wars: Rebels' },
+        { name: 'Friends' }
+      ]
+    );
 
-        const { totalItems, items: tvSeries } = await database.tvSeries.find({ limit: 3 });
+    const { totalItems, items: tvSeries } = await this._database.tvSeries.find(
+      { limit: 2, skip: 1 }
+    );
 
-        expect(tvSeries).to.have.lengthOf(3);
-        expect(totalItems).to.be.equal(5);
-        expect(tvSeries[0].name).to.be.equal('How I Met Your Mother');
-        expect(tvSeries[1].name).to.be.equal('How I Met Your Father');
-        expect(tvSeries[2].name).to.be.equal('Star Wars: Clone Wars');
-      });
+    expect(tvSeries).to.have.lengthOf(2);
+    expect(totalItems).to.be.equal(5);
+    expect(tvSeries[0].name).to.be.equal('How I Met Your Father');
+    expect(tvSeries[1].name).to.be.equal('Star Wars: Clone Wars');
+  }
 
-      it('should get items with skip and limit', async () => {
-        await databaseTestHelper.createTVSeries(
-          database,
-          [
-            { name: 'How I Met Your Mother' },
-            { name: 'How I Met Your Father' },
-            { name: 'Star Wars: Clone Wars' },
-            { name: 'Star Wars: Rebels' },
-            { name: 'Friends' }
-          ]
-        );
+  async testReturnEmptyListWhenThereIsNotTVSeries() {
+    const { totalItems, items: tvSeries } = await this._database.tvSeries.find();
 
-        const { totalItems, items: tvSeries } = await database.tvSeries.find({ limit: 2, skip: 1 });
+    expect(tvSeries).to.be.empty;
+    expect(totalItems).to.be.equal(0);
+  }
 
-        expect(tvSeries).to.have.lengthOf(2);
-        expect(totalItems).to.be.equal(5);
-        expect(tvSeries[0].name).to.be.equal('How I Met Your Father');
-        expect(tvSeries[1].name).to.be.equal('Star Wars: Clone Wars');
-      });
+  async testThrowErrorOnUnexpectedError() {
+    this.stubFunction(this._database.tvSeries, '_connection')
+      .throws(new SerializerError());
 
-      it('should return empty array when there is no tv series', async () => {
-        const { totalItems, items: tvSeries } = await database.tvSeries.find();
-
-        expect(tvSeries).to.be.empty;
-        expect(totalItems).to.be.equal(0);
-      });
-
-      it('should return handled error on unexpected error', async () => {
-        databaseTestHelper.stubFunction(database.tvSeries, '_connection')
-          .throws(new SerializerError());
-
-        await expect(
-          database.tvSeries.find()
-        ).to.be.rejectedWith(SQLDatabaseException);
-      });
-    });
-  });
-});
+    await expect(
+      this._database.tvSeries.find()
+    ).to.be.rejectedWith(SQLDatabaseException);
+  }
+}

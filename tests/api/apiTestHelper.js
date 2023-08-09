@@ -1,11 +1,19 @@
 import request from 'supertest';
 
-import buildTestApp from './testApp';
-import TestHelper from '../testHelper';
+import TestCase from '../testHelper';
+import imdbFactory from '../../app/imdb/factory';
+import MoviesFreakApp from '../../api';
 
-export default class APITestHelper extends TestHelper {
+export default class APITestCase extends TestCase {
   buildTestApp(db) {
-    this._app = buildTestApp(db);
+    const imdbGateway = imdbFactory('dummy');
+    const moviesFreakApp = new MoviesFreakApp(db, imdbGateway);
+
+    moviesFreakApp.build();
+
+    this._app = moviesFreakApp._app;
+
+    this._app.imdb = imdbGateway;
 
     return this._app;
   }
@@ -17,7 +25,7 @@ export default class APITestHelper extends TestHelper {
       statusCode = 201
     } = params;
 
-    const { body } = await request(this._app._app)
+    const { body } = await request(this._app)
       .post(`/movies-freak/api/v1${path}`)
       .send(payload)
       .expect(statusCode);
@@ -32,7 +40,7 @@ export default class APITestHelper extends TestHelper {
       statusCode = 200
     } = params;
 
-    const { body } = await request(this._app._app)
+    const { body } = await request(this._app)
       .get(`/movies-freak/api/v1${path}`)
       .query(query)
       .expect(statusCode);

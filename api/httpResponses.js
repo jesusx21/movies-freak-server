@@ -11,7 +11,7 @@ export class HTTPError extends VError {
 
     let [code, error] = args;
 
-    if (code !== 'string') {
+    if (typeof code !== 'string') {
       [error] = args;
       code = 'UNEXPECTED_ERROR';
     }
@@ -30,7 +30,7 @@ export class HTTPError extends VError {
       code: this._code
     };
 
-    if (this._isDevelopmentEnv()) {
+    if (this._isDevelopmentEnv() && this._error) {
       payload.error = this.cause;
     }
 
@@ -38,6 +38,10 @@ export class HTTPError extends VError {
   }
 
   get cause() {
+    if (!this._error) {
+      return {};
+    }
+
     return {
       name: this._error.constructor.name,
       ...this._error

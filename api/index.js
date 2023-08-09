@@ -4,7 +4,8 @@ import morgan from 'morgan';
 import 'express-async-errors';
 
 import { MoviesFreakAPI } from './v1/resources';
-import { HTTPError } from './httpResponses';
+import { HTTPError, HTTPInternalError } from './httpResponses';
+import Presenters from './v1/presenters';
 
 const RESOURCE_EVENTS_SUPPORTED = [
   'onPost',
@@ -14,12 +15,15 @@ const RESOURCE_EVENTS_SUPPORTED = [
   'onDelete'
 ];
 
+const ENDPOINTS = {};
+
 export default class MoviesFreakApp {
   constructor(database, imdbGateway) {
     this._app = express();
 
     this._database = database;
     this._imdb = imdbGateway;
+    this._presenters = new Presenters();
 
     this._apiPath = '/movies-freak/api';
     this._router = express.Router();
@@ -29,9 +33,13 @@ export default class MoviesFreakApp {
     this._app.use(express.json());
     this._app.use(cors());
     this._app.use(this._setHeaders());
-    this._app.use(this._setRequestLogger());
+
+    if (!this._isTestEnv()) {
+      this._app.use(this._setRequestLogger());
+    }
 
     this._buildAPI();
+    this._buildEndpoints();
 
     this._app.use('/movies-freak/api', this._router);
     this._app.use(this._setUnexpectedError());
@@ -65,24 +73,42 @@ export default class MoviesFreakApp {
   }
 
   registerResource(resourcePath, resourceInstance, middlewares = []) {
-    const resourceRouter = express.Router();
+    const [resource, path = ''] = resourcePath.split('/');
 
-    RESOURCE_EVENTS_SUPPORTED.forEach((eventName) => {
-      const event = resourceInstance[eventName];
-      const verb = eventName.substring(2).toLowerCase();
+    if (!ENDPOINTS[resource]) {
+      ENDPOINTS[resource] = [];
+    }
 
-      if (!event) {
-        return;
-      }
-
-      resourceRouter[verb](
-        '/',
-        middlewares,
-        this._buildController(event.bind(resourceInstance))
-      );
+    ENDPOINTS[resource].push({
+      path,
+      resourceInstance,
+      middlewares
     });
+  }
 
-    this._router.use(`/v1/${resourcePath}`, resourceRouter);
+  _buildEndpoints() {
+    Object.keys(ENDPOINTS).forEach((resource) => {
+      const resourceRouter = express.Router();
+      const endpoints = ENDPOINTS[resource];
+
+      endpoints.forEach(({ path, resourceInstance, middlewares }) => {
+        RESOURCE_EVENTS_SUPPORTED.forEach((eventName) => {
+          const verb = eventName.substring(2).toLowerCase();
+
+          if (!resourceInstance[eventName]) {
+            return;
+          }
+
+          resourceRouter[verb](
+            `/${path}`,
+            middlewares,
+            this._buildController(resourceInstance, eventName)
+          );
+        });
+      });
+
+      this._router.use(`/v1/${resource}`, resourceRouter);
+    });
   }
 
   _setHeaders() {
@@ -106,8 +132,10 @@ export default class MoviesFreakApp {
 
       const payload = { code: 'UNEXPECTED_ERROR' };
 
-      if (this.isTestEnv()) {
+      if (this._isTestEnv()) {
         payload.error = error;
+        // eslint-disable-next-line no-console
+        console.error(error);
       }
 
       res.status(500).send(payload);
@@ -132,13 +160,22 @@ export default class MoviesFreakApp {
     return process.env.NODE_ENV !== 'production';
   }
 
-  _buildController(fn) {
+  _buildController(resource, tokenName) {
     return async (req, res) => {
       let result;
 
+      resource.setTitle('database', this._database);
+      resource.setTitle('imdb', this._imdb);
+      resource.setTitle('presenters', this._presenters);
+
       try {
-        result = await fn(req);
+        result = await resource[tokenName](req);
       } catch (error) {
+        if (!(error instanceof HTTPError)) {
+          // eslint-disable-next-line no-ex-assign
+          error = new HTTPInternalError(error);
+        }
+
         result = {
           status: error.statusCode,
           data: error.payload

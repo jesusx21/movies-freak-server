@@ -6,7 +6,7 @@ import { v4 as uuid } from 'uuid';
 
 import * as Classpuccino from '../classpuccino';
 import buildFixtureGenerator from './fixtures';
-import { Film, TVSerie } from '../app/moviesFreak/entities';
+import { Film, TVSerie, TVSeason } from '../app/moviesFreak/entities';
 import getDatabase from '../database/factory';
 
 chai.use(chaiAsPromised);
@@ -147,6 +147,26 @@ export default class TestCase extends Classpuccino.TestCase {
 
       // eslint-disable-next-line no-await-in-loop
       result.push(await db.tvSeries.create(tvSerie));
+    }
+
+    return result;
+  }
+
+  async createTVSeasons(db, tvSerieId) {
+    const options = this._getFixturesGeneratorOptions(...arguments);
+    options.type = 'tvSeason';
+
+    const fixtures = this._fixturesGenerator.generate(options);
+
+    const result = [];
+
+    // For is use instead of map to make sure the creation respects the index order
+    // eslint-disable-next-line no-restricted-syntax
+    for (const tvSeasonData of fixtures) {
+      const tvSeason = new TVSeason({ ...tvSeasonData, tvSerieId });
+
+      // eslint-disable-next-line no-await-in-loop
+      result.push(await db.tvSeasons.create(tvSeason));
     }
 
     return result;

@@ -32,5 +32,11 @@ export default class TVSerie extends Entity {
     this.imdbRating = imdbRating;
     this.totalSeasons = totalSeasons;
     this.releasedAt = releasedAt;
+
+    this._tvSeasons = [];
+  }
+
+  addTvSeason(tvSeason) {
+    this._tvSeasons.push(tvSeason);
   }
 }

@@ -26,31 +26,35 @@ export default class TestRunner {
       // eslint-disable-next-line import/no-dynamic-require, global-require
       const TestClases = require(testFileDir);
 
+      const testModule = testFileDir.split('../')[1]
+        .split('.')[0]
+        .split('/')
+        .join('.');
+
+      this.errorAndFails[testModule] = {};
+
       // eslint-disable-next-line no-restricted-syntax
       for (const Test of Object.values(TestClases)) {
-        const testModule = testFileDir.split('../')[1]
-          .split('.')[0]
-          .split('/')
-          .join('.');
-
         // eslint-disable-next-line no-await-in-loop
         await this._runTest(Test, testModule);
       }
     }
 
-    Object.keys(this.errorAndFails).forEach((testClassName) => {
-      Object.keys(this.errorAndFails[testClassName]).forEach(functionName => {
-        const { fail, error } = this.errorAndFails[testClassName][functionName];
+    Object.keys(this.errorAndFails).forEach((testModule) => {
+      Object.keys(this.errorAndFails[testModule]).forEach((testClassName) => {
+        Object.keys(this.errorAndFails[testModule][testClassName]).forEach(functionName => {
+          const { fail, error } = this.errorAndFails[testModule][testClassName][functionName];
 
-        if (fail) {
-          console.log(`\n${testClassName}.${functionName}`.yellow);
-          console.log('Fail:'.gray, fail.stack.gray);
-        }
+          if (fail) {
+            console.log(`\n${testClassName}.${functionName}`.yellow);
+            console.log('Fail:'.gray, fail.stack.gray);
+          }
 
-        if (error) {
-          console.log(`\n${testClassName}.${functionName}`.red);
-          console.log('Error:'.gray, error.stack.gray);
-        }
+          if (error) {
+            console.log(`\n${testClassName}.${functionName}`.red);
+            console.log('Error:'.gray, error.stack.gray);
+          }
+        });
       });
     });
 
@@ -72,7 +76,7 @@ export default class TestRunner {
 
     const functions = Object.getOwnPropertyNames(Test.prototype);
 
-    this.errorAndFails[testClassName] = {};
+    this.errorAndFails[testModule][testClassName] = {};
 
     console.log(`\n${testModule}.${test.constructor.name}`.gray.bold);
     // eslint-disable-next-line no-restricted-syntax
@@ -82,7 +86,7 @@ export default class TestRunner {
         continue;
       }
 
-      this.errorAndFails[testClassName][functionName] = {};
+      this.errorAndFails[testModule][testClassName][functionName] = {};
 
       try {
         await test.setUp();
@@ -98,11 +102,11 @@ export default class TestRunner {
         if (error instanceof AssertionError) {
           console.log(`${functionName.padEnd(99, '.')}.fail`.yellow);
 
-          this.errorAndFails[testClassName][functionName].fail = error;
+          this.errorAndFails[testModule][testClassName][functionName].fail = error;
           this.totalFailed += 1;
         } else {
           console.log(`${functionName.padEnd(99, '.')}.error`.red);
-          this.errorAndFails[testClassName][functionName].error = error;
+          this.errorAndFails[testModule][testClassName][functionName].error = error;
           this.totalErrors += 1;
         }
       }

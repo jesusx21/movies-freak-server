@@ -92,7 +92,7 @@ export class CreateTVSerieTest extends TVStoreTest {
 
   async testThrowErrorOnSQLException() {
     this.stubFunction(this._database.tvSeries, '_connection')
-      .throws(new SerializerError());
+      .throws(new Error());
 
     await expect(
       this._database.tvSeries.create(this.tvSerie)

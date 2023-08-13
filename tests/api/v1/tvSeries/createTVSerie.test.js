@@ -20,23 +20,23 @@ export default class CreateTVSerieTest extends APITestCase {
     });
 
     expect(result.id).to.exist;
-    expect(result.imdbId).to.be.equal('tt0111161');
-    expect(result.name).to.be.equal('The Shawshank Redemption');
+    expect(result.imdbId).to.be.equal('tt0460649');
+    expect(result.name).to.be.equal('How I Met Your Mother');
     expect(result.plot).to.be.equal(
-      'Over the course of several years, two convicts form a friendship, '
-      + 'seeking consolation and, eventually, redemption through basic compassion.'
+      'A father recounts to his children - through a series of flashbacks - '
+      + 'the journey he and his four best friends took leading up to him meeting their mother.'
     );
-    expect(result.years).to.be.deep.equal({ from: '1994', to: '1995' });
-    expect(result.rated).to.be.equal('R');
-    expect(result.genre).to.be.deep.equal(['Drama']);
-    expect(result.writers).to.be.deep.equal(['Stephen King', 'Frank Darabont']);
-    expect(result.actors).to.be.deep.equal(['Tim Robbins', 'Morgan Freeman', 'Bob Gunton']);
+    expect(result.years).to.be.deep.equal({ from: '2005', to: '2014' });
+    expect(result.rated).to.be.equal('TV-14');
+    expect(result.genre).to.be.deep.equal(['Comedy', 'Drama', 'Romance']);
+    expect(result.writers).to.be.deep.equal(['Carter Bays', 'Craig Thomas']);
+    expect(result.actors).to.be.deep.equal(['Josh Radnor', 'Jason Segel', 'Cobie Smulders']);
     expect(result.poster).to.be.equal(
-      'https://m.media-amazon.com/images/M/MV5BNDE3ODcxYzMtY2YzZC00NmNlLWJiNDMtZ'
-      + 'DViZWM2MzIxZDYwXkEyXkFqcGdeQXVyNjAwNDUxODI@._V1_SX300.jpg'
+      'https://m.media-amazon.com/images/M/MV5BNjg1MDQ5MjQ2N15BMl5'
+      + 'BanBnXkFtZTYwNjI5NjA3._V1_SX300.jpg'
     );
-    expect(result.imdbRating).to.be.equal('9.3/10');
-    expect(result.totalSeasons).to.be.equal(10);
+    expect(result.imdbRating).to.be.equal('8.3/10');
+    expect(result.totalSeasons).to.be.equal(9);
   }
 
   async testReturnHandledErrorOnUnexpectedError() {

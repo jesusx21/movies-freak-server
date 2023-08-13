@@ -1,5 +1,5 @@
-import DummyGateway from './dummyGateway';
-import OMDBGateway from './omdbGateway';
+import DummyGateway from './gateways/dummy/dummyGateway';
+import OMDBGateway from './gateways/omdb/omdbGateway';
 import { DriverNotSupported } from './errors';
 
 export default function imdbFactory(driverName, host = null, apiKey = null) {

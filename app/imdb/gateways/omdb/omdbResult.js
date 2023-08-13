@@ -1,4 +1,4 @@
-import { ResultIsNotACollection } from './errors';
+import { ResultIsNotACollection } from '../../errors';
 
 class Rating {
   constructor(source, value) {
@@ -33,24 +33,6 @@ export default class OMDBResult {
 
   get title() {
     return this._currentResponse.Title;
-  }
-
-  get year() {
-    if (!this.isMovie()) {
-      return null;
-    }
-
-    return this._currentResponse.Year;
-  }
-
-  get years() {
-    if (!this.isSerie()) {
-      return {};
-    }
-
-    const [from, to] = this._currentResponse.Year.split('–');
-
-    return { from, to };
   }
 
   get rated() {
@@ -121,36 +103,7 @@ export default class OMDBResult {
   }
 
   get type() {
-    return this._currentResponse.Type;
-  }
-
-  get releasedAt() {
-    if (!this.isSerie()) {
-      return null;
-    }
-
-    const [day, month, year] = this._currentResponse.Released.split(' ');
-
-    const months = {
-      Jan: 1,
-      Feb: 2,
-      Mar: 3,
-      Apr: 4,
-      May: 5,
-      Jun: 6,
-      Jul: 7,
-      Aug: 8,
-      Sep: 9,
-      Oct: 10,
-      Nov: 11,
-      Dec: 12
-    };
-
-    return new Date(
-      Number(year),
-      months[month],
-      Number(day)
-    );
+    return this._type;
   }
 
   get production() {
@@ -167,14 +120,6 @@ export default class OMDBResult {
     return this._error;
   }
 
-  get totalSeasons() {
-    if (!this.isSerie()) {
-      return '';
-    }
-
-    return this._currentResponse.totalSeasons;
-  }
-
   get imdbRating() {
     const ratings = this.ratings.filter((rating) => rating.type === 'imdbRating');
     const rating = ratings[0];
@@ -183,11 +128,11 @@ export default class OMDBResult {
   }
 
   isMovie() {
-    return this._currentResponse.Type === 'movie';
+    return this._type === 'film';
   }
 
   isSerie() {
-    return this._currentResponse.Type === 'series';
+    return this._type === 'serie';
   }
 
   isRequestSuccesful() {

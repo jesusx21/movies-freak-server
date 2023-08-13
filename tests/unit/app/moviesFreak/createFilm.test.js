@@ -2,8 +2,8 @@ import { expect } from 'chai';
 
 import TestCase from '../../../testHelper';
 
-import DummyGateway from '../../../../app/imdb/dummyGateway';
 import CreateFilm from '../../../../app/moviesFreak/createFilm';
+import DummyGateway from '../../../../app/imdb/gateways/dummy/dummyGateway';
 import { Film } from '../../../../app/moviesFreak/entities';
 import { CouldNotCreateFilm } from '../../../../app/moviesFreak/errors';
 

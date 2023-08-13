@@ -1,4 +1,4 @@
-import { ResultIsNotACollection } from './errors';
+import { ResultIsNotACollection } from '../../errors';
 
 export class Rating {
   constructor(source, value) {

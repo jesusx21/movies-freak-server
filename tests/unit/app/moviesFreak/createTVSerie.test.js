@@ -3,11 +3,11 @@ import { expect } from 'chai';
 import TestCase from '../../../testHelper';
 import IMDB_TV_SERIE_RESPONSE from '../../data/imdbTVSerieResponse';
 
-import DummyGateway from '../../../../app/imdb/dummyGateway';
-import OMDBResult from '../../../../app/imdb/omdbResult';
 import CreateTVSerie from '../../../../app/moviesFreak/createTVSerie';
-import { TVSerie } from '../../../../app/moviesFreak/entities';
+import DummyGateway from '../../../../app/imdb/gateways/dummy/dummyGateway';
 import { CouldNotCreateTVSerie } from '../../../../app/moviesFreak/errors';
+import { TVSerie } from '../../../../app/moviesFreak/entities';
+import OMDBTVSerieResult from '../../../../app/imdb/gateways/omdb/tvSerieResult';
 
 const IMDB_ID = 'tt0212671';
 
@@ -22,7 +22,7 @@ export default class CreateTVSerieTest extends TestCase {
   }
 
   async testCreateTVSerie() {
-    const omdbResult = new OMDBResult(IMDB_TV_SERIE_RESPONSE.data);
+    const omdbResult = new OMDBTVSerieResult(IMDB_TV_SERIE_RESPONSE.data);
 
     this.stubFunction(this.useCase._imdb, 'fetchTVSerieById')
       .resolves(omdbResult);
@@ -50,7 +50,7 @@ export default class CreateTVSerieTest extends TestCase {
       + 'I2LWFjOGItMDM3OTA3YjUwNjAxXkEyXkFqcGdeQXVyNzA5NjUyNjM@._V1_SX300.jpg'
     );
     expect(tvSerie.imdbRating).to.be.equal('8.2/10');
-    expect(tvSerie.totalSeasons).to.be.equal('7');
+    expect(tvSerie.totalSeasons).to.be.equal(7);
     expect(tvSerie.releasedAt).to.be.instanceOf(Date);
   }
 

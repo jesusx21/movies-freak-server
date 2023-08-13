@@ -3,8 +3,8 @@ import { expect } from 'chai';
 import TestCase from '../../../testHelper';
 
 import imdbFactory from '../../../../app/imdb/factory';
-import DummyGateway from '../../../../app/imdb/dummyGateway';
-import OMDBGateway from '../../../../app/imdb/omdbGateway';
+import DummyGateway from '../../../../app/imdb/gateways/dummy/dummyGateway';
+import OMDBGateway from '../../../../app/imdb/gateways/omdb/omdbGateway';
 import { DriverNotSupported } from '../../../../app/imdb/errors';
 
 export default class IMDBFactoryTest extends TestCase {

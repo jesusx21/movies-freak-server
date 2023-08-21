@@ -6,8 +6,13 @@ import { v4 as uuid } from 'uuid';
 
 import * as Classpuccino from '../classpuccino';
 import buildFixtureGenerator from './fixtures';
-import { Film, TVSerie, TVSeason } from '../app/moviesFreak/entities';
 import getDatabase from '../database/factory';
+import {
+  Film,
+  TVSerie,
+  TVSeason,
+  TVEpisode
+} from '../app/moviesFreak/entities';
 
 chai.use(chaiAsPromised);
 chai.use(sinonChai);
@@ -152,6 +157,17 @@ export default class TestCase extends Classpuccino.TestCase {
     return result;
   }
 
+  async createTVSeason(db, tvSerieId, data = {}) {
+    const [tvSeasonData] = this._fixturesGenerator.generate({
+      type: 'tvSeason',
+      recipe: [{ ...data, tvSerieId }]
+    });
+
+    const tvSeason = new TVSeason(tvSeasonData);
+
+    return db.tvSeasons.create(tvSeason);
+  }
+
   async createTVSeasons(db, tvSerieId) {
     const options = this._getFixturesGeneratorOptions(...arguments);
     options.type = 'tvSeason';
@@ -167,6 +183,37 @@ export default class TestCase extends Classpuccino.TestCase {
 
       // eslint-disable-next-line no-await-in-loop
       result.push(await db.tvSeasons.create(tvSeason));
+    }
+
+    return result;
+  }
+
+  async createTVEpisode(db, tvSerieId, tvSeasonId, data = {}) {
+    const [tvEpisodeData] = this._fixturesGenerator.generate({
+      type: 'tvEpisode',
+      recipe: [{ ...data, tvSerieId, tvSeasonId }]
+    });
+
+    const tvEpisode = new TVEpisode(tvEpisodeData);
+
+    return db.tvEpisodes.create(tvEpisode);
+  }
+
+  async createTVEpisodes(db, tvSerieId, tvSeasonId) {
+    const options = this._getFixturesGeneratorOptions(...arguments);
+    options.type = 'tvEpisode';
+
+    const fixtures = this._fixturesGenerator.generate(options);
+
+    const result = [];
+
+    // For is use instead of map to make sure the creation respects the index order
+    // eslint-disable-next-line no-restricted-syntax
+    for (const tvEpisodeData of fixtures) {
+      const tvEpisode = new TVEpisode({ ...tvEpisodeData, tvSerieId, tvSeasonId });
+
+      // eslint-disable-next-line no-await-in-loop
+      result.push(await db.tvEpisodes.create(tvEpisode));
     }
 
     return result;

@@ -8,11 +8,13 @@ import IMDB_TV_SEASON_RESPONSE from '../../data/imdbTVSeasonResponse';
 import IMDB_TV_EPISODE_RESPONSE from '../../data/imdbTVEpisodeResponse';
 
 import OMDBGateway from '../../../../app/imdb/gateways/omdb/omdbGateway';
-import OMDBTVSeasonResult from '../../../../app/imdb/gateways/omdb/result/tvSesonResult';
-import OMDBFilmResult from '../../../../app/imdb/gateways/omdb/result/filmResult';
-import OMDBTVSerieResult from '../../../../app/imdb/gateways/omdb/result/tvSerieResult';
-import OMDBTVEpisodeResult from '../../../../app/imdb/gateways/omdb/result/tvEpisodeResult';
 import { IMDBError } from '../../../../app/imdb/errors';
+import {
+  OMDBFilmResult,
+  OMDBTVEpisodeResult,
+  OMDBTVSeasonResult,
+  OMDBTVSerieResult
+} from '../../../../app/imdb/gateways/omdb/result';
 
 class OMDBGatewayTest extends TestCase {
   setUp() {

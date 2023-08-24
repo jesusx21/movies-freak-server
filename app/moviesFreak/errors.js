@@ -21,3 +21,6 @@ export class CouldNotCreateTVSerie extends MoviesFreakError {
     this.cause = cause;
   }
 }
+
+export class CouldNotCreateTVSeasons extends CouldNotCreateTVSerie {}
+export class CouldNotCreateTVEpisodes extends CouldNotCreateTVSeasons {}

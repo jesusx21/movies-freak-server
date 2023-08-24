@@ -21,6 +21,7 @@ module.exports = {
     'class-methods-use-this': 'off',
     'prefer-rest-params': 'off',
     'no-underscore-dangle': 'off',
+    'no-use-before-define': 'off',
     'func-names': ['error', 'never'],
     'import/prefer-default-export': 'off',
     'no-unused-expressions': 0,

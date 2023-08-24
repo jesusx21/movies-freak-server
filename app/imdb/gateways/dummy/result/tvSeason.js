@@ -10,9 +10,7 @@ class Episode {
   }
 
   get releasedDate() {
-    const [year, month, day] = this._rawResponse.releasedDate;
-
-    return new Date(Number(year), Number(month), Number(day));
+    return this._rawResponse.releasedDate;
   }
 
   get numberOfEpisode() {
@@ -25,8 +23,8 @@ class Episode {
 }
 
 export default class DummyTVSeasonResult {
-  constructor(rawResponse) {
-    this._rawResponse = rawResponse;
+  constructor() {
+    this._rawResponse = this._getRawResponse();
     this._episodes = [];
   }
 

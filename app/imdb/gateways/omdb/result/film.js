@@ -1,4 +1,4 @@
-import OMDBResult from './omdbResult';
+import OMDBResult from './omdb';
 
 export default class OMDBFilmResult extends OMDBResult {
   constructor(rawResponse) {

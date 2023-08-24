@@ -1,11 +1,13 @@
 import axios from 'axios';
 
 import { IMDBError } from '../../errors';
-import OMDBFilmResult from './result/filmResult';
-import OMDBTVSerieResult from './result/tvSerieResult';
-import OMDBTVSeasonResult from './result/tvSesonResult';
-import OMDBTVEpisodeResult from './result/tvEpisodeResult';
-import OMDBResult from './result/omdbResult';
+import {
+  OMDBFilmResult,
+  OMDBResult,
+  OMDBTVEpisodeResult,
+  OMDBTVSeasonResult,
+  OMDBTVSerieResult
+} from './result';
 
 export default class OMDBGateway {
   constructor(host, apiKey) {

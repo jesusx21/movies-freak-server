@@ -1,13 +1,19 @@
 import { expect } from 'chai';
 
 import TestCase from '../../../testHelper';
+import IMDB_TV_EPISODE_RESPONSE from '../../data/imdbTVEpisodeResponse';
 import IMDB_TV_SERIE_RESPONSE from '../../data/imdbTVSerieResponse';
+import IMDB_TV_SEASON_RESPONSE from '../../data/imdbTVSeasonResponse';
 
 import CreateTVSerie from '../../../../app/moviesFreak/createTVSerie';
 import DummyGateway from '../../../../app/imdb/gateways/dummy/dummyGateway';
-import OMDBTVSerieResult from '../../../../app/imdb/gateways/omdb/result/tvSerieResult';
-import { CouldNotCreateTVSerie } from '../../../../app/moviesFreak/errors';
+import { CouldNotCreateTVSeasons, CouldNotCreateTVSerie } from '../../../../app/moviesFreak/errors';
 import { TVSerie } from '../../../../app/moviesFreak/entities';
+import {
+  OMDBTVEpisodeResult,
+  OMDBTVSeasonResult,
+  OMDBTVSerieResult
+} from '../../../../app/imdb/gateways/omdb/result';
 
 const IMDB_ID = 'tt0212671';
 
@@ -22,10 +28,18 @@ export default class CreateTVSerieTest extends TestCase {
   }
 
   async testCreateTVSerie() {
-    const omdbResult = new OMDBTVSerieResult(IMDB_TV_SERIE_RESPONSE.data);
+    const tvSerieResponse = new OMDBTVSerieResult(IMDB_TV_SERIE_RESPONSE.data);
 
     this.stubFunction(this.useCase._imdb, 'fetchTVSerieById')
-      .resolves(omdbResult);
+      .resolves(tvSerieResponse);
+
+    const tvSeasonResponse = new OMDBTVSeasonResult(IMDB_TV_SEASON_RESPONSE.data);
+    this.stubFunction(this.useCase._imdb, 'fetchTVSeasonBySerieId')
+      .resolves(tvSeasonResponse);
+
+    const tvEpisodeResponse = new OMDBTVEpisodeResult(IMDB_TV_EPISODE_RESPONSE.data);
+    this.stubFunction(this.useCase._imdb, 'fetchTVEpisodeById')
+      .resolves(tvEpisodeResponse);
 
     const tvSerie = await this.useCase.execute();
 
@@ -63,12 +77,30 @@ export default class CreateTVSerieTest extends TestCase {
     ).to.be.rejectedWith(CouldNotCreateTVSerie);
   }
 
-  async testThrowErrorWhenDatabaseFails() {
+  async testThrowErrorWhenSavingTVSerieFails() {
     this.stubFunction(this.useCase._database.tvSeries, 'create')
       .throws(new Error());
 
     await expect(
       this.useCase.execute()
     ).to.be.rejectedWith(CouldNotCreateTVSerie);
+  }
+
+  async testThrowErrorWhenSavingTVSeasonsFails() {
+    this.stubFunction(this.useCase._database.tvSeasons, 'create')
+      .throws(new Error());
+
+    await expect(
+      this.useCase.execute()
+    ).to.be.rejectedWith(CouldNotCreateTVSeasons);
+  }
+
+  async testThrowErrorWhenSavingTVEpisodesFails() {
+    this.stubFunction(this.useCase._database.tvEpisodes, 'create')
+      .throws(new Error());
+
+    await expect(
+      this.useCase.execute()
+    ).to.be.rejectedWith(CouldNotCreateTVSeasons);
   }
 }

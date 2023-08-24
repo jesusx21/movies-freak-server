@@ -10,4 +10,8 @@ export default class InMemoryDatabase {
     this.tvSeasons = new InMemoryTVSeasonStore();
     this.tvSeries = new InMemoryTVSeriesStore();
   }
+
+  async withTransaction(fn, ...args) {
+    return fn(this, ...args);
+  }
 }

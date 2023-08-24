@@ -1,4 +1,4 @@
-import DummyResult, { Rating } from './dummyResult';
+import DummyResult, { Rating } from './dummy';
 
 export default class DummyFilmResult extends DummyResult {
   constructor() {

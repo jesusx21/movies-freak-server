@@ -1,8 +1,11 @@
 /* eslint-disable no-unused-vars */
-import DummyFilmResult from './result/filmResult';
-import DummyTVEpisodeResult from './result/tvEpisodeResult';
-import DummyTVSeasonResult from './result/tvSeasonResult';
-import DummyTVSerieResult from './result/tvSerieResult';
+
+import {
+  DummyFilmResult,
+  DummyTVEpisodeResult,
+  DummyTVSeasonResult,
+  DummyTVSerieResult
+} from './result';
 
 export default class DummyGateway {
   fetchFilmById(_imdbId) {

@@ -5,9 +5,9 @@ import IMDB_TV_SERIE_RESPONSE from '../../data/imdbTVSerieResponse';
 
 import CreateTVSerie from '../../../../app/moviesFreak/createTVSerie';
 import DummyGateway from '../../../../app/imdb/gateways/dummy/dummyGateway';
+import OMDBTVSerieResult from '../../../../app/imdb/gateways/omdb/result/tvSerieResult';
 import { CouldNotCreateTVSerie } from '../../../../app/moviesFreak/errors';
 import { TVSerie } from '../../../../app/moviesFreak/entities';
-import OMDBTVSerieResult from '../../../../app/imdb/gateways/omdb/tvSerieResult';
 
 const IMDB_ID = 'tt0212671';
 

@@ -58,10 +58,6 @@ export default class DummyTVSeasonResult {
     return this._error;
   }
 
-  isRequestSuccesful() {
-    return JSON.parse(this._rawResponse?.Response?.toLowerCase());
-  }
-
   _getRawResponse() {
     return {
       title: 'How I Met Your Mother',

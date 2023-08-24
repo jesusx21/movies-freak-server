@@ -1,4 +1,6 @@
-import { ResultIsNotACollection } from '../../errors';
+import { ResultIsNotACollection } from '../../../errors';
+
+class NotImplemented extends Error {}
 
 export class Rating {
   constructor(source, value) {
@@ -45,32 +47,12 @@ export default class DummyResult {
     return this._currentResponse.title;
   }
 
-  get year() {
-    if (!this.isMovie()) {
-      return null;
-    }
-
-    return this._currentResponse.year;
-  }
-
-  get years() {
-    if (!this.isSerie()) {
-      return {};
-    }
-
-    return this._currentResponse.years;
-  }
-
   get rated() {
     return this._currentResponse.rated;
   }
 
   get released() {
     return this._currentResponse.released;
-  }
-
-  get releasedAt() {
-    return this._currentResponse.releasedAt;
   }
 
   get runtime() {
@@ -129,14 +111,6 @@ export default class DummyResult {
     return this._currentResponse.production;
   }
 
-  get totalSeasons() {
-    if (!this.isSerie()) {
-      return '';
-    }
-
-    return this._currentResponse.totalSeasons;
-  }
-
   get error() {
     return this._error;
   }
@@ -170,7 +144,7 @@ export default class DummyResult {
   }
 
   isSerie() {
-    return this._currentResponse.type === 'tvSerie';
+    return this._currentResponse.type === 'serie';
   }
 
   _setNextIndex() {
@@ -190,33 +164,34 @@ export default class DummyResult {
   }
 
   get _rawResponse() {
-    return {
-      title: 'The Shawshank Redemption',
-      year: '1994',
-      years: { from: '1994', to: '1995' },
-      rated: 'R',
-      released: '14 Oct 1994',
-      releasedAt: new Date(2015, 6, 23),
-      runtime: '142 min',
-      genre: ['Drama'],
-      director: 'Frank Darabont',
-      writers: ['Stephen King', 'Frank Darabont'],
-      actors: ['Tim Robbins', 'Morgan Freeman', 'Bob Gunton'],
-      plot: 'Over the course of several years, two convicts form a friendship, '
-        + 'seeking consolation and, eventually, redemption through basic compassion.',
-      language: 'English',
-      country: 'United States',
-      awards: 'Nominated for 7 Oscars. 21 wins & 42 nominations total',
-      poster: 'https://m.media-amazon.com/images/M/MV5BNDE3ODcxYzMtY2YzZC00NmNlLWJ'
-        + 'iNDMtZDViZWM2MzIxZDYwXkEyXkFqcGdeQXVyNjAwNDUxODI@._V1_SX300.jpg',
-      ratings: [
-        new Rating('Internet Movie Database', '9.3/10'),
-        new Rating('Rotten Tomatoes', '91%'),
-        new Rating('Metacritic', '82/100')
-      ],
-      imdbId: 'tt0111161',
-      totalSeasons: 10,
-      production: 'N/A'
-    };
+    throw new NotImplemented();
+    // return {
+    //   title: 'The Shawshank Redemption',
+    //   year: '1994',
+    //   years: { from: '1994', to: '1995' },
+    //   rated: 'R',
+    //   released: '14 Oct 1994',
+    //   releasedAt: new Date(2015, 6, 23),
+    //   runtime: '142 min',
+    //   genre: ['Drama'],
+    //   director: 'Frank Darabont',
+    //   writers: ['Stephen King', 'Frank Darabont'],
+    //   actors: ['Tim Robbins', 'Morgan Freeman', 'Bob Gunton'],
+    //   plot: 'Over the course of several years, two convicts form a friendship, '
+    //     + 'seeking consolation and, eventually, redemption through basic compassion.',
+    //   language: 'English',
+    //   country: 'United States',
+    //   awards: 'Nominated for 7 Oscars. 21 wins & 42 nominations total',
+    //   poster: 'https://m.media-amazon.com/images/M/MV5BNDE3ODcxYzMtY2YzZC00NmNlLWJ'
+    //     + 'iNDMtZDViZWM2MzIxZDYwXkEyXkFqcGdeQXVyNjAwNDUxODI@._V1_SX300.jpg',
+    //   ratings: [
+    //     new Rating('Internet Movie Database', '9.3/10'),
+    //     new Rating('Rotten Tomatoes', '91%'),
+    //     new Rating('Metacritic', '82/100')
+    //   ],
+    //   imdbId: 'tt0111161',
+    //   totalSeasons: 10,
+    //   production: 'N/A'
+    // };
   }
 }

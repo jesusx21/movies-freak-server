@@ -1,10 +1,11 @@
 import axios from 'axios';
 
-import OMDBResult from './omdbResult';
 import { IMDBError } from '../../errors';
-import OMDBTVSeasonResult from './tvSesonResult';
-import OMDBFilmResult from './filmResult';
-import OMDBTVSerieResult from './tvSerieResult';
+import OMDBFilmResult from './result/filmResult';
+import OMDBTVSerieResult from './result/tvSerieResult';
+import OMDBTVSeasonResult from './result/tvSesonResult';
+import OMDBTVEpisodeResult from './result/tvEpisodeResult';
+import OMDBResult from './result/omdbResult';
 
 export default class OMDBGateway {
   constructor(host, apiKey) {
@@ -40,6 +41,15 @@ export default class OMDBGateway {
     return this._request(query, 'season');
   }
 
+  fetchTVEpisodeById(imdbId) {
+    const query = {
+      i: imdbId,
+      type: 'episode'
+    };
+
+    return this._request(query, 'episode');
+  }
+
   async _request(query, type) {
     const params = Object.keys(query)
       .map((key) => `${key}=${query[key]}`)
@@ -65,6 +75,9 @@ export default class OMDBGateway {
         break;
       case 'season':
         omdbResult = new OMDBTVSeasonResult(response.data);
+        break;
+      case 'episode':
+        omdbResult = new OMDBTVEpisodeResult(response.data);
         break;
       default:
         omdbResult = new OMDBResult(response.data);

@@ -1,4 +1,4 @@
-import { ResultIsNotACollection } from '../../errors';
+import { ResultIsNotACollection } from '../../../errors';
 
 class Rating {
   constructor(source, value) {
@@ -133,6 +133,10 @@ export default class OMDBResult {
 
   isSerie() {
     return this._type === 'serie';
+  }
+
+  isEpisode() {
+    return this._type === 'episode';
   }
 
   isRequestSuccesful() {

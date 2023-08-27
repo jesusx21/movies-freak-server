@@ -116,6 +116,11 @@ export default class TestRunner {
   async _getTestFilesPath(testDir) {
     const testPath = testDir || this.testDir;
     const directoryPath = path.join(__dirname, `${testPath}`);
+
+    if (directoryPath.endsWith('.test.js')) {
+      return [testPath];
+    }
+
     const folders = fs.readdirSync(directoryPath);
 
     let testFiles = [];

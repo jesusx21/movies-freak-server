@@ -2,6 +2,7 @@ import InMemoryFilmsStore from './films';
 import InMemoryTVEpisodesStore from './tvEpisodes';
 import InMemoryTVSeasonStore from './tvSeasons';
 import InMemoryTVSeriesStore from './tvSeries';
+import InMemoryWatchlistStore from './watchlist';
 
 export default class InMemoryDatabase {
   constructor() {
@@ -9,6 +10,7 @@ export default class InMemoryDatabase {
     this.tvEpisodes = new InMemoryTVEpisodesStore();
     this.tvSeasons = new InMemoryTVSeasonStore();
     this.tvSeries = new InMemoryTVSeriesStore();
+    this.watchlist = new InMemoryWatchlistStore();
   }
 
   async withTransaction(fn, ...args) {

@@ -2,6 +2,7 @@ import SQLFilmsStore from './films';
 import SQLTVEpisodeStore from './tvEpisodes';
 import SQLTVSeason from './tvSeason';
 import SQLTVSeriesStore from './tvSeries';
+import SQLWatchlistsStore from './watchlists';
 
 export default class SQLDatabase {
   constructor(connection) {
@@ -11,6 +12,7 @@ export default class SQLDatabase {
     this.tvEpisodes = new SQLTVEpisodeStore(this.connection);
     this.tvSeasons = new SQLTVSeason(this.connection);
     this.tvSeries = new SQLTVSeriesStore(this.connection);
+    this.watchlists = new SQLWatchlistsStore(this.connection);
   }
 
   async withTransaction(fn, ...args) {

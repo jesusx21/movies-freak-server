@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
@@ -11,7 +12,8 @@ import {
   Film,
   TVSerie,
   TVSeason,
-  TVEpisode
+  TVEpisode,
+  Watchlist
 } from '../app/moviesFreak/entities';
 
 chai.use(chaiAsPromised);
@@ -157,10 +159,18 @@ export default class TestCase extends Classpuccino.TestCase {
     return result;
   }
 
-  async createTVSeason(db, tvSerieId, data = {}) {
+  async createTVSeason() {
+    const [db, ...params] = arguments;
+    let [tvSerie, data = {}] = params;
+
+    if (!(tvSerie instanceof TVSerie)) {
+      data = tvSerie || {};
+      tvSerie = await this.createTVSerie(db);
+    }
+
     const [tvSeasonData] = this._fixturesGenerator.generate({
       type: 'tvSeason',
-      recipe: [{ ...data, tvSerieId }]
+      recipe: [{ ...data, tvSerieId: tvSerie.id }]
     });
 
     const tvSeason = new TVSeason(tvSeasonData);
@@ -168,8 +178,16 @@ export default class TestCase extends Classpuccino.TestCase {
     return db.tvSeasons.create(tvSeason);
   }
 
-  async createTVSeasons(db, tvSerieId) {
-    const options = this._getFixturesGeneratorOptions(...arguments);
+  async createTVSeasons() {
+    const [db, ...params] = arguments;
+    let [tvSerie, ...args] = params;
+
+    if (!(tvSerie instanceof TVSerie)) {
+      args = params;
+      tvSerie = await this.createTVSerie(db);
+    }
+
+    const options = this._getFixturesGeneratorOptions(...args);
     options.type = 'tvSeason';
 
     const fixtures = this._fixturesGenerator.generate(options);
@@ -179,7 +197,7 @@ export default class TestCase extends Classpuccino.TestCase {
     // For is use instead of map to make sure the creation respects the index order
     // eslint-disable-next-line no-restricted-syntax
     for (const tvSeasonData of fixtures) {
-      const tvSeason = new TVSeason({ ...tvSeasonData, tvSerieId });
+      const tvSeason = new TVSeason({ ...tvSeasonData, tvSerieId: tvSerie.id });
 
       // eslint-disable-next-line no-await-in-loop
       result.push(await db.tvSeasons.create(tvSeason));
@@ -188,10 +206,22 @@ export default class TestCase extends Classpuccino.TestCase {
     return result;
   }
 
-  async createTVEpisode(db, tvSerieId, tvSeasonId, data = {}) {
+  async createTVEpisode() {
+    const [db, ...params] = arguments;
+    let [tvSeason, data = {}] = params;
+
+    if (!(tvSeason instanceof TVSeason)) {
+      data = tvSeason || {};
+      tvSeason = await this.createTVSeason(db);
+    }
+
     const [tvEpisodeData] = this._fixturesGenerator.generate({
       type: 'tvEpisode',
-      recipe: [{ ...data, tvSerieId, tvSeasonId }]
+      recipe: [{
+        ...data,
+        tvSerieId: tvSeason.tvSerieId,
+        tvSeasonId: tvSeason.id
+      }]
     });
 
     const tvEpisode = new TVEpisode(tvEpisodeData);
@@ -199,8 +229,16 @@ export default class TestCase extends Classpuccino.TestCase {
     return db.tvEpisodes.create(tvEpisode);
   }
 
-  async createTVEpisodes(db, tvSerieId, tvSeasonId) {
-    const options = this._getFixturesGeneratorOptions(...arguments);
+  async createTVEpisodes() {
+    const [db, ...params] = arguments;
+    let [tvSeason, ...args] = params;
+
+    if (!(tvSeason instanceof TVSeason)) {
+      args = params;
+      tvSeason = await this.createTVSeason(db);
+    }
+
+    const options = this._getFixturesGeneratorOptions(...args);
     options.type = 'tvEpisode';
 
     const fixtures = this._fixturesGenerator.generate(options);
@@ -210,10 +248,45 @@ export default class TestCase extends Classpuccino.TestCase {
     // For is use instead of map to make sure the creation respects the index order
     // eslint-disable-next-line no-restricted-syntax
     for (const tvEpisodeData of fixtures) {
-      const tvEpisode = new TVEpisode({ ...tvEpisodeData, tvSerieId, tvSeasonId });
+      const tvEpisode = new TVEpisode({
+        ...tvEpisodeData,
+        tvSerieId: tvSeason.tvSerieid,
+        tvSeasonId: tvSeason.id
+      });
 
       // eslint-disable-next-line no-await-in-loop
       result.push(await db.tvEpisodes.create(tvEpisode));
+    }
+
+    return result;
+  }
+
+  async createWatchlist(db, data = {}) {
+    const [watchlistData] = this._fixturesGenerator.generate({
+      type: 'watchlist',
+      recipe: [data]
+    });
+
+    const watchlist = new Watchlist(watchlistData);
+
+    return db.watchlists.create(watchlist);
+  }
+
+  async createWhatchlists(db) {
+    const options = this._getFixturesGeneratorOptions(...arguments);
+    options.type = 'watchlist';
+
+    const fixtures = this._fixturesGenerator.generate(options);
+
+    const result = [];
+
+    // For is use instead of map to make sure the creation respects the index order
+    // eslint-disable-next-line no-restricted-syntax
+    for (const watchlistData of fixtures) {
+      const watchlist = new Watchlist(watchlistData);
+
+      // eslint-disable-next-line no-await-in-loop
+      result.push(await db.watchlists.create(watchlist));
     }
 
     return result;

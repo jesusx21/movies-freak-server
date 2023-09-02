@@ -45,7 +45,7 @@ const tvEpisode = JSON(
     createdAt: DATETIME,
     updatedAt: DATETIME
   },
-  ['id', 'name', 'seasonNumber', 'episodeNumber']
+  ['id', 'imdbId', 'name', 'seasonNumber', 'episodeNumber']
 );
 
 export default tvEpisode;

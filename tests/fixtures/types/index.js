@@ -1,4 +1,5 @@
 export { default as ARRAY } from './array';
+export { default as BOOLEAN } from './boolean';
 export { default as DATETIME } from './datetime';
 export { default as ENUM } from './enum';
 export { default as FULL_NAME } from './fullName';

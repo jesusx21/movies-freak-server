@@ -1,5 +1,5 @@
-import Serializer, { field } from '../serializer';
 import { Film } from '../../../../app/moviesFreak/entities';
+import Serializer, { field } from '../serializer';
 
 const FilmSerializer = Serializer
   .init(Film)

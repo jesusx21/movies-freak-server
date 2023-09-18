@@ -1,4 +1,9 @@
-import { BOOLEAN, INTEGER, JSON, UUID } from '../types';
+import {
+  BOOLEAN,
+  INTEGER,
+  JSON,
+  UUID
+} from '../types';
 
 const mediaWatchlist = JSON(
   {

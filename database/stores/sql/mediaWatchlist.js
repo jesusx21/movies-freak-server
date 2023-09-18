@@ -9,7 +9,6 @@ export default class SQLMediaWatchlistsStore {
 
   async create(mediaWatchlist) {
     const dataToInsert = this._serialize(mediaWatchlist);
-    console.log(dataToInsert)
 
     let result;
 

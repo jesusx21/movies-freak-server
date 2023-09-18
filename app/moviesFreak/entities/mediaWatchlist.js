@@ -12,7 +12,7 @@ export default class MediaWatchlist extends Entity {
     createdAt,
     updatedAt
   }) {
-    super({ id, createdAt, updatedAt });
+    super(id, createdAt, updatedAt);
 
     this.watchlistId = watchlistId;
     this.filmId = filmId;
@@ -46,7 +46,7 @@ export default class MediaWatchlist extends Entity {
     }
 
     this.film = film;
-    this.filmId = film.id
+    this.filmId = film.id;
   }
 
   setTVEpisode(tvEpisode) {

@@ -13,7 +13,7 @@ class TVEpisodeTest extends SQLTestCase {
     this._database = this.getDatabase();
 
     this.tvSerie = await this.createTVSerie(this._database);
-    this.tvSeason = await this.createTVSeason(this._database, this.tvSerie.id);
+    this.tvSeason = await this.createTVSeason(this._database, this.tvSerie);
   }
 
   async tearDown() {
@@ -64,8 +64,7 @@ export class FindByIdTest extends TVEpisodeTest {
 
     this.tvEpisodes = await this.createTVEpisodes(
       this._database,
-      this.tvSerie.id,
-      this.tvSeason.id,
+      this.tvSeason,
       [
         { seasonNumber: 7, episodeNumber: 1 },
         { seasonNumber: 7, episodeNumber: 2 },
@@ -105,8 +104,7 @@ export class FindByTVSeasonIdTest extends TVEpisodeTest {
 
     await this.createTVEpisodes(
       this._database,
-      this.tvSerie.id,
-      this.tvSeason.id,
+      this.tvSeason,
       [
         { seasonNumber: 3, episodeNumber: 1 },
         { seasonNumber: 3, episodeNumber: 2 },
@@ -167,7 +165,7 @@ export class FindByTVSeasonIdTest extends TVEpisodeTest {
   }
 
   async testReturnEmptyListWhenThereIsNotTVEpisodes() {
-    const tvSeason = await this.createTVSeason(this._database, this.tvSerie.id);
+    const tvSeason = await this.createTVSeason(this._database, this.tvSerie);
 
     const { totalItems, items: tvEpisodes } = await this._database
       .tvEpisodes

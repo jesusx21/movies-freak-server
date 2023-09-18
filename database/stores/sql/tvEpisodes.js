@@ -9,7 +9,6 @@ export default class SQLTVEpisodeStore {
 
   async create(tvEpisode) {
     const dataToInsert = this._serialize(tvEpisode);
-    console.log(dataToInsert)
 
     let result;
 

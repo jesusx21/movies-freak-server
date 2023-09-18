@@ -10,7 +10,7 @@ export default class SQLDatabase {
     this.connection = connection;
 
     this.films = new SQLFilmsStore(this.connection);
-    this.mediaWatchlists = new SQLMediaWatchlistsStore(this.connection);
+    this.mediaWatchlists = new SQLMediaWatchlistsStore(this.connection, this);
     this.tvEpisodes = new SQLTVEpisodeStore(this.connection);
     this.tvSeasons = new SQLTVSeason(this.connection);
     this.tvSeries = new SQLTVSeriesStore(this.connection);

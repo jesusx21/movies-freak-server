@@ -1,3 +1,4 @@
+import { isNil } from 'lodash';
 import VError from 'verror';
 
 export class SerializerError extends VError {}
@@ -96,7 +97,7 @@ class Serializer {
       const key = options.from || field;
       let value = entity[key];
 
-      if (!value) {
+      if (isNil(value)) {
         value = undefined;
       } else if (options.as === 'array') {
         value = value.join(',');

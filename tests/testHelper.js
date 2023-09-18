@@ -250,7 +250,7 @@ export default class TestCase extends Classpuccino.TestCase {
     for (const tvEpisodeData of fixtures) {
       const tvEpisode = new TVEpisode({
         ...tvEpisodeData,
-        tvSerieId: tvSeason.tvSerieid,
+        tvSerieId: tvSeason.tvSerieId,
         tvSeasonId: tvSeason.id
       });
 

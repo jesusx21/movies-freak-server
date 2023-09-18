@@ -100,7 +100,7 @@ export class FindBySerieIdTest extends TVSeasonTest {
 
     await this.createTVSeasons(
       this._database,
-      this.tvSerie.id,
+      this.tvSerie,
       [
         { seasonNumber: 1 },
         { seasonNumber: 2 },

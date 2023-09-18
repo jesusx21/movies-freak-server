@@ -6,8 +6,8 @@ exports.up = function (knex) {
   return knex.schema.createTable('media_watchlists', (table) => {
     table.uuid('id').primary().defaultTo(knex.raw('uuid_generate_v4()'));
     table.uuid('watchlist_id').notNull();
-    table.uuid('film_id').notNull();
-    table.uuid('tv_episode_id').notNull();
+    table.uuid('film_id');
+    table.uuid('tv_episode_id');
     table.integer('index');
     table.boolean('watched').defaultTo(false);
 

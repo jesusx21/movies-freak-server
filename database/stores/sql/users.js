@@ -1,6 +1,12 @@
-import { EmailAlreadyExists, UsernameAlreadyExists } from '../errors';
-import { SQLDatabaseException } from './errors';
+import { omit } from 'lodash';
+
 import { UserSerializer } from './serializers';
+import { SQLDatabaseException } from './errors';
+import {
+  EmailAlreadyExists,
+  UserNotFound,
+  UsernameAlreadyExists
+} from '../errors';
 
 export default class SQLUsersStore {
   constructor(connection) {
@@ -30,13 +36,31 @@ export default class SQLUsersStore {
     return this._deserialize(result);
   }
 
+  async findById(userId) {
+    let result;
+
+    try {
+      result = await this._connection('users')
+        .where('id', userId)
+        .first();
+    } catch (error) {
+      throw new SQLDatabaseException(error);
+    }
+
+    if (!result) {
+      throw new UserNotFound(userId);
+    }
+
+    return this._deserialize(result);
+  }
+
   _serialize(user) {
     const result = UserSerializer.toJSON(user);
 
     result.password_hash = user._password.hash;
     result.password_salt = user._password.salt;
 
-    return result;
+    return omit(result, ['id', 'created_at', 'updated_at']);
   }
 
   _deserialize(data) {

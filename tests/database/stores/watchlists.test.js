@@ -7,7 +7,7 @@ import { WatchlistSerializer } from '../../../database/stores/sql/serializers';
 import { SerializerError } from '../../../database/stores/sql/serializer';
 import { SQLDatabaseException } from '../../../database/stores/sql/errors';
 
-class WatchlistTest extends SQLTestCase {
+class WatchlistsStoreTest extends SQLTestCase {
   setUp() {
     super.setUp();
 
@@ -21,7 +21,7 @@ class WatchlistTest extends SQLTestCase {
   }
 }
 
-export class CreateWatchlistTest extends WatchlistTest {
+export class CreateWatchlistTest extends WatchlistsStoreTest {
   setUp() {
     super.setUp();
 

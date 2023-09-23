@@ -4,7 +4,7 @@ import SQLTestCase from '../testHelper';
 
 import { Film, MediaWatchlist } from '../../../app/moviesFreak/entities';
 
-class MediaWatchlistTest extends SQLTestCase {
+class MediaWatchlistsTest extends SQLTestCase {
   async setUp() {
     super.setUp();
 
@@ -22,7 +22,7 @@ class MediaWatchlistTest extends SQLTestCase {
   }
 }
 
-export class CreateTVSerieTest extends MediaWatchlistTest {
+export class CreateTVSerieTest extends MediaWatchlistsTest {
   async setUp() {
     await super.setUp();
 

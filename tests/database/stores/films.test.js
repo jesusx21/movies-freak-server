@@ -8,7 +8,7 @@ import { FilmSerializer } from '../../../database/stores/sql/serializers';
 import { SQLDatabaseException } from '../../../database/stores/sql/errors';
 import { FilmNotFound } from '../../../database/stores/errors';
 
-class FilmStoreTest extends SQLTestCase {
+class FilmsStoreTest extends SQLTestCase {
   setUp() {
     super.setUp();
 
@@ -22,7 +22,7 @@ class FilmStoreTest extends SQLTestCase {
   }
 }
 
-export class CreateFilmTest extends FilmStoreTest {
+export class CreateFilmTest extends FilmsStoreTest {
   setUp() {
     super.setUp();
 
@@ -97,7 +97,7 @@ export class CreateFilmTest extends FilmStoreTest {
   }
 }
 
-export class FindByIdTest extends FilmStoreTest {
+export class FindByIdTest extends FilmsStoreTest {
   async setUp() {
     super.setUp();
 
@@ -136,7 +136,7 @@ export class FindByIdTest extends FilmStoreTest {
   }
 }
 
-export class FindTest extends FilmStoreTest {
+export class FindTest extends FilmsStoreTest {
   async testFindAllFilms() {
     await this.createFilms(this._database, 5);
 

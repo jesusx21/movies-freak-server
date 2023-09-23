@@ -13,7 +13,8 @@ import {
   TVSerie,
   TVSeason,
   TVEpisode,
-  Watchlist
+  Watchlist,
+  User
 } from '../app/moviesFreak/entities';
 
 chai.use(chaiAsPromised);
@@ -95,6 +96,40 @@ export default class TestCase extends Classpuccino.TestCase {
 
   generateUUID() {
     return uuid();
+  }
+
+  createUser(db, data = {}) {
+    const [userData] = this._fixturesGenerator.generate({
+      type: 'user',
+      recipe: [data]
+    });
+
+    const user = new User(userData);
+    user._password = userData.password;
+
+    return db.users.create(user);
+  }
+
+  async createUsers(db) {
+    const options = this._getFixturesGeneratorOptions(...arguments);
+    options.type = 'user';
+
+    const fixtures = this._fixturesGenerator.generate(options);
+
+    const result = [];
+
+    // For is use instead of map to make sure the creation respects the index order
+    // eslint-disable-next-line no-restricted-syntax
+    for (const userData of fixtures) {
+      const user = new User(userData);
+
+      user._password = userData.password;
+
+      // eslint-disable-next-line no-await-in-loop
+      result.push(await db.users.create(user));
+    }
+
+    return result;
   }
 
   async createFilm(db, data = {}) {

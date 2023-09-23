@@ -6,7 +6,7 @@ import { TVSeason } from '../../../app/moviesFreak/entities';
 import { SQLDatabaseException } from '../../../database/stores/sql/errors';
 import { TVSeasonNotFound } from '../../../database/stores/errors';
 
-class TVSeasonTest extends SQLTestCase {
+class TVSeasonsStoreTest extends SQLTestCase {
   async setUp() {
     super.setUp();
 
@@ -22,7 +22,7 @@ class TVSeasonTest extends SQLTestCase {
   }
 }
 
-export class CreateTVSeasonTest extends TVSeasonTest {
+export class CreateTVSeasonTest extends TVSeasonsStoreTest {
   async setUp() {
     await super.setUp();
 
@@ -55,7 +55,7 @@ export class CreateTVSeasonTest extends TVSeasonTest {
   }
 }
 
-export class FindByIdTest extends TVSeasonTest {
+export class FindByIdTest extends TVSeasonsStoreTest {
   async setUp() {
     await super.setUp();
 
@@ -94,7 +94,7 @@ export class FindByIdTest extends TVSeasonTest {
   }
 }
 
-export class FindBySerieIdTest extends TVSeasonTest {
+export class FindBySerieIdTest extends TVSeasonsStoreTest {
   async setUp() {
     await super.setUp();
 

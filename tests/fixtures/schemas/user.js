@@ -11,19 +11,21 @@ const user = JSON(
   {
     id: UUID,
     name: STRING({ min: 5, max: 20 }),
-    username: REGEX('^(?=.{8,20}$)(?![_])[a-zA-Z0-9_]+(?<![_])$'),
+    username: STRING({ min: 3, max: 15 }),
     lastName: STRING({ min: 5, max: 20 }),
     email: EMAIL,
     password: JSON(
       {
-        salt: REGEX('^(?=.{8,20}$)[a-zA-Z0-9]$'),
-        hash: REGEX('^(?=.{8,20}$)[a-zA-Z0-9]$')
-      }
+        salt: REGEX('d{10}\\/\\d{6}(-\\d)?|(ch|co|ev|nm|tt)\\d{10}'),
+        hash: REGEX('d{10}\\/\\d{6}(-\\d)?|(ch|co|ev|nm|tt)\\d{10}')
+      },
+      ['salt', 'hash']
     ),
     birthdate: DATETIME,
     createdAt: DATETIME,
     updatedAt: DATETIME
-  }
+  },
+  ['id', 'name', 'lastName', 'username', 'email', 'password']
 );
 
 export default user;

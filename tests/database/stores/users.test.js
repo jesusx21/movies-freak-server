@@ -4,13 +4,23 @@ import SQLTestCase from '../testHelper';
 
 import { User } from '../../../app/moviesFreak/entities';
 import { SQLDatabaseException } from '../../../database/stores/sql/errors';
-import { EmailAlreadyExists, UsernameAlreadyExists } from '../../../database/stores/errors';
+import {
+  EmailAlreadyExists,
+  UserNotFound,
+  UsernameAlreadyExists
+} from '../../../database/stores/errors';
 
-class UserStoreTest extends SQLTestCase {
-  setUp() {
+class UsersStoreTest extends SQLTestCase {
+  async setUp() {
     super.setUp();
 
     this._database = this.getDatabase();
+
+    this.users = await this.createUsers(this._database, 5, [
+      { username: 'rocky', email: 'rocky@gmail.com' },
+      { username: 'columbia', email: 'columbia@gmail.com' },
+      { username: 'magenta', email: 'magenta@gmail.com' }
+    ]);
   }
 
   async tearDown() {
@@ -20,9 +30,9 @@ class UserStoreTest extends SQLTestCase {
   }
 }
 
-export class CreateUserTest extends UserStoreTest {
-  setUp() {
-    super.setUp();
+export class CreateUserTest extends UsersStoreTest {
+  async setUp() {
+    await super.setUp();
 
     this.user = new User({
       name: 'Peter',
@@ -77,6 +87,31 @@ export class CreateUserTest extends UserStoreTest {
 
     await expect(
       this._database.users.create(this.user)
+    ).to.be.rejectedWith(SQLDatabaseException);
+  }
+}
+
+export class FindUserByIdTest extends UsersStoreTest {
+  async testFindById() {
+    const user = await this._database.users.findById(this.users[1].id);
+
+    expect(user).to.be.instanceOf(User);
+    expect(user.username).to.be.equal('columbia');
+    expect(user.email).to.be.equal('columbia@gmail.com');
+  }
+
+  async testThrowsErrorWhenUserIsNotFound() {
+    expect(
+      this._database.users.findById(this.generateUUID())
+    ).to.be.rejectedWith(UserNotFound);
+  }
+
+  async testThrowsErrorOnUnexpectedError() {
+    this.stubFunction(this._database.users, '_connection')
+      .throws(new Error());
+
+    await expect(
+      this._database.users.findById(this.users[2].id)
     ).to.be.rejectedWith(SQLDatabaseException);
   }
 }

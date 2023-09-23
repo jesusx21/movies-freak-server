@@ -1,4 +1,5 @@
 import InMemoryFilmsStore from './films';
+import InMemorySessionsStore from './session';
 import InMemoryTVEpisodesStore from './tvEpisodes';
 import InMemoryTVSeasonStore from './tvSeasons';
 import InMemoryTVSeriesStore from './tvSeries';
@@ -8,6 +9,7 @@ import InMemoryWatchlistStore from './watchlist';
 export default class InMemoryDatabase {
   constructor() {
     this.films = new InMemoryFilmsStore();
+    this.sessions = new InMemorySessionsStore();
     this.tvEpisodes = new InMemoryTVEpisodesStore();
     this.tvSeasons = new InMemoryTVSeasonStore();
     this.tvSeries = new InMemoryTVSeriesStore();

@@ -8,7 +8,7 @@ import { SQLDatabaseException } from '../../../database/stores/sql/errors';
 import { SerializerError } from '../../../database/stores/sql/serializer';
 import { TVSerieSerializer } from '../../../database/stores/sql/serializers';
 
-class TVStoreTest extends SQLTestCase {
+class TVSeriesStoreTest extends SQLTestCase {
   setUp() {
     super.setUp();
 
@@ -22,7 +22,7 @@ class TVStoreTest extends SQLTestCase {
   }
 }
 
-export class CreateTVSerieTest extends TVStoreTest {
+export class CreateTVSerieTest extends TVSeriesStoreTest {
   setUp() {
     super.setUp();
 
@@ -100,7 +100,7 @@ export class CreateTVSerieTest extends TVStoreTest {
   }
 }
 
-export class FindByIdTest extends TVStoreTest {
+export class FindByIdTest extends TVSeriesStoreTest {
   async setUp() {
     super.setUp();
 
@@ -139,7 +139,7 @@ export class FindByIdTest extends TVStoreTest {
   }
 }
 
-export class FindTest extends TVStoreTest {
+export class FindTest extends TVSeriesStoreTest {
   async testFindAllTVSeries() {
     await this.createTVSeries(this._database, 5);
 

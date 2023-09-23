@@ -13,7 +13,7 @@ import {
   YEAR
 } from '../types';
 
-const Film = JSON(
+const film = JSON(
   {
     id: UUID,
     name: STRING({ min: 1, max: 100 }),
@@ -33,4 +33,4 @@ const Film = JSON(
   ['id', 'imdbId', 'name', 'plot']
 );
 
-export default Film;
+export default film;

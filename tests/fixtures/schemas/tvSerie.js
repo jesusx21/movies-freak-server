@@ -13,7 +13,7 @@ import {
   YEAR
 } from '../types';
 
-const TVSerie = JSON(
+const tvSerie = JSON(
   {
     id: UUID,
     name: STRING({ min: 1, max: 100 }),
@@ -39,4 +39,4 @@ const TVSerie = JSON(
   ['id', 'imdbId', 'name', 'plot', 'totalSeasons']
 );
 
-export default TVSerie;
+export default tvSerie;

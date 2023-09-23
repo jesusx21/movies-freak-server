@@ -2,7 +2,7 @@ import { TVSeasonNotFound } from '../errors';
 import { SQLDatabaseException } from './errors';
 import { TVSeasonSerializer } from './serializers';
 
-export default class SQLTVSeason {
+export default class SQLTVSeasonStore {
   constructor(connection) {
     this._connection = connection;
   }

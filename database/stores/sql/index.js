@@ -1,8 +1,9 @@
 import SQLFilmsStore from './films';
 import SQLMediaWatchlistsStore from './mediaWatchlist';
 import SQLTVEpisodeStore from './tvEpisodes';
-import SQLTVSeason from './tvSeason';
+import SQLTVSeasonStore from './tvSeason';
 import SQLTVSeriesStore from './tvSeries';
+import SQLUsersStore from './users';
 import SQLWatchlistsStore from './watchlists';
 
 export default class SQLDatabase {
@@ -12,8 +13,9 @@ export default class SQLDatabase {
     this.films = new SQLFilmsStore(this.connection);
     this.mediaWatchlists = new SQLMediaWatchlistsStore(this.connection, this);
     this.tvEpisodes = new SQLTVEpisodeStore(this.connection);
-    this.tvSeasons = new SQLTVSeason(this.connection);
+    this.tvSeasons = new SQLTVSeasonStore(this.connection);
     this.tvSeries = new SQLTVSeriesStore(this.connection);
+    this.users = new SQLUsersStore(this.connection);
     this.watchlists = new SQLWatchlistsStore(this.connection);
   }
 

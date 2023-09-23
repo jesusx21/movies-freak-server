@@ -2,7 +2,7 @@ import Store from './store';
 
 export default class InMemorySessionsStore {
   constructor() {
-    this.store = new Store();
+    this._store = new Store();
   }
 
   create(film) {

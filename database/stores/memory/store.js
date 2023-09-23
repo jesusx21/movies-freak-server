@@ -41,6 +41,22 @@ export default class Store {
     };
   }
 
+  async findOne(query) {
+    const [entity] = Object.values(query)
+      .filter((item) => {
+        return Object.keys(query)
+          .reduce((succeed, key) => {
+            return succeed && query[key] === item[key];
+          }, true);
+      });
+
+    if (!entity) {
+      throw new NotFound();
+    }
+
+    return cloneDeep(entity);
+  }
+
   async count() {
     return Object.values(this._items)
       .length;

@@ -24,3 +24,7 @@ export class CouldNotCreateTVSerie extends MoviesFreakError {
 
 export class CouldNotCreateTVSeasons extends CouldNotCreateTVSerie {}
 export class CouldNotCreateTVEpisodes extends CouldNotCreateTVSeasons {}
+
+export class CouldNotRegister extends MoviesFreakError {}
+export class EmailAlreadyUsed extends MoviesFreakError {}
+export class UsernameAlreadyUsed extends MoviesFreakError {}

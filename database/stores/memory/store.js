@@ -42,7 +42,7 @@ export default class Store {
   }
 
   async findOne(query) {
-    const [entity] = Object.values(query)
+    const [entity] = Object.values(this._items)
       .filter((item) => {
         return Object.keys(query)
           .reduce((succeed, key) => {

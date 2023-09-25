@@ -3,6 +3,7 @@ import { VError } from 'verror';
 export const OK = 200;
 export const CREATED = 201;
 export const NOT_FOUND = 404;
+export const CONFLICT = 409;
 export const SERVER_ERROR = 500;
 
 export class HTTPError extends VError {
@@ -58,6 +59,14 @@ export class HTTPNotFound extends HTTPError {
     super(code, cause);
 
     this._statusCode = NOT_FOUND;
+  }
+}
+
+export class HTTPConflict extends HTTPError {
+  constructor(code = 'CONFLICT', cause = null) {
+    super(code, cause);
+
+    this._statusCode = CONFLICT;
   }
 }
 

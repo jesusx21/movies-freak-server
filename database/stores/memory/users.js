@@ -14,7 +14,7 @@ export default class InMemoryUsersStore {
   async create(user) {
     try {
       await this.findByEmail(user.email);
-      throw EmailAlreadyExists();
+      throw new EmailAlreadyExists();
     } catch (error) {
       if (!(error instanceof UserNotFound)) {
         throw error;
@@ -23,7 +23,7 @@ export default class InMemoryUsersStore {
 
     try {
       await this.findByUsername(user.username);
-      throw UsernameAlreadyExists();
+      throw new UsernameAlreadyExists();
     } catch (error) {
       if (!(error instanceof UserNotFound)) {
         throw error;

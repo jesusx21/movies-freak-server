@@ -44,4 +44,17 @@ export default class Presenters {
   presentTVSeries(tvSeries) {
     return tvSeries.map(this.presentTVSerie.bind(this));
   }
+
+  presentSession(session) {
+    return {
+      id: session.id,
+      token: session.token,
+      expiresAt: session.expiresAt,
+      isActive: session.isActive,
+      user: {
+        id: session.user.id,
+        name: session.user.name
+      }
+    };
+  }
 }

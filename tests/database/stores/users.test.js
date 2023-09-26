@@ -1,5 +1,3 @@
-import { expect } from 'chai';
-
 import SQLTestCase from '../testHelper';
 
 import { User } from '../../../app/moviesFreak/entities';
@@ -48,17 +46,17 @@ export class CreateUserTest extends UsersStoreTest {
   async testCreateUser() {
     const userCreated = await this._database.users.create(this.user);
 
-    expect(userCreated).to.be.instanceOf(User);
-    expect(userCreated.id).to.exist;
-    expect(userCreated.name).to.be.equal('Peter');
-    expect(userCreated.lastName).to.be.equal('Parker');
-    expect(userCreated.username).to.be.equal('peterB');
-    expect(userCreated.email).to.be.equal('peterb@gmail.com');
-    expect(userCreated.birthdate).to.be.deep.equal(this.user.birthdate);
+    this.assertThat(userCreated).isInstanceOf(User);
+    this.assertThat(userCreated.id).doesExist();
+    this.assertThat(userCreated.name).isEqual('Peter');
+    this.assertThat(userCreated.lastName).isEqual('Parker');
+    this.assertThat(userCreated.username).isEqual('peterB');
+    this.assertThat(userCreated.email).isEqual('peterb@gmail.com');
+    this.assertThat(userCreated.birthdate).isEqual(this.user.birthdate);
 
-    expect(userCreated._password).to.be.not.equal('Password1.');
-    expect(userCreated._password.salt).to.exist;
-    expect(userCreated._password.hash).to.exist;
+    this.assertThat(userCreated._password).isNotEqual('Password1.');
+    this.assertThat(userCreated._password.salt).doesExist();
+    this.assertThat(userCreated._password.hash).doesExist();
   }
 
   async testThrownErrorOnRepeatedEmail() {
@@ -66,9 +64,9 @@ export class CreateUserTest extends UsersStoreTest {
 
     this.user.username = 'peter';
 
-    await expect(
+    await this.assertThat(
       this._database.users.create(this.user)
-    ).to.be.rejectedWith(EmailAlreadyExists);
+    ).willBeRejectedWith(EmailAlreadyExists);
   }
 
   async testThrownErrorOnRepeatedUsername() {
@@ -76,18 +74,18 @@ export class CreateUserTest extends UsersStoreTest {
 
     this.user.email = 'peterb@gmail.com';
 
-    await expect(
+    await this.assertThat(
       this._database.users.create(this.user)
-    ).to.be.rejectedWith(UsernameAlreadyExists);
+    ).willBeRejectedWith(UsernameAlreadyExists);
   }
 
   async testThrowErrorOnSQLException() {
     this.stubFunction(this._database.users, '_connection')
       .throws(new Error());
 
-    await expect(
+    await this.assertThat(
       this._database.users.create(this.user)
-    ).to.be.rejectedWith(SQLDatabaseException);
+    ).willBeRejectedWith(SQLDatabaseException);
   }
 }
 
@@ -95,23 +93,23 @@ export class FindUserByIdTest extends UsersStoreTest {
   async testFindById() {
     const user = await this._database.users.findById(this.users[1].id);
 
-    expect(user).to.be.instanceOf(User);
-    expect(user.username).to.be.equal('columbia');
-    expect(user.email).to.be.equal('columbia@gmail.com');
+    this.assertThat(user).isInstanceOf(User);
+    this.assertThat(user.username).isEqual('columbia');
+    this.assertThat(user.email).isEqual('columbia@gmail.com');
   }
 
   async testThrowsErrorWhenUserIsNotFound() {
-    expect(
+    await this.assertThat(
       this._database.users.findById(this.generateUUID())
-    ).to.be.rejectedWith(UserNotFound);
+    ).willBeRejectedWith(UserNotFound);
   }
 
   async testThrowsErrorOnUnexpectedError() {
     this.stubFunction(this._database.users, '_connection')
       .throws(new Error());
 
-    await expect(
+    await this.assertThat(
       this._database.users.findById(this.users[2].id)
-    ).to.be.rejectedWith(SQLDatabaseException);
+    ).willBeRejectedWith(SQLDatabaseException);
   }
 }

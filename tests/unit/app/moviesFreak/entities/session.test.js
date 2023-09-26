@@ -1,6 +1,4 @@
 /* eslint-disable no-return-assign */
-import { expect } from 'chai';
-
 import TestCase from '../../../../testHelper';
 
 import { Session, User } from '../../../../../app/moviesFreak/entities';
@@ -18,57 +16,57 @@ export class SessionTest extends TestCase {
   testSetUser() {
     this.session.user = this.user;
 
-    expect(this.session.user).to.be.deep.equal(this.user);
+    this.assertThat(this.session.user).isEqual(this.user);
   }
 
   testThrowsErrorOnUserAlreadySet() {
     this.session.user = this.user;
 
-    expect(
+    this.assertThat(
       () => this.session.user = this.user
-    ).to.throws(ReadOnlyField);
+    ).willThrow(ReadOnlyField);
   }
 
   testSetToken() {
     this.session.token = 'fake-token';
 
-    expect(this.session.token).to.be.deep.equal('fake-token');
+    this.assertThat(this.session.token).isEqual('fake-token');
   }
 
   testThrowsErrorOnTokenAlreadySet() {
     this.session.token = 'fake-token';
 
-    expect(
+    this.assertThat(
       () => this.session.token = 'fake-token'
-    ).to.throws(ReadOnlyField);
+    ).willThrow(ReadOnlyField);
   }
 
   testSetExpiresAt() {
     this.session.expiresAt = new Date();
 
-    expect(this.session.expiresAt).to.exist;
+    this.assertThat(this.session.expiresAt).doesExist();
   }
 
   testThrowsErrorOnExpiresAtAlreadySet() {
     this.session.expiresAt = new Date();
 
-    expect(
+    this.assertThat(
       () => this.session.expiresAt = new Date()
-    ).to.throws(ReadOnlyField);
+    ).willThrow(ReadOnlyField);
   }
 
   testSetIsActive() {
     this.session.isActive = true;
 
-    expect(this.session.isActive).to.be.true;
+    this.assertThat(this.session.isActive).isTrue();
   }
 
   testThrowsErrorOnIsActiveAlreadySet() {
     this.session.isActive = false;
 
-    expect(
+    this.assertThat(
       () => this.session.isActive = true
-    ).to.throws(ReadOnlyField);
+    ).willThrow(ReadOnlyField);
   }
 
   testGenerateToken() {
@@ -79,10 +77,10 @@ export class SessionTest extends TestCase {
 
     this.session.generateToken('test');
 
-    expect(this.session.token).to.exist;
-    expect(this.session.token).to.not.be.equal('fake-token');
-    expect(this.session.expiresAt).to.be.null;
-    expect(this.session.isActive).to.be.false;
+    this.assertThat(this.session.token).doesExist();
+    this.assertThat(this.session.token).isNotEqual('fake-token');
+    this.assertThat(this.session.expiresAt).isNull();
+    this.assertThat(this.session.isActive).isFalse();
   }
 
   testActivateToken() {
@@ -91,9 +89,9 @@ export class SessionTest extends TestCase {
 
     this.session.activateToken();
 
-    expect(this.session.token).to.not.be.equal('fake-token');
-    expect(this.session.expiresAt).to.be.greaterThan(new Date());
-    expect(this.session.isActive).to.be.true;
+    this.assertThat(this.session.token).isNotEqual('fake-token');
+    this.assertThat(this.session.expiresAt).isGreaterThan(new Date());
+    this.assertThat(this.session.isActive).isTrue();
   }
 
   testThrowsErrorTokenAlreadyActived() {
@@ -101,15 +99,15 @@ export class SessionTest extends TestCase {
     this.session.generateToken('test')
       .activateToken();
 
-    expect(
+    this.assertThat(
       () => this.session.activateToken()
-    ).to.throws(SessionAlreadyActive);
+    ).willThrow(SessionAlreadyActive);
   }
 
   testReturnTrueWhenIsExpired() {
     this.session.expiresAt = new Date('2023-01-01');
 
-    expect(this.session.isExpired()).to.be.true;
+    this.assertThat(this.session.isExpired()).isTrue();
   }
 
   testReturnFalseWhenIsExpired() {
@@ -117,7 +115,7 @@ export class SessionTest extends TestCase {
     this.session.generateToken('test')
       .activateToken();
 
-    expect(this.session.isExpired()).to.be.false;
+    this.assertThat(this.session.isExpired()).isFalse();
   }
 
   testReactivateToken() {
@@ -127,9 +125,9 @@ export class SessionTest extends TestCase {
 
     this.session.reactivateToken();
 
-    expect(this.session.token).to.not.be.equal('fake-token');
-    expect(this.session.expiresAt).to.be.greaterThan(new Date());
-    expect(this.session.isActive).to.be.true;
+    this.assertThat(this.session.token).isNotEqual('fake-token');
+    this.assertThat(this.session.expiresAt).isGreaterThan(new Date());
+    this.assertThat(this.session.isActive).isTrue();
   }
 
   testDeactivateToken() {
@@ -139,7 +137,7 @@ export class SessionTest extends TestCase {
 
     this.session.deactivateToken();
 
-    expect(this.session.expiresAt).to.be.lessThanOrEqual(new Date());
-    expect(this.session.isActive).to.be.false;
+    this.assertThat(this.session.expiresAt).isLessThanOrEqual(new Date());
+    this.assertThat(this.session.isActive).isFalse();
   }
 }

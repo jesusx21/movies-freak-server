@@ -1,5 +1,3 @@
-import { expect } from 'chai';
-
 import SQLTestCase from '../testHelper';
 
 import { Watchlist } from '../../../app/moviesFreak/entities';
@@ -37,13 +35,13 @@ export class CreateWatchlistTest extends WatchlistsStoreTest {
   async testCreateWatchlist() {
     const watchlistCreated = await this._database.watchlists.create(this.watchlist);
 
-    expect(watchlistCreated).to.instanceOf(Watchlist);
-    expect(watchlistCreated.id).to.exist;
-    expect(watchlistCreated.name).to.be.equal('Maraton de Halloween');
-    expect(watchlistCreated.type).to.be.equal('all');
-    expect(watchlistCreated.description).to.be.equal('This is a nice watchlist');
-    expect(watchlistCreated.totalFilms).to.be.equal(0);
-    expect(watchlistCreated.totalTVEpisodes).to.be.equal(0);
+    this.assertThat(watchlistCreated).isInstanceOf(Watchlist);
+    this.assertThat(watchlistCreated.id).doesExist();
+    this.assertThat(watchlistCreated.name).isEqual('Maraton de Halloween');
+    this.assertThat(watchlistCreated.type).isEqual('all');
+    this.assertThat(watchlistCreated.description).isEqual('This is a nice watchlist');
+    this.assertThat(watchlistCreated.totalFilms).isEqual(0);
+    this.assertThat(watchlistCreated.totalTVEpisodes).isEqual(0);
   }
 
   async testThrowErrorOnSerializationError() {
@@ -51,17 +49,17 @@ export class CreateWatchlistTest extends WatchlistsStoreTest {
       .expects('fromJSON')
       .throws(new SerializerError());
 
-    await expect(
+    await this.assertThat(
       this._database.watchlists.create(this.watchlist)
-    ).to.be.rejectedWith(SerializerError);
+    ).willBeRejectedWith(SerializerError);
   }
 
   async testThrowErrorOnSQLException() {
     this.stubFunction(this._database.watchlists, '_connection')
       .throws(new Error());
 
-    await expect(
+    await this.assertThat(
       this._database.watchlists.create(this.watchlist)
-    ).to.be.rejectedWith(SQLDatabaseException);
+    ).willBeRejectedWith(SQLDatabaseException);
   }
 }

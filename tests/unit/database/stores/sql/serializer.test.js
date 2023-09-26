@@ -1,5 +1,3 @@
-import { expect } from 'chai';
-
 import TestCase from '../../../../testHelper';
 
 import Serializer, {
@@ -20,13 +18,13 @@ export default class SerializerTest extends TestCase {
   }
 
   testReturnInstanceOfSerializer() {
-    expect(
+    this.assertThat(
       Serializer.init(FakeEntity)
-    ).to.be.instanceOf(Serializer);
+    ).isInstanceOf(Serializer);
   }
 
   testReturnSerializerWithTargetEntity() {
-    expect(this.serializer._target).to.be.equal(FakeEntity);
+    this.assertThat(this.serializer._target).isEqual(FakeEntity);
   }
 
   testAddFieldsToSerializer() {
@@ -37,10 +35,10 @@ export default class SerializerTest extends TestCase {
       field('updated_at', { from: 'updatedAt' })
     );
 
-    expect(this.serializer._schema.id).to.be.empty;
-    expect(this.serializer._schema.name).to.be.empty;
-    expect(this.serializer._schema.created_at).to.be.deep.equal({ from: 'createdAt' });
-    expect(this.serializer._schema.updated_at).to.be.deep.equal({ from: 'updatedAt' });
+    this.assertThat(this.serializer._schema.id).isEmpty();
+    this.assertThat(this.serializer._schema.name).isEmpty();
+    this.assertThat(this.serializer._schema.created_at).isEqual({ from: 'createdAt' });
+    this.assertThat(this.serializer._schema.updated_at).isEqual({ from: 'updatedAt' });
   }
 
   testReturnEntityInstanceOnSerializingFromJSON() {
@@ -60,11 +58,11 @@ export default class SerializerTest extends TestCase {
 
     const entity = this.serializer.fromJSON(data);
 
-    expect(entity).to.be.instanceOf(FakeEntity);
-    expect(entity.id).to.be.equal(data.id);
-    expect(entity.name).to.be.equal(data.name);
-    expect(entity.createdAt).to.be.deep.equal(data.created_at);
-    expect(entity.updatedAt).to.be.deep.equal(data.updated_at);
+    this.assertThat(entity).isInstanceOf(FakeEntity);
+    this.assertThat(entity.id).isEqual(data.id);
+    this.assertThat(entity.name).isEqual(data.name);
+    this.assertThat(entity.createdAt).isEqual(data.created_at);
+    this.assertThat(entity.updatedAt).isEqual(data.updated_at);
   }
 
   testReturnJSONOnSerializingFromEntity() {
@@ -84,20 +82,22 @@ export default class SerializerTest extends TestCase {
 
     const data = this.serializer.toJSON(entity);
 
-    expect(data.id).to.be.equal(entity.id);
-    expect(data.name).to.be.equal(entity.name);
-    expect(data.created_at).to.be.deep.equal(entity.createdAt);
-    expect(data.updated_at).to.be.deep.equal(entity.updatedAt);
+    this.assertThat(data.id).isEqual(entity.id);
+    this.assertThat(data.name).isEqual(entity.name);
+    this.assertThat(data.created_at).isEqual(entity.createdAt);
+    this.assertThat(data.updated_at).isEqual(entity.updatedAt);
   }
 
   testThrowErrorOnInvalidField() {
-    expect(
+    const error = this.assertThat(
       () => this.serializer.addSchema(
         field('id'),
         field('name'),
         'created_at'
       )
-    ).to.throw(InvalidField).with.property('message', 'Invalid field created_at');
+    ).willThrow(InvalidField);
+
+    this.assertThat(error.message).isEqual('Invalid field created_at');
   }
 
   testThrowErrorWhenSerializingFromJSON() {
@@ -108,9 +108,11 @@ export default class SerializerTest extends TestCase {
       updated_at: new Date()
     };
 
-    expect(
+    const error = this.assertThat(
       () => this.serializer.fromJSON(data)
-    ).to.throw(MissingSchema).with.property('message', 'Schema has not been provided');
+    ).willThrow(MissingSchema);
+
+    this.assertThat(error.message).isEqual('Schema has not been provided');
   }
 
   testThrowErrorWhenSerializingToJSON() {
@@ -121,8 +123,10 @@ export default class SerializerTest extends TestCase {
       updatedAt: new Date()
     });
 
-    expect(
+    const error = this.assertThat(
       () => this.serializer.toJSON(entity)
-    ).to.throw(MissingSchema).with.property('message', 'Schema has not been provided');
+    ).willThrow(MissingSchema);
+
+    this.assertThat(error.message).isEqual('Schema has not been provided');
   }
 }

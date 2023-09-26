@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import APITestCase from '../apiTestHelper';
 import Register from '../../../app/moviesFreak/register';
 
@@ -25,12 +24,12 @@ export class RegisterTest extends APITestCase {
       payload: this.userData
     });
 
-    expect(result.id).to.exist;
-    expect(result.token).to.exist;
-    expect(new Date(result.expiresAt)).to.be.greaterThan(new Date());
-    expect(result.isActive).to.be.true;
-    expect(result.user.id).to.exist;
-    expect(result.user.name).to.be.equal('Evan');
+    this.assertThat(result.id).doesExist();
+    this.assertThat(result.token).doesExist();
+    this.assertThat(new Date(result.expiresAt)).isGreaterThan(new Date());
+    this.assertThat(result.isActive).isTrue();
+    this.assertThat(result.user.id).doesExist();
+    this.assertThat(result.user.name).isEqual('Evan');
   }
 
   async testReturnsErrorOnEmailAlreadyUsed() {
@@ -47,7 +46,7 @@ export class RegisterTest extends APITestCase {
       statusCode: 409
     });
 
-    expect(result.code).to.be.equal('EMAIL_ALREADY_USED');
+    this.assertThat(result.code).isEqual('EMAIL_ALREADY_USED');
   }
 
   async testReturnsErrorOnUsernameAlreadyUsed() {
@@ -64,7 +63,7 @@ export class RegisterTest extends APITestCase {
       statusCode: 409
     });
 
-    expect(result.code).to.be.equal('USERNAME_ALREADY_USED');
+    this.assertThat(result.code).isEqual('USERNAME_ALREADY_USED');
   }
 
   async testReturnHandledErrorOnUnexpectedError() {
@@ -78,6 +77,6 @@ export class RegisterTest extends APITestCase {
       statusCode: 500
     });
 
-    expect(result.code).to.be.equal('UNEXPECTED_ERROR');
+    this.assertThat(result.code).isEqual('UNEXPECTED_ERROR');
   }
 }

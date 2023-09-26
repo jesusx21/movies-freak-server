@@ -1,5 +1,3 @@
-import { expect } from 'chai';
-
 import APITestCase from '../../apiTestHelper';
 
 export default class GetFilmsTest extends APITestCase {
@@ -17,10 +15,10 @@ export default class GetFilmsTest extends APITestCase {
       path: '/films'
     });
 
-    expect(result.items).to.have.lengthOf(5);
-    expect(result.totalItems).to.be.equal(5);
-    expect(result.skip).to.be.equal(0);
-    expect(result.limit).to.be.equal(25);
+    this.assertThat(result.items).hasLengthOf(5);
+    this.assertThat(result.totalItems).isEqual(5);
+    this.assertThat(result.skip).isEqual(0);
+    this.assertThat(result.limit).isEqual(25);
   }
 
   async testGetFilmsWithSkip() {
@@ -40,14 +38,14 @@ export default class GetFilmsTest extends APITestCase {
       query: { skip: 2 }
     });
 
-    expect(result.items).to.have.lengthOf(3);
-    expect(result.totalItems).to.be.equal(5);
-    expect(result.skip).to.be.equal(2);
-    expect(result.limit).to.be.equal(25);
+    this.assertThat(result.items).hasLengthOf(3);
+    this.assertThat(result.totalItems).isEqual(5);
+    this.assertThat(result.skip).isEqual(2);
+    this.assertThat(result.limit).isEqual(25);
 
-    expect(result.items[0].name).to.be.equal('10 Things I Hate about You');
-    expect(result.items[1].name).to.be.equal('The Perks of Being a Wallflower');
-    expect(result.items[2].name).to.be.equal('Predestination');
+    this.assertThat(result.items[0].name).isEqual('10 Things I Hate about You');
+    this.assertThat(result.items[1].name).isEqual('The Perks of Being a Wallflower');
+    this.assertThat(result.items[2].name).isEqual('Predestination');
   }
 
   async testGetFilmsWithLimit() {
@@ -67,14 +65,14 @@ export default class GetFilmsTest extends APITestCase {
       query: { limit: 3 }
     });
 
-    expect(result.items).to.have.lengthOf(3);
-    expect(result.totalItems).to.be.equal(5);
-    expect(result.skip).to.be.equal(0);
-    expect(result.limit).to.be.equal(3);
+    this.assertThat(result.items).hasLengthOf(3);
+    this.assertThat(result.totalItems).isEqual(5);
+    this.assertThat(result.skip).isEqual(0);
+    this.assertThat(result.limit).isEqual(3);
 
-    expect(result.items[0].name).to.be.equal('Midsomar');
-    expect(result.items[1].name).to.be.equal('Nimona');
-    expect(result.items[2].name).to.be.equal('10 Things I Hate about You');
+    this.assertThat(result.items[0].name).isEqual('Midsomar');
+    this.assertThat(result.items[1].name).isEqual('Nimona');
+    this.assertThat(result.items[2].name).isEqual('10 Things I Hate about You');
   }
 
   async testGetFilmsWithSkipAndLimit() {
@@ -94,13 +92,13 @@ export default class GetFilmsTest extends APITestCase {
       query: { skip: 1, limit: 2 }
     });
 
-    expect(result.items).to.have.lengthOf(2);
-    expect(result.totalItems).to.be.equal(5);
-    expect(result.skip).to.be.equal(1);
-    expect(result.limit).to.be.equal(2);
+    this.assertThat(result.items).hasLengthOf(2);
+    this.assertThat(result.totalItems).isEqual(5);
+    this.assertThat(result.skip).isEqual(1);
+    this.assertThat(result.limit).isEqual(2);
 
-    expect(result.items[0].name).to.be.equal('Nimona');
-    expect(result.items[1].name).to.be.equal('10 Things I Hate about You');
+    this.assertThat(result.items[0].name).isEqual('Nimona');
+    this.assertThat(result.items[1].name).isEqual('10 Things I Hate about You');
   }
 
   async testGetEmptyListWhenThereIsNotFilms() {
@@ -108,10 +106,10 @@ export default class GetFilmsTest extends APITestCase {
       path: '/films'
     });
 
-    expect(result.items).to.empty;
-    expect(result.totalItems).to.be.equal(0);
-    expect(result.skip).to.be.equal(0);
-    expect(result.limit).to.be.equal(25);
+    this.assertThat(result.items).isEmpty();
+    this.assertThat(result.totalItems).isEqual(0);
+    this.assertThat(result.skip).isEqual(0);
+    this.assertThat(result.limit).isEqual(25);
   }
 
   async testReturnErrorHandlerOnUnexpectedError() {
@@ -123,6 +121,6 @@ export default class GetFilmsTest extends APITestCase {
       statusCode: 500
     });
 
-    expect(result.code).to.be.equal('UNEXPECTED_ERROR');
+    this.assertThat(result.code).isEqual('UNEXPECTED_ERROR');
   }
 }

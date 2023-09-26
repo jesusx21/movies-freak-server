@@ -1,5 +1,3 @@
-import { expect } from 'chai';
-
 import APITestCase from '../../apiTestHelper';
 
 export default class GetTVSeriesTest extends APITestCase {
@@ -17,10 +15,10 @@ export default class GetTVSeriesTest extends APITestCase {
       path: '/tv-series'
     });
 
-    expect(result.items).to.have.lengthOf(5);
-    expect(result.totalItems).to.be.equal(5);
-    expect(result.skip).to.be.equal(0);
-    expect(result.limit).to.be.equal(25);
+    this.assertThat(result.items).hasLengthOf(5);
+    this.assertThat(result.totalItems).isEqual(5);
+    this.assertThat(result.skip).isEqual(0);
+    this.assertThat(result.limit).isEqual(25);
   }
 
   async testGetTVSeriesWithSkip() {
@@ -40,14 +38,14 @@ export default class GetTVSeriesTest extends APITestCase {
       query: { skip: 2 }
     });
 
-    expect(result.items).to.have.lengthOf(3);
-    expect(result.totalItems).to.be.equal(5);
-    expect(result.skip).to.be.equal(2);
-    expect(result.limit).to.be.equal(25);
+    this.assertThat(result.items).hasLengthOf(3);
+    this.assertThat(result.totalItems).isEqual(5);
+    this.assertThat(result.skip).isEqual(2);
+    this.assertThat(result.limit).isEqual(25);
 
-    expect(result.items[0].name).to.be.equal('Star Wars: Clone Wars');
-    expect(result.items[1].name).to.be.equal('Star Wars: Rebels');
-    expect(result.items[2].name).to.be.equal('Friends');
+    this.assertThat(result.items[0].name).isEqual('Star Wars: Clone Wars');
+    this.assertThat(result.items[1].name).isEqual('Star Wars: Rebels');
+    this.assertThat(result.items[2].name).isEqual('Friends');
   }
 
   async testGetTVSeriesWithLimit() {
@@ -67,14 +65,14 @@ export default class GetTVSeriesTest extends APITestCase {
       query: { limit: 3 }
     });
 
-    expect(result.items).to.have.lengthOf(3);
-    expect(result.totalItems).to.be.equal(5);
-    expect(result.skip).to.be.equal(0);
-    expect(result.limit).to.be.equal(3);
+    this.assertThat(result.items).hasLengthOf(3);
+    this.assertThat(result.totalItems).isEqual(5);
+    this.assertThat(result.skip).isEqual(0);
+    this.assertThat(result.limit).isEqual(3);
 
-    expect(result.items[0].name).to.be.equal('How I Met Your Mother');
-    expect(result.items[1].name).to.be.equal('How I Met Your Father');
-    expect(result.items[2].name).to.be.equal('Star Wars: Clone Wars');
+    this.assertThat(result.items[0].name).isEqual('How I Met Your Mother');
+    this.assertThat(result.items[1].name).isEqual('How I Met Your Father');
+    this.assertThat(result.items[2].name).isEqual('Star Wars: Clone Wars');
   }
 
   async testGetTVSeriesWithSkipAndLimit() {
@@ -94,13 +92,13 @@ export default class GetTVSeriesTest extends APITestCase {
       query: { skip: 1, limit: 2 }
     });
 
-    expect(result.items).to.have.lengthOf(2);
-    expect(result.totalItems).to.be.equal(5);
-    expect(result.skip).to.be.equal(1);
-    expect(result.limit).to.be.equal(2);
+    this.assertThat(result.items).hasLengthOf(2);
+    this.assertThat(result.totalItems).isEqual(5);
+    this.assertThat(result.skip).isEqual(1);
+    this.assertThat(result.limit).isEqual(2);
 
-    expect(result.items[0].name).to.be.equal('How I Met Your Father');
-    expect(result.items[1].name).to.be.equal('Star Wars: Clone Wars');
+    this.assertThat(result.items[0].name).isEqual('How I Met Your Father');
+    this.assertThat(result.items[1].name).isEqual('Star Wars: Clone Wars');
   }
 
   async testGetEmptyListWhenThereIsNotTVSeries() {
@@ -108,10 +106,10 @@ export default class GetTVSeriesTest extends APITestCase {
       path: '/tv-series'
     });
 
-    expect(result.items).to.empty;
-    expect(result.totalItems).to.be.equal(0);
-    expect(result.skip).to.be.equal(0);
-    expect(result.limit).to.be.equal(25);
+    this.assertThat(result.items).isEmpty();
+    this.assertThat(result.totalItems).isEqual(0);
+    this.assertThat(result.skip).isEqual(0);
+    this.assertThat(result.limit).isEqual(25);
   }
 
   async testReturnErrorHandlerOnUnexpectedError() {
@@ -123,6 +121,6 @@ export default class GetTVSeriesTest extends APITestCase {
       statusCode: 500
     });
 
-    expect(result.code).to.be.equal('UNEXPECTED_ERROR');
+    this.assertThat(result.code).isEqual('UNEXPECTED_ERROR');
   }
 }

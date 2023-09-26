@@ -1,5 +1,3 @@
-import { expect } from 'chai';
-
 import APITestCase from '../../apiTestHelper';
 
 export default class GetTVSerieByIdTest extends APITestCase {
@@ -17,8 +15,8 @@ export default class GetTVSerieByIdTest extends APITestCase {
       path: `/tv-series/${this.tvSeries[2].id}`
     });
 
-    expect(result.id).to.be.equal(this.tvSeries[2].id);
-    expect(result.name).to.be.equal(this.tvSeries[2].name);
+    this.assertThat(result.id).isEqual(this.tvSeries[2].id);
+    this.assertThat(result.name).isEqual(this.tvSeries[2].name);
   }
 
   async testReturnHandledErrorOnUnexpectedError() {
@@ -30,6 +28,6 @@ export default class GetTVSerieByIdTest extends APITestCase {
       statusCode: 500
     });
 
-    expect(result.code).to.be.equal('UNEXPECTED_ERROR');
+    this.assertThat(result.code).isEqual('UNEXPECTED_ERROR');
   }
 }

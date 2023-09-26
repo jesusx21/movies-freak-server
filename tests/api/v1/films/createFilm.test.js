@@ -1,5 +1,3 @@
-import { expect } from 'chai';
-
 import APITestCase from '../../apiTestHelper';
 import CreateFilm from '../../../../app/moviesFreak/createFilm';
 
@@ -17,27 +15,27 @@ export default class CreateFilmTest extends APITestCase {
       payload: { imdbId: 'fakeImdbId' }
     });
 
-    expect(result.id).to.exist;
-    expect(result.name).to.be.equal('The Shawshank Redemption');
-    expect(result.plot).to.be.equal(
+    this.assertThat(result.id).doesExist();
+    this.assertThat(result.name).isEqual('The Shawshank Redemption');
+    this.assertThat(result.plot).isEqual(
       'Over the course of several years, two convicts form a friendship, '
       + 'seeking consolation and, eventually, redemption through basic compassion.'
     );
-    expect(result.title).to.be.equal('The Shawshank Redemption');
-    expect(result.year).to.be.equal('1994');
-    expect(result.rated).to.be.equal('R');
-    expect(result.runtime).to.be.equal('142 min');
-    expect(result.director).to.be.equal('Frank Darabont');
-    expect(result.poster).to.be.equal(
+    this.assertThat(result.title).isEqual('The Shawshank Redemption');
+    this.assertThat(result.year).isEqual('1994');
+    this.assertThat(result.rated).isEqual('R');
+    this.assertThat(result.runtime).isEqual('142 min');
+    this.assertThat(result.director).isEqual('Frank Darabont');
+    this.assertThat(result.poster).isEqual(
       'https://m.media-amazon.com/images/M/MV5BNDE3ODcxYzMtY2YzZC00NmNlLWJiNDMtZ'
       + 'DViZWM2MzIxZDYwXkEyXkFqcGdeQXVyNjAwNDUxODI@._V1_SX300.jpg'
     );
-    expect(result.production).to.be.equal('N/A');
-    expect(result.genre).to.be.deep.equal(['Drama']);
-    expect(result.writers).to.be.deep.equal(['Stephen King', 'Frank Darabont']);
-    expect(result.actors).to.be.deep.equal(['Tim Robbins', 'Morgan Freeman', 'Bob Gunton']);
-    expect(result.imdbId).to.be.equal('tt0111161');
-    expect(result.imdbRating).to.be.equal('9.3/10');
+    this.assertThat(result.production).isEqual('N/A');
+    this.assertThat(result.genre).isEqual(['Drama']);
+    this.assertThat(result.writers).isEqual(['Stephen King', 'Frank Darabont']);
+    this.assertThat(result.actors).isEqual(['Tim Robbins', 'Morgan Freeman', 'Bob Gunton']);
+    this.assertThat(result.imdbId).isEqual('tt0111161');
+    this.assertThat(result.imdbRating).isEqual('9.3/10');
   }
 
   async testReturnsErrorOnUnexpectedError() {
@@ -51,6 +49,6 @@ export default class CreateFilmTest extends APITestCase {
       statusCode: 500
     });
 
-    expect(result.code).to.be.equal('UNEXPECTED_ERROR');
+    this.assertThat(result.code).isEqual('UNEXPECTED_ERROR');
   }
 }

@@ -99,7 +99,7 @@ export default class TestRunner {
       } catch (error) {
         await test.tearDown();
 
-        if (error instanceof AssertionError) {
+        if (error.constructor.name === 'AssertionError') {
           console.log(`${functionName.padEnd(99, '.')}.fail`.yellow);
 
           this.errorAndFails[testModule][testClassName][functionName].fail = error;

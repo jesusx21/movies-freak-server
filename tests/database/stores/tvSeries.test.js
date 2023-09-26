@@ -1,5 +1,3 @@
-import { expect } from 'chai';
-
 import SQLTestCase from '../testHelper';
 
 import { TVSerie } from '../../../app/moviesFreak/entities';
@@ -53,29 +51,29 @@ export class CreateTVSerieTest extends TVSeriesStoreTest {
   async testCreateTVSerie() {
     const tvSerieCreated = await this._database.tvSeries.create(this.tvSerie);
 
-    expect(tvSerieCreated).to.be.an.instanceOf(TVSerie);
-    expect(tvSerieCreated.id).to.exist;
-    expect(tvSerieCreated.name).to.be.equal('Malcolm in the Middle');
-    expect(tvSerieCreated.plot).to.be.equal(this.tvSerie.plot);
-    expect(tvSerieCreated.years).to.be.deep.equal({ from: '2000', to: '2006' });
-    expect(tvSerieCreated.rated).to.be.equal('TV-PG');
-    expect(tvSerieCreated.genre).to.be.deep.equal(['Comedy', 'Family']);
-    expect(tvSerieCreated.writers).to.be.deep.equal(this.tvSerie.writers);
-    expect(tvSerieCreated.actors).to.be.deep.equal(this.tvSerie.actors);
-    expect(tvSerieCreated.poster).to.be.equal(this.tvSerie.poster);
-    expect(tvSerieCreated.imdbRating).to.be.equal('8.2/10');
-    expect(tvSerieCreated.totalSeasons).to.be.equal(7);
-    expect(tvSerieCreated.releasedAt).to.be.deep.equal(this.tvSerie.releasedAt);
+    this.assertThat(tvSerieCreated).isInstanceOf(TVSerie);
+    this.assertThat(tvSerieCreated.id).doesExist();
+    this.assertThat(tvSerieCreated.name).isEqual('Malcolm in the Middle');
+    this.assertThat(tvSerieCreated.plot).isEqual(this.tvSerie.plot);
+    this.assertThat(tvSerieCreated.years).isEqual({ from: '2000', to: '2006' });
+    this.assertThat(tvSerieCreated.rated).isEqual('TV-PG');
+    this.assertThat(tvSerieCreated.genre).isEqual(['Comedy', 'Family']);
+    this.assertThat(tvSerieCreated.writers).isEqual(this.tvSerie.writers);
+    this.assertThat(tvSerieCreated.actors).isEqual(this.tvSerie.actors);
+    this.assertThat(tvSerieCreated.poster).isEqual(this.tvSerie.poster);
+    this.assertThat(tvSerieCreated.imdbRating).isEqual('8.2/10');
+    this.assertThat(tvSerieCreated.totalSeasons).isEqual(7);
+    this.assertThat(tvSerieCreated.releasedAt).isEqual(this.tvSerie.releasedAt);
   }
 
   async testThrowErrorWhenUniqueFieldIsRepeated() {
     await this._database.tvSeries.create(this.tvSerie);
 
-    const error = await expect(
+    const error = await this.assertThat(
       this._database.tvSeries.create(this.tvSerie)
-    ).to.be.rejectedWith(SQLDatabaseException);
+    ).willBeRejectedWith(SQLDatabaseException);
 
-    expect(error.message).to.have.string(
+    this.assertThat(error.message).hasSubstring(
       'duplicate key value violates unique constraint "tv_series_imdb_id_unique"'
     );
   }
@@ -85,18 +83,18 @@ export class CreateTVSerieTest extends TVSeriesStoreTest {
       .expects('fromJSON')
       .throws(new SerializerError());
 
-    await expect(
+    await this.assertThat(
       this._database.tvSeries.create(this.tvSerie)
-    ).to.be.rejectedWith(SerializerError);
+    ).willBeRejectedWith(SerializerError);
   }
 
   async testThrowErrorOnSQLException() {
     this.stubFunction(this._database.tvSeries, '_connection')
       .throws(new Error());
 
-    await expect(
+    await this.assertThat(
       this._database.tvSeries.create(this.tvSerie)
-    ).to.be.rejectedWith(SQLDatabaseException);
+    ).willBeRejectedWith(SQLDatabaseException);
   }
 }
 
@@ -117,25 +115,25 @@ export class FindByIdTest extends TVSeriesStoreTest {
   async testFindTVSerieById() {
     const tvSerieFound = await this._database.tvSeries.findById(this.tvSeries[2].id);
 
-    expect(tvSerieFound).to.be.instanceOf(TVSerie);
-    expect(tvSerieFound.id).to.be.equal(this.tvSeries[2].id);
-    expect(tvSerieFound.name).to.be.equal('Gravity Falls');
-    expect(tvSerieFound.plot).to.be.equal('Another Stoned Kids');
+    this.assertThat(tvSerieFound).isInstanceOf(TVSerie);
+    this.assertThat(tvSerieFound.id).isEqual(this.tvSeries[2].id);
+    this.assertThat(tvSerieFound.name).isEqual('Gravity Falls');
+    this.assertThat(tvSerieFound.plot).isEqual('Another Stoned Kids');
   }
 
   async testThrowsErrorWhenTVSerieIsNotFound() {
-    await expect(
+    await this.assertThat(
       this._database.tvSeries.findById(this.generateUUID())
-    ).to.be.rejectedWith(TVSerieNotFound);
+    ).willBeRejectedWith(TVSerieNotFound);
   }
 
   async testThrowsErrorOnUnexpectedError() {
     this.stubFunction(this._database.tvSeries, '_connection')
       .throws(new SerializerError());
 
-    await expect(
+    await this.assertThat(
       this._database.tvSeries.findById(this.tvSeries[2].id)
-    ).to.be.rejectedWith(SQLDatabaseException);
+    ).willBeRejectedWith(SQLDatabaseException);
   }
 }
 
@@ -145,9 +143,9 @@ export class FindTest extends TVSeriesStoreTest {
 
     const { totalItems, items: tvSeries } = await this._database.tvSeries.find();
 
-    expect(tvSeries).to.have.lengthOf(5);
-    expect(totalItems).to.be.equal(5);
-    tvSeries.forEach((tvSerie) => expect(tvSerie).to.be.instanceOf(TVSerie));
+    this.assertThat(tvSeries).hasLengthOf(5);
+    this.assertThat(totalItems).isEqual(5);
+    tvSeries.forEach((tvSerie) => this.assertThat(tvSerie).isInstanceOf(TVSerie));
   }
 
   async testFindWithSkip() {
@@ -164,11 +162,11 @@ export class FindTest extends TVSeriesStoreTest {
 
     const { totalItems, items: tvSeries } = await this._database.tvSeries.find({ skip: 2 });
 
-    expect(tvSeries).to.have.lengthOf(3);
-    expect(totalItems).to.be.equal(5);
-    expect(tvSeries[0].name).to.be.equal('Star Wars: Clone Wars');
-    expect(tvSeries[1].name).to.be.equal('Star Wars: Rebels');
-    expect(tvSeries[2].name).to.be.equal('Friends');
+    this.assertThat(tvSeries).hasLengthOf(3);
+    this.assertThat(totalItems).isEqual(5);
+    this.assertThat(tvSeries[0].name).isEqual('Star Wars: Clone Wars');
+    this.assertThat(tvSeries[1].name).isEqual('Star Wars: Rebels');
+    this.assertThat(tvSeries[2].name).isEqual('Friends');
   }
 
   async testFindWithLimit() {
@@ -185,11 +183,11 @@ export class FindTest extends TVSeriesStoreTest {
 
     const { totalItems, items: tvSeries } = await this._database.tvSeries.find({ limit: 3 });
 
-    expect(tvSeries).to.have.lengthOf(3);
-    expect(totalItems).to.be.equal(5);
-    expect(tvSeries[0].name).to.be.equal('How I Met Your Mother');
-    expect(tvSeries[1].name).to.be.equal('How I Met Your Father');
-    expect(tvSeries[2].name).to.be.equal('Star Wars: Clone Wars');
+    this.assertThat(tvSeries).hasLengthOf(3);
+    this.assertThat(totalItems).isEqual(5);
+    this.assertThat(tvSeries[0].name).isEqual('How I Met Your Mother');
+    this.assertThat(tvSeries[1].name).isEqual('How I Met Your Father');
+    this.assertThat(tvSeries[2].name).isEqual('Star Wars: Clone Wars');
   }
 
   async testFindWithSkipAndLimit() {
@@ -208,25 +206,25 @@ export class FindTest extends TVSeriesStoreTest {
       { limit: 2, skip: 1 }
     );
 
-    expect(tvSeries).to.have.lengthOf(2);
-    expect(totalItems).to.be.equal(5);
-    expect(tvSeries[0].name).to.be.equal('How I Met Your Father');
-    expect(tvSeries[1].name).to.be.equal('Star Wars: Clone Wars');
+    this.assertThat(tvSeries).hasLengthOf(2);
+    this.assertThat(totalItems).isEqual(5);
+    this.assertThat(tvSeries[0].name).isEqual('How I Met Your Father');
+    this.assertThat(tvSeries[1].name).isEqual('Star Wars: Clone Wars');
   }
 
   async testReturnEmptyListWhenThereIsNotTVSeries() {
     const { totalItems, items: tvSeries } = await this._database.tvSeries.find();
 
-    expect(tvSeries).to.be.empty;
-    expect(totalItems).to.be.equal(0);
+    this.assertThat(tvSeries).isEmpty();
+    this.assertThat(totalItems).isEqual(0);
   }
 
   async testThrowErrorOnUnexpectedError() {
     this.stubFunction(this._database.tvSeries, '_connection')
       .throws(new SerializerError());
 
-    await expect(
+    await this.assertThat(
       this._database.tvSeries.find()
-    ).to.be.rejectedWith(SQLDatabaseException);
+    ).willBeRejectedWith(SQLDatabaseException);
   }
 }

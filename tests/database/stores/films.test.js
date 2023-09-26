@@ -1,5 +1,3 @@
-import { expect } from 'chai';
-
 import SQLTestCase from '../testHelper';
 
 import { Film } from '../../../app/moviesFreak/entities';
@@ -47,32 +45,32 @@ export class CreateFilmTest extends FilmsStoreTest {
   async testCreateFilm() {
     const filmCreated = await this._database.films.create(this.film);
 
-    expect(filmCreated).to.be.instanceOf(Film);
-    expect(filmCreated.id).to.exist;
-    expect(filmCreated.name).to.be.equal('It Chapter I');
-    expect(filmCreated.plot).to.be.equal('Is about a serial clown killer');
-    expect(filmCreated.title).to.be.equal('It');
-    expect(filmCreated.year).to.be.equal('2017');
-    expect(filmCreated.rated).to.be.equal('pg-13');
-    expect(filmCreated.runtime).to.be.equal('2 horas y media');
-    expect(filmCreated.director).to.be.equal('El Andy Muscchieti');
-    expect(filmCreated.poster).to.be.equal('www.film.com/poster');
-    expect(filmCreated.production).to.be.equal('Warner Bros');
-    expect(filmCreated.genre).to.be.deep.equal(['coming out of age', 'thriller', 'horror']);
-    expect(filmCreated.writers).to.be.deep.equal(['I dunno']);
-    expect(filmCreated.actors).to.be.deep.equal(['Billy', 'Tom', 'Mike']);
-    expect(filmCreated.imdbId).to.be.equal('45s4d7fsd');
-    expect(filmCreated.imdbRating).to.be.equal('10 out of 10');
+    this.assertThat(filmCreated).isInstanceOf(Film);
+    this.assertThat(filmCreated.id).exists;
+    this.assertThat(filmCreated.name).isEqual('It Chapter I');
+    this.assertThat(filmCreated.plot).isEqual('Is about a serial clown killer');
+    this.assertThat(filmCreated.title).isEqual('It');
+    this.assertThat(filmCreated.year).isEqual('2017');
+    this.assertThat(filmCreated.rated).isEqual('pg-13');
+    this.assertThat(filmCreated.runtime).isEqual('2 horas y media');
+    this.assertThat(filmCreated.director).isEqual('El Andy Muscchieti');
+    this.assertThat(filmCreated.poster).isEqual('www.film.com/poster');
+    this.assertThat(filmCreated.production).isEqual('Warner Bros');
+    this.assertThat(filmCreated.genre).isEqual(['coming out of age', 'thriller', 'horror']);
+    this.assertThat(filmCreated.writers).isEqual(['I dunno']);
+    this.assertThat(filmCreated.actors).isEqual(['Billy', 'Tom', 'Mike']);
+    this.assertThat(filmCreated.imdbId).isEqual('45s4d7fsd');
+    this.assertThat(filmCreated.imdbRating).isEqual('10 out of 10');
   }
 
   async testThrowErrorWhenUniqueFieldIsRepeated() {
     await this._database.films.create(this.film);
 
-    const error = await expect(
+    const error = await this.assertThat(
       this._database.films.create(this.film)
-    ).to.be.rejectedWith(SQLDatabaseException);
+    ).willBeRejectedWith(SQLDatabaseException);
 
-    expect(error.message).to.have.string(
+    this.assertThat(error.message).hasSubstring(
       'duplicate key value violates unique constraint "films_imdb_id_unique"'
     );
   }
@@ -82,18 +80,18 @@ export class CreateFilmTest extends FilmsStoreTest {
       .expects('fromJSON')
       .throws(new SerializerError());
 
-    await expect(
+    await this.assertThat(
       this._database.films.create(this.film)
-    ).to.be.rejectedWith(SerializerError);
+    ).willBeRejectedWith(SerializerError);
   }
 
   async testThrowErrorOnSQLException() {
     this.stubFunction(this._database.films, '_connection')
       .throws(new SerializerError());
 
-    await expect(
+    await this.assertThat(
       this._database.films.create(this.film)
-    ).to.be.rejectedWith(SQLDatabaseException);
+    ).willBeRejectedWith(SQLDatabaseException);
   }
 }
 
@@ -114,25 +112,25 @@ export class FindByIdTest extends FilmsStoreTest {
   async testFindFilmById() {
     const filmFound = await this._database.films.findById(this.films[2].id);
 
-    expect(filmFound).to.be.instanceOf(Film);
-    expect(filmFound.id).to.be.equal(this.films[2].id);
-    expect(filmFound.name).to.be.equal('It Chapter II');
-    expect(filmFound.plot).to.be.equal('Another Horror Movie');
+    this.assertThat(filmFound).isInstanceOf(Film);
+    this.assertThat(filmFound.id).isEqual(this.films[2].id);
+    this.assertThat(filmFound.name).isEqual('It Chapter II');
+    this.assertThat(filmFound.plot).isEqual('Another Horror Movie');
   }
 
   async testThrowsErrorWhenFilmIsNotFound() {
-    await expect(
+    await this.assertThat(
       this._database.films.findById(this.generateUUID())
-    ).to.be.rejectedWith(FilmNotFound);
+    ).willBeRejectedWith(FilmNotFound);
   }
 
   async testThrowsErrorOnUnexpectedError() {
     this.stubFunction(this._database.films, '_connection')
       .throws(new SerializerError());
 
-    await expect(
+    await this.assertThat(
       this._database.films.findById(this.films[2].id)
-    ).to.be.rejectedWith(SQLDatabaseException);
+    ).willBeRejectedWith(SQLDatabaseException);
   }
 }
 
@@ -142,9 +140,9 @@ export class FindTest extends FilmsStoreTest {
 
     const { totalItems, items: films } = await this._database.films.find();
 
-    expect(films).to.have.lengthOf(5);
-    expect(totalItems).to.be.equal(5);
-    films.forEach((film) => expect(film).to.be.instanceOf(Film));
+    this.assertThat(films).hasLengthOf(5);
+    this.assertThat(totalItems).isEqual(5);
+    films.forEach((film) => this.assertThat(film).isInstanceOf(Film));
   }
 
   async testFindWithSkip() {
@@ -161,11 +159,11 @@ export class FindTest extends FilmsStoreTest {
 
     const { totalItems, items: films } = await this._database.films.find({ skip: 2 });
 
-    expect(films).to.have.lengthOf(3);
-    expect(totalItems).to.be.equal(5);
-    expect(films[0].name).to.be.equal('10 Things I Hate about You');
-    expect(films[1].name).to.be.equal('The Perks of Being a Wallflower');
-    expect(films[2].name).to.be.equal('Predestination');
+    this.assertThat(films).hasLengthOf(3);
+    this.assertThat(totalItems).isEqual(5);
+    this.assertThat(films[0].name).isEqual('10 Things I Hate about You');
+    this.assertThat(films[1].name).isEqual('The Perks of Being a Wallflower');
+    this.assertThat(films[2].name).isEqual('Predestination');
   }
 
   async testFindWithLimit() {
@@ -182,11 +180,11 @@ export class FindTest extends FilmsStoreTest {
 
     const { totalItems, items: films } = await this._database.films.find({ limit: 3 });
 
-    expect(films).to.have.lengthOf(3);
-    expect(totalItems).to.be.equal(5);
-    expect(films[0].name).to.be.equal('Midsomar');
-    expect(films[1].name).to.be.equal('Nimona');
-    expect(films[2].name).to.be.equal('10 Things I Hate about You');
+    this.assertThat(films).hasLengthOf(3);
+    this.assertThat(totalItems).isEqual(5);
+    this.assertThat(films[0].name).isEqual('Midsomar');
+    this.assertThat(films[1].name).isEqual('Nimona');
+    this.assertThat(films[2].name).isEqual('10 Things I Hate about You');
   }
 
   async testFindWithSkipAndLimit() {
@@ -203,25 +201,25 @@ export class FindTest extends FilmsStoreTest {
 
     const { totalItems, items: films } = await this._database.films.find({ limit: 2, skip: 1 });
 
-    expect(films).to.have.lengthOf(2);
-    expect(totalItems).to.be.equal(5);
-    expect(films[0].name).to.be.equal('Nimona');
-    expect(films[1].name).to.be.equal('10 Things I Hate about You');
+    this.assertThat(films).hasLengthOf(2);
+    this.assertThat(totalItems).isEqual(5);
+    this.assertThat(films[0].name).isEqual('Nimona');
+    this.assertThat(films[1].name).isEqual('10 Things I Hate about You');
   }
 
   async testReturnEmptyListWhenThereIsNotFilms() {
     const { totalItems, items: films } = await this._database.films.find();
 
-    expect(films).to.be.empty;
-    expect(totalItems).to.be.equal(0);
+    this.assertThat(films).isEmpty();
+    this.assertThat(totalItems).isEqual(0);
   }
 
   async testThrowErrorOnUnexpectedError() {
     this.stubFunction(this._database.films, '_connection')
       .throws(new SerializerError());
 
-    await expect(
+    await this.assertThat(
       this._database.films.find()
-    ).to.be.rejectedWith(SQLDatabaseException);
+    ).willBeRejectedWith(SQLDatabaseException);
   }
 }

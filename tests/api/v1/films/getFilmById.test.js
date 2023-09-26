@@ -1,5 +1,3 @@
-import { expect } from 'chai';
-
 import APITestCase from '../../apiTestHelper';
 
 export default class GetFilmById extends APITestCase {
@@ -22,8 +20,8 @@ export default class GetFilmById extends APITestCase {
       path: `/films/${this.films[2].id}`
     });
 
-    expect(result.id).to.be.equal(this.films[2].id);
-    expect(result.name).to.be.equal(this.films[2].name);
+    this.assertThat(result.id).isEqual(this.films[2].id);
+    this.assertThat(result.name).isEqual(this.films[2].name);
   }
 
   async testReturnsNotFoundErorOnUnexistentFilm() {
@@ -32,7 +30,7 @@ export default class GetFilmById extends APITestCase {
       statusCode: 404
     });
 
-    expect(result.code).to.be.equal('FILM_NOT_FOUND');
+    this.assertThat(result.code).isEqual('FILM_NOT_FOUND');
   }
 
   async testReturnsUnexpectedErrorOnServerError() {
@@ -46,6 +44,6 @@ export default class GetFilmById extends APITestCase {
       statusCode: 500
     });
 
-    expect(result.code).to.be.equal('UNEXPECTED_ERROR');
+    this.assertThat(result.code).isEqual('UNEXPECTED_ERROR');
   }
 }

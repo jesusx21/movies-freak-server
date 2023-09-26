@@ -1,5 +1,3 @@
-import { expect } from 'chai';
-
 import TestCase from '../../../../testHelper';
 
 import { User } from '../../../../../app/moviesFreak/entities';
@@ -19,21 +17,21 @@ export class UserTest extends TestCase {
   testAddPassword() {
     this.user.addPassword('Password1');
 
-    expect(this.user._password).to.exist;
-    expect(this.user._password).to.have.keys('salt', 'hash');
-    expect(this.user._password.salt).to.exist;
-    expect(this.user._password.hash).to.exist;
+    this.assertThat(this.user._password).doesExist();
+    this.assertThat(this.user._password).hasKeys('salt', 'hash');
+    this.assertThat(this.user._password.salt).doesExist();
+    this.assertThat(this.user._password.hash).doesExist();
   }
 
   testDoesPasswordMatchReturnsTrueWhenPasswordMatch() {
     this.user.addPassword('Password1');
 
-    expect(this.user.doesPasswordMatch('Password1')).to.be.true;
+    this.assertThat(this.user.doesPasswordMatch('Password1')).isTrue();
   }
 
   testDoesPasswordMatchReturnsFalseWhenPasswordDoesntMatch() {
     this.user.addPassword('Password1');
 
-    expect(this.user.doesPasswordMatch('Password')).to.be.false;
+    this.assertThat(this.user.doesPasswordMatch('Password')).isFalse();
   }
 }

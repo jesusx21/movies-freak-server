@@ -1,12 +1,11 @@
-import { expect } from 'chai';
-
 import TestCase from '../../../testHelper';
 
 import Register from '../../../../app/moviesFreak/register';
 import { Session, User } from '../../../../app/moviesFreak/entities';
 import {
   CouldNotRegister,
-  EmailAlreadyUsed
+  EmailAlreadyUsed,
+  UsernameAlreadyUsed
 } from '../../../../app/moviesFreak/errors';
 import { DatabaseError } from '../../../../database/stores/errors';
 
@@ -30,17 +29,17 @@ export class RegisterTest extends TestCase {
   async testRegisterUser() {
     const session = await this.useCase.execute();
 
-    expect(session).to.be.instanceOf(Session);
-    expect(session.token).to.exist;
-    expect(session.expiresAt).to.be.greaterThan(new Date());
-    expect(session.isActive).to.be.true;
+    this.assertThat(session).isInstanceOf(Session);
+    this.assertThat(session.token).doesExist();
+    this.assertThat(session.expiresAt).isGreaterThan(new Date());
+    this.assertThat(session.isActive).isTrue();
 
-    expect(session.user).to.be.instanceOf(User);
-    expect(session.user.name).to.be.equal('Edward');
-    expect(session.user.lastName).to.be.equal('Cullen');
-    expect(session.user.username).to.be.equal('eddy');
-    expect(session.user.email).to.be.equal('eddy@yahoo.com');
-    expect(session.user.birthdate).to.be.deep.equal(this.userData.birthdate);
+    this.assertThat(session.user).isInstanceOf(User);
+    this.assertThat(session.user.name).isEqual('Edward');
+    this.assertThat(session.user.lastName).isEqual('Cullen');
+    this.assertThat(session.user.username).isEqual('eddy');
+    this.assertThat(session.user.email).isEqual('eddy@yahoo.com');
+    this.assertThat(session.user.birthdate).isEqual(this.userData.birthdate);
   }
 
   async testThrowErrorOnEmailAlreadyUsed() {
@@ -49,37 +48,37 @@ export class RegisterTest extends TestCase {
 
     const useCase = new Register(this._database, this.userData);
 
-    expect(
+    await this.assertThat(
       useCase.execute()
-    ).to.be.rejectedWith(EmailAlreadyUsed);
+    ).willBeRejectedWith(EmailAlreadyUsed);
   }
 
   async testThrowErrorOnUsernameAlreadyUsed() {
     await this.useCase.execute();
-    this.userData.email = 'eddy@hotmail.com';
+    this.userData.email = 'edddy@hotmail.com';
 
     const useCase = new Register(this._database, this.userData);
 
-    expect(
+    await this.assertThat(
       useCase.execute()
-    ).to.be.rejectedWith(EmailAlreadyUsed);
+    ).willBeRejectedWith(UsernameAlreadyUsed);
   }
 
   async testThrowErrorWhenSavingUser() {
     this.stubFunction(this._database.users, 'create')
       .throws(new DatabaseError());
 
-    expect(
+    await this.assertThat(
       this.useCase.execute()
-    ).to.be.rejectedWith(CouldNotRegister);
+    ).willBeRejectedWith(CouldNotRegister);
   }
 
   async testThrowErrorWhenCreateSession() {
     this.stubFunction(this._database.sessions, 'create')
       .throws(new DatabaseError());
 
-    expect(
+    await this.assertThat(
       this.useCase.execute()
-    ).to.be.rejectedWith(CouldNotRegister);
+    ).willBeRejectedWith(CouldNotRegister);
   }
 }

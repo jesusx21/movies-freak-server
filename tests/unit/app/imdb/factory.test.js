@@ -1,5 +1,3 @@
-import { expect } from 'chai';
-
 import TestCase from '../../../testHelper';
 
 import imdbFactory from '../../../../app/imdb/factory';
@@ -11,18 +9,18 @@ export default class IMDBFactoryTest extends TestCase {
   testReturnDummyGateway() {
     const gateway = imdbFactory('dummy');
 
-    expect(gateway).to.be.instanceOf(DummyGateway);
+    this.assertThat(gateway).isInstanceOf(DummyGateway);
   }
 
   testReturnOMDBGateway() {
     const gateway = imdbFactory('omdb');
 
-    expect(gateway).to.be.instanceOf(OMDBGateway);
+    this.assertThat(gateway).isInstanceOf(OMDBGateway);
   }
 
   testThrowErrorOnUnsupportedDriver() {
-    expect(
+    this.assertThat(
       () => imdbFactory('invalid-driver')
-    ).to.throw(DriverNotSupported);
+    ).willThrow(DriverNotSupported);
   }
 }

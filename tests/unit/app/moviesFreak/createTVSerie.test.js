@@ -1,5 +1,3 @@
-import { expect } from 'chai';
-
 import TestCase from '../../../testHelper';
 import IMDB_TV_EPISODE_RESPONSE from '../../data/imdbTVEpisodeResponse';
 import IMDB_TV_SERIE_RESPONSE from '../../data/imdbTVSerieResponse';
@@ -43,64 +41,64 @@ export default class CreateTVSerieTest extends TestCase {
 
     const tvSerie = await this.useCase.execute();
 
-    expect(tvSerie).to.be.instanceOf(TVSerie);
-    expect(tvSerie.id).to.exist;
-    expect(tvSerie.imdbId).to.be.equal('tt0212671');
-    expect(tvSerie.name).to.be.equal('Malcolm in the Middle');
-    expect(tvSerie.plot).to.be.equal(
+    this.assertThat(tvSerie).isInstanceOf(TVSerie);
+    this.assertThat(tvSerie.id).doesExist();
+    this.assertThat(tvSerie.imdbId).isEqual('tt0212671');
+    this.assertThat(tvSerie.name).isEqual('Malcolm in the Middle');
+    this.assertThat(tvSerie.plot).isEqual(
       'A gifted young teen tries to survive life with his dimwitted, dysfunctional family.'
     );
-    expect(tvSerie.years).to.be.deep.equal({ from: '2000', to: '2006' });
-    expect(tvSerie.rated).to.be.equal('TV-PG');
-    expect(tvSerie.genre).to.be.deep.equal(['Comedy', 'Family']);
-    expect(tvSerie.writers).to.be.deep.equal(
+    this.assertThat(tvSerie.years).isEqual({ from: '2000', to: '2006' });
+    this.assertThat(tvSerie.rated).isEqual('TV-PG');
+    this.assertThat(tvSerie.genre).isEqual(['Comedy', 'Family']);
+    this.assertThat(tvSerie.writers).isEqual(
       ['Linwood Boomer', 'Michael Glouberman', 'Gary Murphy']
     );
-    expect(tvSerie.actors).to.be.deep.equal(
+    this.assertThat(tvSerie.actors).isEqual(
       ['Frankie Muniz', 'Bryan Cranston', 'Justin Berfield']
     );
-    expect(tvSerie.poster).to.be.equal(
+    this.assertThat(tvSerie.poster).isEqual(
       'https://m.media-amazon.com/images/M/MV5BNTc2MzM2N2YtZDdiOS00M2'
       + 'I2LWFjOGItMDM3OTA3YjUwNjAxXkEyXkFqcGdeQXVyNzA5NjUyNjM@._V1_SX300.jpg'
     );
-    expect(tvSerie.imdbRating).to.be.equal('8.2/10');
-    expect(tvSerie.totalSeasons).to.be.equal(7);
-    expect(tvSerie.releasedAt).to.be.instanceOf(Date);
+    this.assertThat(tvSerie.imdbRating).isEqual('8.2/10');
+    this.assertThat(tvSerie.totalSeasons).isEqual(7);
+    this.assertThat(tvSerie.releasedAt).isInstanceOf(Date);
   }
 
   async testThrowErrorWhenIMDBFails() {
     this.stubFunction(this.useCase._imdb, 'fetchTVSerieById')
       .throws(new Error());
 
-    await expect(
+    await this.assertThat(
       this.useCase.execute()
-    ).to.be.rejectedWith(CouldNotCreateTVSerie);
+    ).willBeRejectedWith(CouldNotCreateTVSerie);
   }
 
   async testThrowErrorWhenSavingTVSerieFails() {
     this.stubFunction(this.useCase._database.tvSeries, 'create')
       .throws(new Error());
 
-    await expect(
+    await this.assertThat(
       this.useCase.execute()
-    ).to.be.rejectedWith(CouldNotCreateTVSerie);
+    ).willBeRejectedWith(CouldNotCreateTVSerie);
   }
 
   async testThrowErrorWhenSavingTVSeasonsFails() {
     this.stubFunction(this.useCase._database.tvSeasons, 'create')
       .throws(new Error());
 
-    await expect(
+    await this.assertThat(
       this.useCase.execute()
-    ).to.be.rejectedWith(CouldNotCreateTVSeasons);
+    ).willBeRejectedWith(CouldNotCreateTVSeasons);
   }
 
   async testThrowErrorWhenSavingTVEpisodesFails() {
     this.stubFunction(this.useCase._database.tvEpisodes, 'create')
       .throws(new Error());
 
-    await expect(
+    await this.assertThat(
       this.useCase.execute()
-    ).to.be.rejectedWith(CouldNotCreateTVSeasons);
+    ).willBeRejectedWith(CouldNotCreateTVSeasons);
   }
 }

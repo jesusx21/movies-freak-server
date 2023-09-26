@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 
 import TestCase from '../../../testHelper';
 
@@ -22,45 +21,45 @@ export default class CreateFilmTest extends TestCase {
   async testCreateFilm() {
     const film = await this.useCase.execute();
 
-    expect(film).to.be.instanceOf(Film);
-    expect(film.id).to.exist;
-    expect(film.name).to.be.equal('The Shawshank Redemption');
-    expect(film.plot).to.be.equal(
+    this.assertThat(film).isInstanceOf(Film);
+    this.assertThat(film.id).doesExist();
+    this.assertThat(film.name).isEqual('The Shawshank Redemption');
+    this.assertThat(film.plot).isEqual(
       'Over the course of several years, two convicts form a friendship, '
       + 'seeking consolation and, eventually, redemption through basic compassion.'
     );
-    expect(film.title).to.be.equal('The Shawshank Redemption');
-    expect(film.year).to.be.equal('1994');
-    expect(film.rated).to.be.equal('R');
-    expect(film.runtime).to.be.equal('142 min');
-    expect(film.director).to.be.equal('Frank Darabont');
-    expect(film.poster).to.be.equal(
+    this.assertThat(film.title).isEqual('The Shawshank Redemption');
+    this.assertThat(film.year).isEqual('1994');
+    this.assertThat(film.rated).isEqual('R');
+    this.assertThat(film.runtime).isEqual('142 min');
+    this.assertThat(film.director).isEqual('Frank Darabont');
+    this.assertThat(film.poster).isEqual(
       'https://m.media-amazon.com/images/M/MV5BNDE3ODcxYzMtY2YzZC00NmN'
       + 'lLWJiNDMtZDViZWM2MzIxZDYwXkEyXkFqcGdeQXVyNjAwNDUxODI@._V1_SX300.jpg'
     );
-    expect(film.production).to.be.equal('N/A');
-    expect(film.genre).to.be.deep.equal(['Drama']);
-    expect(film.writers).to.be.deep.equal(['Stephen King', 'Frank Darabont']);
-    expect(film.actors).to.be.deep.equal(['Tim Robbins', 'Morgan Freeman', 'Bob Gunton']);
-    expect(film.imdbId).to.be.equal('tt0111161');
-    expect(film.imdbRating).to.be.equal('9.3/10');
+    this.assertThat(film.production).isEqual('N/A');
+    this.assertThat(film.genre).isEqual(['Drama']);
+    this.assertThat(film.writers).isEqual(['Stephen King', 'Frank Darabont']);
+    this.assertThat(film.actors).isEqual(['Tim Robbins', 'Morgan Freeman', 'Bob Gunton']);
+    this.assertThat(film.imdbId).isEqual('tt0111161');
+    this.assertThat(film.imdbRating).isEqual('9.3/10');
   }
 
   async testThrowErrorWhenIMDBFails() {
     this.stubFunction(this.useCase._imdb, 'fetchFilmById')
       .throws(new Error());
 
-    await expect(
+    await this.assertThat(
       this.useCase.execute()
-    ).to.be.rejectedWith(CouldNotCreateFilm);
+    ).willBeRejectedWith(CouldNotCreateFilm);
   }
 
   async testThrowErrorWhenDatabaseFails() {
     this.stubFunction(this.useCase._database.films, 'create')
       .throws(new Error());
 
-    await expect(
+    await this.assertThat(
       this.useCase.execute()
-    ).to.be.rejectedWith(CouldNotCreateFilm);
+    ).willBeRejectedWith(CouldNotCreateFilm);
   }
 }

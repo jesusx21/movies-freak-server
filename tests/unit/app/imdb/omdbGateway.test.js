@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { expect } from 'chai';
 
 import TestCase from '../../../testHelper';
 import IMDB_FILM_RESPONSE from '../../data/imdbFilmResponse';
@@ -33,34 +32,34 @@ export class FetchFilmByIdTest extends OMDBGatewayTest {
     const result = await this.gateway.fetchFilmById('tt0111161');
     const { data } = IMDB_FILM_RESPONSE;
 
-    expect(result).to.be.instanceOf(OMDBFilmResult);
-    expect(result.isRequestSuccesful()).to.be.true;
-    expect(result._isCollection()).to.be.false;
-    expect(result.title).to.be.equal(data.Title);
-    expect(result.year).to.be.equal(data.Year);
-    expect(result.rated).to.be.equal(data.Rated);
-    expect(result.released).to.be.equal(data.Released);
-    expect(result.runtime).to.be.equal(data.Runtime);
-    expect(result.genre).to.be.deep.equal(data.Genre.split(','));
-    expect(result.director).to.be.equal(data.Director);
-    expect(result.writers).to.be.deep.equal(['Stephen King', 'Frank Darabont']);
-    expect(result.actors).to.be.deep.equal(
+    this.assertThat(result).isInstanceOf(OMDBFilmResult);
+    this.assertThat(result.isRequestSuccesful()).isTrue();
+    this.assertThat(result._isCollection()).isFalse();
+    this.assertThat(result.title).isEqual(data.Title);
+    this.assertThat(result.year).isEqual(data.Year);
+    this.assertThat(result.rated).isEqual(data.Rated);
+    this.assertThat(result.released).isEqual(data.Released);
+    this.assertThat(result.runtime).isEqual(data.Runtime);
+    this.assertThat(result.genre).isEqual(data.Genre.split(','));
+    this.assertThat(result.director).isEqual(data.Director);
+    this.assertThat(result.writers).isEqual(['Stephen King', 'Frank Darabont']);
+    this.assertThat(result.actors).isEqual(
       ['Tim Robbins', 'Morgan Freeman', 'Bob Gunton']
     );
-    expect(result.plot).to.be.equal(data.Plot);
-    expect(result.language).to.be.equal(data.Language);
-    expect(result.country).to.be.equal(data.Country);
-    expect(result.awards).to.be.equal(data.Awards);
-    expect(result.poster).to.be.equal(data.Poster);
-    expect(result.ratings[0].source).to.be.equal(data.Ratings[0].Source);
-    expect(result.ratings[0].value).to.be.equal(data.Ratings[0].Value);
-    expect(result.ratings[1].source).to.be.equal(data.Ratings[1].Source);
-    expect(result.ratings[1].value).to.be.equal(data.Ratings[1].Value);
-    expect(result.ratings[2].source).to.be.equal(data.Ratings[2].Source);
-    expect(result.ratings[2].value).to.be.equal(data.Ratings[2].Value);
-    expect(result.imdbId).to.be.equal(data.imdbID);
-    expect(result.type).to.be.equal('film');
-    expect(result.production).to.be.equal(data.Production);
+    this.assertThat(result.plot).isEqual(data.Plot);
+    this.assertThat(result.language).isEqual(data.Language);
+    this.assertThat(result.country).isEqual(data.Country);
+    this.assertThat(result.awards).isEqual(data.Awards);
+    this.assertThat(result.poster).isEqual(data.Poster);
+    this.assertThat(result.ratings[0].source).isEqual(data.Ratings[0].Source);
+    this.assertThat(result.ratings[0].value).isEqual(data.Ratings[0].Value);
+    this.assertThat(result.ratings[1].source).isEqual(data.Ratings[1].Source);
+    this.assertThat(result.ratings[1].value).isEqual(data.Ratings[1].Value);
+    this.assertThat(result.ratings[2].source).isEqual(data.Ratings[2].Source);
+    this.assertThat(result.ratings[2].value).isEqual(data.Ratings[2].Value);
+    this.assertThat(result.imdbId).isEqual(data.imdbID);
+    this.assertThat(result.type).isEqual('film');
+    this.assertThat(result.production).isEqual(data.Production);
   }
 
   async testThrowErrorOnIncorrectIMDBId() {
@@ -68,11 +67,11 @@ export class FetchFilmByIdTest extends OMDBGatewayTest {
       .expects('get')
       .resolves({ data: { Response: 'False', Error: 'Incorrect IMDb ID.' } });
 
-    const error = await expect(
+    const error = await this.assertThat(
       this.gateway.fetchFilmById('tt0111161')
-    ).to.be.rejectedWith(IMDBError);
+    ).willBeRejectedWith(IMDBError);
 
-    expect(error.message).to.be.equal('Incorrect IMDb ID.');
+    this.assertThat(error.message).isEqual('Incorrect IMDb ID.');
   }
 
   async testErrorOnInvalidApiKey() {
@@ -82,11 +81,11 @@ export class FetchFilmByIdTest extends OMDBGatewayTest {
       .expects('get')
       .rejects({ response: { data } });
 
-    const error = await expect(
+    const error = await this.assertThat(
       this.gateway.fetchFilmById('tt011161')
-    ).to.be.rejectedWith(IMDBError);
+    ).willBeRejectedWith(IMDBError);
 
-    expect(error.message).to.be.equal('Invalid API key!');
+    this.assertThat(error.message).isEqual('Invalid API key!');
   }
 }
 
@@ -99,32 +98,32 @@ export class FetchTVSerieByIdTest extends OMDBGatewayTest {
     const result = await this.gateway.fetchTVSerieById('tt0212671');
     const { data } = IMDB_TV_SERIE_RESPONSE;
 
-    expect(result).to.be.instanceOf(OMDBTVSerieResult);
-    expect(result.isRequestSuccesful()).to.be.true;
-    expect(result._isCollection()).to.be.false;
-    expect(result.title).to.be.equal(data.Title);
-    expect(result.years).to.be.deep.equal({ from: '2000', to: '2006' });
-    expect(result.rated).to.be.equal(data.Rated);
-    expect(result.released).to.be.equal(data.Released);
-    expect(result.runtime).to.be.equal(data.Runtime);
-    expect(result.genre).to.be.deep.equal(['Comedy', 'Family']);
-    expect(result.director).to.be.equal(data.Director);
-    expect(result.writers).to.be.deep.equal(
+    this.assertThat(result).isInstanceOf(OMDBTVSerieResult);
+    this.assertThat(result.isRequestSuccesful()).isTrue();
+    this.assertThat(result._isCollection()).isFalse();
+    this.assertThat(result.title).isEqual(data.Title);
+    this.assertThat(result.years).isEqual({ from: '2000', to: '2006' });
+    this.assertThat(result.rated).isEqual(data.Rated);
+    this.assertThat(result.released).isEqual(data.Released);
+    this.assertThat(result.runtime).isEqual(data.Runtime);
+    this.assertThat(result.genre).isEqual(['Comedy', 'Family']);
+    this.assertThat(result.director).isEqual(data.Director);
+    this.assertThat(result.writers).isEqual(
       ['Linwood Boomer', 'Michael Glouberman', 'Gary Murphy']
     );
-    expect(result.actors).to.be.deep.equal(
+    this.assertThat(result.actors).isEqual(
       ['Frankie Muniz', 'Bryan Cranston', 'Justin Berfield']
     );
-    expect(result.plot).to.be.equal(data.Plot);
-    expect(result.language).to.be.equal(data.Language);
-    expect(result.country).to.be.equal(data.Country);
-    expect(result.awards).to.be.equal(data.Awards);
-    expect(result.poster).to.be.equal(data.Poster);
-    expect(result.ratings[0].source).to.be.equal(data.Ratings[0].Source);
-    expect(result.ratings[0].value).to.be.equal(data.Ratings[0].Value);
-    expect(result.imdbId).to.be.equal(data.imdbID);
-    expect(result.type).to.be.equal('serie');
-    expect(result.production).to.be.equal(data.Production);
+    this.assertThat(result.plot).isEqual(data.Plot);
+    this.assertThat(result.language).isEqual(data.Language);
+    this.assertThat(result.country).isEqual(data.Country);
+    this.assertThat(result.awards).isEqual(data.Awards);
+    this.assertThat(result.poster).isEqual(data.Poster);
+    this.assertThat(result.ratings[0].source).isEqual(data.Ratings[0].Source);
+    this.assertThat(result.ratings[0].value).isEqual(data.Ratings[0].Value);
+    this.assertThat(result.imdbId).isEqual(data.imdbID);
+    this.assertThat(result.type).isEqual('serie');
+    this.assertThat(result.production).isEqual(data.Production);
   }
 
   async testThrowErrorOnIncorrectIMDBId() {
@@ -132,11 +131,11 @@ export class FetchTVSerieByIdTest extends OMDBGatewayTest {
       .expects('get')
       .resolves({ data: { Response: 'False', Error: 'Incorrect IMDb ID.' } });
 
-    const error = await expect(
+    const error = await this.assertThat(
       this.gateway.fetchTVSerieById('tt0111161')
-    ).to.be.rejectedWith(IMDBError);
+    ).willBeRejectedWith(IMDBError);
 
-    expect(error.message).to.be.equal('Incorrect IMDb ID.');
+    this.assertThat(error.message).isEqual('Incorrect IMDb ID.');
   }
 
   async testErrorOnInvalidApiKey() {
@@ -146,11 +145,11 @@ export class FetchTVSerieByIdTest extends OMDBGatewayTest {
       .expects('get')
       .rejects({ response: { data } });
 
-    const error = await expect(
+    const error = await this.assertThat(
       this.gateway.fetchTVSerieById('tt011161')
-    ).to.be.rejectedWith(IMDBError);
+    ).willBeRejectedWith(IMDBError);
 
-    expect(error.message).to.be.equal('Invalid API key!');
+    this.assertThat(error.message).isEqual('Invalid API key!');
   }
 }
 
@@ -163,19 +162,19 @@ export class FetchTVSeasonBySerieIdTest extends OMDBGatewayTest {
     const result = await this.gateway.fetchTVSeasonBySerieId('tt0212671', 1);
     const { data } = IMDB_TV_SEASON_RESPONSE;
 
-    expect(result).to.be.instanceOf(OMDBTVSeasonResult);
-    expect(result.isRequestSuccesful()).to.be.true;
-    expect(result.season).to.be.equal(Number(data.Season));
-    expect(result.totalSeasons).to.be.equal(Number(data.totalSeasons));
-    expect(result.episodes).to.have.lengthOf(data.Episodes.length);
+    this.assertThat(result).isInstanceOf(OMDBTVSeasonResult);
+    this.assertThat(result.isRequestSuccesful()).isTrue();
+    this.assertThat(result.season).isEqual(Number(data.Season));
+    this.assertThat(result.totalSeasons).isEqual(Number(data.totalSeasons));
+    this.assertThat(result.episodes).hasLengthOf(data.Episodes.length);
 
     result.episodes.forEach((episode, index) => {
       const rawEpisode = data.Episodes[index];
 
-      expect(episode.title).to.be.equal(rawEpisode.Title);
-      expect(episode.releasedDate).to.be.deep.equal(new Date(rawEpisode.Released));
-      expect(episode.numberOfEpisode).to.be.equal(Number(rawEpisode.Episode));
-      expect(episode.imdbId).to.be.equal(rawEpisode.imdbID);
+      this.assertThat(episode.title).isEqual(rawEpisode.Title);
+      this.assertThat(episode.releasedDate).isEqual(new Date(rawEpisode.Released));
+      this.assertThat(episode.numberOfEpisode).isEqual(Number(rawEpisode.Episode));
+      this.assertThat(episode.imdbId).isEqual(rawEpisode.imdbID);
     });
   }
 
@@ -184,11 +183,11 @@ export class FetchTVSeasonBySerieIdTest extends OMDBGatewayTest {
       .expects('get')
       .resolves({ data: { Response: 'False', Error: 'Incorrect IMDb ID.' } });
 
-    const error = await expect(
+    const error = await this.assertThat(
       this.gateway.fetchTVSeasonBySerieId('tt0212671', 1)
-    ).to.be.rejectedWith(IMDBError);
+    ).willBeRejectedWith(IMDBError);
 
-    expect(error.message).to.be.equal('Incorrect IMDb ID.');
+    this.assertThat(error.message).isEqual('Incorrect IMDb ID.');
   }
 
   async testErrorOnInvalidApiKey() {
@@ -198,11 +197,11 @@ export class FetchTVSeasonBySerieIdTest extends OMDBGatewayTest {
       .expects('get')
       .rejects({ response: { data } });
 
-    const error = await expect(
+    const error = await this.assertThat(
       this.gateway.fetchTVSeasonBySerieId('tt0212671', 1)
-    ).to.be.rejectedWith(IMDBError);
+    ).willBeRejectedWith(IMDBError);
 
-    expect(error.message).to.be.equal('Invalid API key!');
+    this.assertThat(error.message).isEqual('Invalid API key!');
   }
 }
 
@@ -215,33 +214,33 @@ export class FetchTVEpisodeByIdTest extends OMDBGatewayTest {
     const result = await this.gateway.fetchTVEpisodeById('tt3390684');
     const { data } = IMDB_TV_EPISODE_RESPONSE;
 
-    expect(result).to.be.instanceOf(OMDBTVEpisodeResult);
-    expect(result.isRequestSuccesful()).to.be.true;
-    expect(result._isCollection()).to.be.false;
-    expect(result.title).to.be.equal(data.Title);
-    expect(result.year).to.be.equal(data.Year);
-    expect(result.numberOfSeason).to.be.equal(Number(data.Season));
-    expect(result.numberOfEpisode).to.be.equal(Number(data.Episode));
-    expect(result.rated).to.be.equal(data.Rated);
-    expect(result.released).to.be.equal(data.Released);
-    expect(result.runtime).to.be.equal(data.Runtime);
-    expect(result.director).to.be.equal(data.Director);
-    expect(result.genre).to.be.deep.equal(['Comedy', 'Drama', 'Romance']);
-    expect(result.writers).to.be.deep.equal(['Carter Bays', 'Craig Thomas']);
-    expect(result.actors).to.be.deep.equal(
+    this.assertThat(result).isInstanceOf(OMDBTVEpisodeResult);
+    this.assertThat(result.isRequestSuccesful()).isTrue();
+    this.assertThat(result._isCollection()).isFalse();
+    this.assertThat(result.title).isEqual(data.Title);
+    this.assertThat(result.year).isEqual(data.Year);
+    this.assertThat(result.numberOfSeason).isEqual(Number(data.Season));
+    this.assertThat(result.numberOfEpisode).isEqual(Number(data.Episode));
+    this.assertThat(result.rated).isEqual(data.Rated);
+    this.assertThat(result.released).isEqual(data.Released);
+    this.assertThat(result.runtime).isEqual(data.Runtime);
+    this.assertThat(result.director).isEqual(data.Director);
+    this.assertThat(result.genre).isEqual(['Comedy', 'Drama', 'Romance']);
+    this.assertThat(result.writers).isEqual(['Carter Bays', 'Craig Thomas']);
+    this.assertThat(result.actors).isEqual(
       ['Josh Radnor', 'Jason Segel', 'Cobie Smulders']
     );
-    expect(result.language).to.be.deep.equal(['English', 'French']);
-    expect(result.plot).to.be.equal(data.Plot);
-    expect(result.country).to.be.equal(data.Country);
-    expect(result.awards).to.be.equal(data.Awards);
-    expect(result.poster).to.be.equal(data.Poster);
-    expect(result.ratings[0].source).to.be.equal(data.Ratings[0].Source);
-    expect(result.ratings[0].value).to.be.equal(data.Ratings[0].Value);
-    expect(result.imdbId).to.be.equal(data.imdbID);
-    expect(result.serieIMDBId).to.be.equal(data.seriesID);
-    expect(result.type).to.be.equal('episode');
-    expect(result.production).to.be.equal(data.Production);
+    this.assertThat(result.language).isEqual(['English', 'French']);
+    this.assertThat(result.plot).isEqual(data.Plot);
+    this.assertThat(result.country).isEqual(data.Country);
+    this.assertThat(result.awards).isEqual(data.Awards);
+    this.assertThat(result.poster).isEqual(data.Poster);
+    this.assertThat(result.ratings[0].source).isEqual(data.Ratings[0].Source);
+    this.assertThat(result.ratings[0].value).isEqual(data.Ratings[0].Value);
+    this.assertThat(result.imdbId).isEqual(data.imdbID);
+    this.assertThat(result.serieIMDBId).isEqual(data.seriesID);
+    this.assertThat(result.type).isEqual('episode');
+    this.assertThat(result.production).isEqual(data.Production);
   }
 
   async testThrowErrorOnIncorrectIMDBId() {
@@ -249,11 +248,11 @@ export class FetchTVEpisodeByIdTest extends OMDBGatewayTest {
       .expects('get')
       .resolves({ data: { Response: 'False', Error: 'Incorrect IMDb ID.' } });
 
-    const error = await expect(
+    const error = await this.assertThat(
       this.gateway.fetchTVEpisodeById('tt0111161')
-    ).to.be.rejectedWith(IMDBError);
+    ).willBeRejectedWith(IMDBError);
 
-    expect(error.message).to.be.equal('Incorrect IMDb ID.');
+    this.assertThat(error.message).isEqual('Incorrect IMDb ID.');
   }
 
   async testErrorOnInvalidApiKey() {
@@ -263,10 +262,10 @@ export class FetchTVEpisodeByIdTest extends OMDBGatewayTest {
       .expects('get')
       .rejects({ response: { data } });
 
-    const error = await expect(
+    const error = await this.assertThat(
       this.gateway.fetchTVEpisodeById('tt011161')
-    ).to.be.rejectedWith(IMDBError);
+    ).willBeRejectedWith(IMDBError);
 
-    expect(error.message).to.be.equal('Invalid API key!');
+    this.assertThat(error.message).isEqual('Invalid API key!');
   }
 }

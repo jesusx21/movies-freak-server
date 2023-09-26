@@ -1,5 +1,3 @@
-import { expect } from 'chai';
-
 import SQLTestCase from '../testHelper';
 
 import { Session } from '../../../app/moviesFreak/entities';
@@ -32,20 +30,20 @@ export class CreateSessionTest extends SessionsStoreTest {
   async testCreateSession() {
     const sessionCreated = await this._database.sessions.create(this.session);
 
-    expect(sessionCreated).to.be.instanceOf(Session);
-    expect(sessionCreated.id).to.exist;
-    expect(sessionCreated.user.id).to.be.equal(this.user.id);
-    expect(sessionCreated.token).to.be.equal(this.session.token);
-    expect(sessionCreated.expiresAt).to.be.deep.equal(this.session.expiresAt);
-    expect(sessionCreated.isActive).to.be.true;
+    this.assertThat(sessionCreated).isInstanceOf(Session);
+    this.assertThat(sessionCreated.id).doesExist();
+    this.assertThat(sessionCreated.user.id).isEqual(this.user.id);
+    this.assertThat(sessionCreated.token).isEqual(this.session.token);
+    this.assertThat(sessionCreated.expiresAt).isEqual(this.session.expiresAt);
+    this.assertThat(sessionCreated.isActive).isTrue();
   }
 
   async testThrowErrorOnSQLException() {
     this.stubFunction(this._database.sessions, '_connection')
       .throws(new Error());
 
-    await expect(
+    await this.assertThat(
       this._database.sessions.create(this.session)
-    ).to.be.rejectedWith(SQLDatabaseException);
+    ).willBeRejectedWith(SQLDatabaseException);
   }
 }

@@ -1,5 +1,3 @@
-import { expect } from 'chai';
-
 import SQLTestCase from '../testHelper';
 
 import { Film, MediaWatchlist } from '../../../app/moviesFreak/entities';
@@ -37,15 +35,15 @@ export class CreateTVSerieTest extends MediaWatchlistsTest {
     this.mediaWatchlist.setFilm(this.film);
     const filmWatchlist = await this._database.mediaWatchlists.create(this.mediaWatchlist);
 
-    expect(filmWatchlist).to.be.instanceOf(MediaWatchlist);
-    expect(filmWatchlist.id).to.exist;
-    expect(filmWatchlist.watchlistId).to.be.equal(this.watchlist.id);
-    expect(filmWatchlist.film).to.be.instanceOf(Film);
-    expect(filmWatchlist.filmId).to.be.equal(this.film.id);
-    expect(filmWatchlist.film.id).to.be.equal(this.film.id);
-    expect(filmWatchlist.index).to.be.equal(0);
-    expect(filmWatchlist.watched).to.be.false;
-    expect(filmWatchlist.tvEpisode).to.not.exist;
-    expect(filmWatchlist.tvEpisodeId).to.not.exist;
+    this.assertThat(filmWatchlist).isInstanceOf(MediaWatchlist);
+    this.assertThat(filmWatchlist.id).doesExist();
+    this.assertThat(filmWatchlist.watchlistId).isEqual(this.watchlist.id);
+    this.assertThat(filmWatchlist.film).isInstanceOf(Film);
+    this.assertThat(filmWatchlist.filmId).isEqual(this.film.id);
+    this.assertThat(filmWatchlist.film.id).isEqual(this.film.id);
+    this.assertThat(filmWatchlist.index).isEqual(0);
+    this.assertThat(filmWatchlist.watched).isFalse();
+    this.assertThat(filmWatchlist.tvEpisode).doesNotExist();
+    this.assertThat(filmWatchlist.tvEpisodeId).doesNotExist();
   }
 }

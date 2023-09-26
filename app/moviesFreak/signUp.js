@@ -4,12 +4,12 @@ import {
   UsernameAlreadyExists
 } from '../../database/stores/errors';
 import {
-  CouldNotRegister,
+  CouldNotSignUp,
   EmailAlreadyUsed,
   UsernameAlreadyUsed
 } from './errors';
 
-export default class Register {
+export default class SignUp {
   constructor(database, userData) {
     this._database = database;
     this._userData = userData;
@@ -31,7 +31,7 @@ export default class Register {
         throw new UsernameAlreadyUsed();
       }
 
-      throw new CouldNotRegister(error);
+      throw new CouldNotSignUp(error);
     }
 
     const session = new Session({ user: userCreated });
@@ -42,7 +42,7 @@ export default class Register {
     try {
       return await this._database.sessions.create(session);
     } catch (error) {
-      throw new CouldNotRegister(error);
+      throw new CouldNotSignUp(error);
     }
   }
 }

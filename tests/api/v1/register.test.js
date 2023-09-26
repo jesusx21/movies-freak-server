@@ -1,7 +1,7 @@
 import APITestCase from '../apiTestHelper';
-import Register from '../../../app/moviesFreak/register';
+import SignUp from '../../../app/moviesFreak/signUp';
 
-export class RegisterTest extends APITestCase {
+export class SignUpTest extends APITestCase {
   setUp() {
     super.setUp();
 
@@ -18,7 +18,7 @@ export class RegisterTest extends APITestCase {
     };
   }
 
-  async testRegisterUser() {
+  async testSignUpUser() {
     const result = await this.simulatePost({
       path: '/sign-up',
       payload: this.userData
@@ -67,7 +67,7 @@ export class RegisterTest extends APITestCase {
   }
 
   async testReturnHandledErrorOnUnexpectedError() {
-    this.mockClass(Register, 'instance')
+    this.mockClass(SignUp, 'instance')
       .expects('execute')
       .throws(new Error('database fails'));
 

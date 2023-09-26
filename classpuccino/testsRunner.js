@@ -1,8 +1,6 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-console */
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { AssertionError } from 'chai';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import colors from 'colors';
 import fs from 'fs';
 import path from 'path';

@@ -1,20 +1,20 @@
 import { Monopoly } from '../../../boardGame';
 
-import RegisterUser from '../../../app/moviesFreak/register';
+import Register from '../../../app/moviesFreak/signUp';
 import {
   EmailAlreadyUsed, UsernameAlreadyUsed
 } from '../../../app/moviesFreak/errors';
 import { CREATED, HTTPConflict, HTTPInternalError } from '../../httpResponses';
 
-export default class Register extends Monopoly {
+export default class SignUp extends Monopoly {
   async onPost({ body }) {
     const database = this.getTitle('database');
-    const registerUser = new RegisterUser(database, body);
+    const signUp = new Register(database, body);
 
     let session;
 
     try {
-      session = await registerUser.execute();
+      session = await signUp.execute();
     } catch (error) {
       if (error instanceof EmailAlreadyUsed) {
         throw new HTTPConflict('EMAIL_ALREADY_USED');

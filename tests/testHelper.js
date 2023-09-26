@@ -1,8 +1,5 @@
 /* eslint-disable no-param-reassign */
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
-import sinonChai from 'sinon-chai';
 import { v4 as uuid } from 'uuid';
 
 import * as Classpuccino from '../classpuccino';
@@ -16,9 +13,6 @@ import {
   Watchlist,
   User
 } from '../app/moviesFreak/entities';
-
-chai.use(chaiAsPromised);
-chai.use(sinonChai);
 
 class SandboxNotInitialized extends Error {
   get name() {

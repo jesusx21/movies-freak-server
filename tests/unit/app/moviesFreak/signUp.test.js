@@ -1,15 +1,15 @@
 import TestCase from '../../../testHelper';
 
-import Register from '../../../../app/moviesFreak/register';
+import SignUp from '../../../../app/moviesFreak/signUp';
 import { Session, User } from '../../../../app/moviesFreak/entities';
 import {
-  CouldNotRegister,
+  CouldNotSignUp,
   EmailAlreadyUsed,
   UsernameAlreadyUsed
 } from '../../../../app/moviesFreak/errors';
 import { DatabaseError } from '../../../../database/stores/errors';
 
-export class RegisterTest extends TestCase {
+export class SignUpTest extends TestCase {
   setUp() {
     super.setUp();
 
@@ -23,10 +23,10 @@ export class RegisterTest extends TestCase {
       birthdate: new Date('1895-12-31')
     };
 
-    this.useCase = new Register(this._database, this.userData);
+    this.useCase = new SignUp(this._database, this.userData);
   }
 
-  async testRegisterUser() {
+  async testSignUpUser() {
     const session = await this.useCase.execute();
 
     this.assertThat(session).isInstanceOf(Session);
@@ -46,7 +46,7 @@ export class RegisterTest extends TestCase {
     await this.useCase.execute();
     this.userData.username = 'edward';
 
-    const useCase = new Register(this._database, this.userData);
+    const useCase = new SignUp(this._database, this.userData);
 
     await this.assertThat(
       useCase.execute()
@@ -57,7 +57,7 @@ export class RegisterTest extends TestCase {
     await this.useCase.execute();
     this.userData.email = 'edddy@hotmail.com';
 
-    const useCase = new Register(this._database, this.userData);
+    const useCase = new SignUp(this._database, this.userData);
 
     await this.assertThat(
       useCase.execute()
@@ -70,7 +70,7 @@ export class RegisterTest extends TestCase {
 
     await this.assertThat(
       this.useCase.execute()
-    ).willBeRejectedWith(CouldNotRegister);
+    ).willBeRejectedWith(CouldNotSignUp);
   }
 
   async testThrowErrorWhenCreateSession() {
@@ -79,6 +79,6 @@ export class RegisterTest extends TestCase {
 
     await this.assertThat(
       this.useCase.execute()
-    ).willBeRejectedWith(CouldNotRegister);
+    ).willBeRejectedWith(CouldNotSignUp);
   }
 }

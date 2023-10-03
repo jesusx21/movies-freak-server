@@ -1,4 +1,4 @@
-import { difference, isEqual, isNil, isPlainObject } from 'lodash';
+import { difference, isEqual, isNil } from 'lodash';
 import { AssertionError } from './errors';
 
 export default class Assertions {
@@ -152,7 +152,9 @@ export default class Assertions {
   }
 
   hasLengthOf(length) {
-    if (Object.values(this._actual).length === length) {
+    const actualLength = Object.values(this._actual).length;
+
+    if (actualLength === length) {
       return true;
     }
 
@@ -164,7 +166,7 @@ export default class Assertions {
 
   hasSubstring(substr) {
     if (typeof this._actual !== 'string') {
-      throw new AssertionError( `Expected ${this._actual} to be a string`);
+      throw new AssertionError(`Expected ${this._actual} to be a string`);
     }
 
     if (this._actual.includes(substr)) {

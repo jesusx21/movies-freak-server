@@ -1,4 +1,3 @@
-
 import TestCase from '../../../testHelper';
 
 import CreateFilm from '../../../../app/moviesFreak/createFilm';

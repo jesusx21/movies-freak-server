@@ -11,12 +11,24 @@ import {
   TVSeason,
   TVEpisode,
   Watchlist,
-  User
+  User,
+  Session
 } from '../app/moviesFreak/entities';
+import { isEmpty } from 'lodash';
 
 class SandboxNotInitialized extends Error {
   get name() {
     return 'SandboxNotInitialized';
+  }
+}
+
+class OptionMissing extends Error {
+  constructor(option) {
+    super(`Option ${option} is missing`);
+  }
+
+  get name() {
+    return 'OptionMissing';
   }
 }
 
@@ -93,7 +105,7 @@ export default class TestCase extends Classpuccino.TestCase {
   }
 
   createUser(db, data = {}) {
-    const [userData] = this._fixturesGenerator.generate({
+    const [userData] = this.generateFixtures({
       type: 'user',
       recipe: [data]
     });
@@ -106,9 +118,10 @@ export default class TestCase extends Classpuccino.TestCase {
 
   async createUsers(db) {
     const options = this._getFixturesGeneratorOptions(...arguments);
-    options.type = 'user';
-
-    const fixtures = this._fixturesGenerator.generate(options);
+    const fixtures = this.generateFixtures({
+      type: 'user',
+      ...options
+    });
 
     const result = [];
 
@@ -127,11 +140,10 @@ export default class TestCase extends Classpuccino.TestCase {
   }
 
   async createFilm(db, data = {}) {
-    const [filmData] = this._fixturesGenerator.generate({
+    const [filmData] = this.generateFixtures({
       type: 'film',
       recipe: [data]
     });
-
     const film = new Film(filmData);
 
     return db.films.create(film);
@@ -139,9 +151,10 @@ export default class TestCase extends Classpuccino.TestCase {
 
   async createFilms(db) {
     const options = this._getFixturesGeneratorOptions(...arguments);
-    options.type = 'film';
-
-    const fixtures = this._fixturesGenerator.generate(options);
+    const fixtures = this.generateFixtures({
+      type: 'film',
+      ...options
+    });
 
     const result = [];
 
@@ -158,11 +171,10 @@ export default class TestCase extends Classpuccino.TestCase {
   }
 
   createTVSerie(db, data = {}) {
-    const [tvSerieData] = this._fixturesGenerator.generate({
+    const [tvSerieData] = this.generateFixtures({
       type: 'tvSerie',
       recipe: [data]
     });
-
     const tvSerie = new TVSerie(tvSerieData);
 
     return db.tvSeries.create(tvSerie);
@@ -170,9 +182,10 @@ export default class TestCase extends Classpuccino.TestCase {
 
   async createTVSeries(db) {
     const options = this._getFixturesGeneratorOptions(...arguments);
-    options.type = 'tvSerie';
-
-    const fixtures = this._fixturesGenerator.generate(options);
+    const fixtures = this.generateFixtures({
+      type: 'tvSerie',
+      ...options
+    });
 
     const result = [];
 
@@ -197,7 +210,7 @@ export default class TestCase extends Classpuccino.TestCase {
       tvSerie = await this.createTVSerie(db);
     }
 
-    const [tvSeasonData] = this._fixturesGenerator.generate({
+    const [tvSeasonData] = this.generateFixtures({
       type: 'tvSeason',
       recipe: [{ ...data, tvSerieId: tvSerie.id }]
     });
@@ -217,9 +230,10 @@ export default class TestCase extends Classpuccino.TestCase {
     }
 
     const options = this._getFixturesGeneratorOptions(...args);
-    options.type = 'tvSeason';
-
-    const fixtures = this._fixturesGenerator.generate(options);
+    const fixtures = this.generateFixtures({
+      type: 'tvSeason',
+      ...options
+    });
 
     const result = [];
 
@@ -244,7 +258,7 @@ export default class TestCase extends Classpuccino.TestCase {
       tvSeason = await this.createTVSeason(db);
     }
 
-    const [tvEpisodeData] = this._fixturesGenerator.generate({
+    const [tvEpisodeData] = this.generateFixtures({
       type: 'tvEpisode',
       recipe: [{
         ...data,
@@ -268,9 +282,10 @@ export default class TestCase extends Classpuccino.TestCase {
     }
 
     const options = this._getFixturesGeneratorOptions(...args);
-    options.type = 'tvEpisode';
-
-    const fixtures = this._fixturesGenerator.generate(options);
+    const fixtures = this.generateFixtures({
+      type: 'tvEpisode',
+      ...options
+    });
 
     const result = [];
 
@@ -291,7 +306,7 @@ export default class TestCase extends Classpuccino.TestCase {
   }
 
   async createWatchlist(db, data = {}) {
-    const [watchlistData] = this._fixturesGenerator.generate({
+    const [watchlistData] = this.generateFixtures({
       type: 'watchlist',
       recipe: [data]
     });
@@ -303,9 +318,10 @@ export default class TestCase extends Classpuccino.TestCase {
 
   async createWhatchlists(db) {
     const options = this._getFixturesGeneratorOptions(...arguments);
-    options.type = 'watchlist';
-
-    const fixtures = this._fixturesGenerator.generate(options);
+    const fixtures = this.generateFixtures({
+      type: 'watchlist',
+      ...options
+    });
 
     const result = [];
 
@@ -321,6 +337,34 @@ export default class TestCase extends Classpuccino.TestCase {
     return result;
   }
 
+  async createSession(db, user) {
+    const session = new Session({ user });
+
+    session.generateToken('password')
+      .activateToken();
+
+    return db.sessions.create(session);
+  }
+
+  generateFixtures(options = {}) {
+    const { type } = options;
+    let { recipe, quantity } = options;
+
+    if (!type) {
+      throw new OptionMissing('type');
+    }
+
+    if (!recipe) {
+      recipe = [];
+    }
+
+    if (!quantity) {
+      quantity = isEmpty(recipe) ? 1 : recipe.length;
+    }
+
+    return this._fixturesGenerator.generate({ type, quantity, recipe });
+  }
+
   _getFixturesGeneratorOptions() {
     const options = [...arguments].reduce((prev, param) => {
       if (typeof param === 'number') {
@@ -333,9 +377,6 @@ export default class TestCase extends Classpuccino.TestCase {
 
       return prev;
     }, {});
-
-    options.recipe ||= [];
-    options.quantity ||= options.recipe.length;
 
     return options;
   }

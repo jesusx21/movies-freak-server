@@ -37,18 +37,30 @@ export default class SQLUsersStore {
   }
 
   async findById(userId) {
+    return this._findOne({ id: userId });
+  }
+
+  async findByEmail(email) {
+    return this._findOne({ email });
+  }
+
+  async findByUsername(username) {
+    return this._findOne({ username });
+  }
+
+  async _findOne(query) {
     let result;
 
     try {
       result = await this._connection('users')
-        .where('id', userId)
+        .where(query)
         .first();
     } catch (error) {
       throw new SQLDatabaseException(error);
     }
 
     if (!result) {
-      throw new UserNotFound(userId);
+      throw new UserNotFound();
     }
 
     return this._deserialize(result);

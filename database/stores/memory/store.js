@@ -1,4 +1,5 @@
 import cloneDeep from 'clone-deep';
+import { get } from 'lodash';
 import { v4 as uuid } from 'uuid';
 
 import { NotFound } from '../errors';
@@ -18,6 +19,18 @@ export default class Store {
     this._items[entity.id] = entityToSave;
 
     return entity;
+  }
+
+  async update(id, entity) {
+    const entityFound = await this.findById(id);
+
+    this.items[id] = {
+      ...entityFound,
+      ...entity,
+      _updatedAt: new Date()
+    };
+
+    return this.items[id];
   }
 
   async findById(entityId) {
@@ -43,10 +56,11 @@ export default class Store {
 
   async findOne(query) {
     const [entity] = Object.values(this._items)
+      .sort((a, b) => b.createdAt - a.createdAt)
       .filter((item) => {
         return Object.keys(query)
           .reduce((succeed, key) => {
-            return succeed && query[key] === item[key];
+            return succeed && get(query, key) === get(item, key);
           }, true);
       });
 

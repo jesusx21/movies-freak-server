@@ -27,7 +27,11 @@ export class CouldNotCreateTVEpisodes extends CouldNotCreateTVSeasons {}
 
 export class CouldNotCreateWatchlist extends MoviesFreakError {}
 export class CouldNotSignUp extends MoviesFreakError {}
+export class CouldNotSignIn extends MoviesFreakError {}
+
 export class EmailAlreadyUsed extends MoviesFreakError {}
 export class UsernameAlreadyUsed extends MoviesFreakError {}
 
 export class InvalidType extends MoviesFreakError {}
+export class UserNotFound extends MoviesFreakError {}
+export class InvalidPassword extends MoviesFreakError {}

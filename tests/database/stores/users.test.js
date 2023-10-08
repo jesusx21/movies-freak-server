@@ -113,3 +113,54 @@ export class FindUserByIdTest extends UsersStoreTest {
     ).willBeRejectedWith(SQLDatabaseException);
   }
 }
+
+export class FindUserByEmailTest extends UsersStoreTest {
+  async testFindByEmail() {
+    const user = await this._database.users.findByEmail(this.users[1].email);
+
+    this.assertThat(user).isInstanceOf(User);
+    this.assertThat(user.username).isEqual('columbia');
+    this.assertThat(user.email).isEqual('columbia@gmail.com');
+  }
+
+  async testThrowsErrorWhenUserIsNotFound() {
+    await this.assertThat(
+      this._database.users.findByEmail('notfound@mail.com')
+    ).willBeRejectedWith(UserNotFound);
+  }
+
+  async testThrowsErrorOnUnexpectedError() {
+    this.stubFunction(this._database.users, '_connection')
+      .throws(new Error());
+
+    await this.assertThat(
+      this._database.users.findByEmail(this.users[2].email)
+    ).willBeRejectedWith(SQLDatabaseException);
+  }
+}
+
+export class FindUserByUsernameTest extends UsersStoreTest {
+  async testFindByUsername() {
+    const user = await this._database.users.findByUsername(this.users[1].username);
+
+    this.assertThat(user).isInstanceOf(User);
+    this.assertThat(user.username).isEqual('columbia');
+    this.assertThat(user.email).isEqual('columbia@gmail.com');
+  }
+
+  async testThrowsErrorWhenUserIsNotFound() {
+    await this.assertThat(
+      this._database.users.findByUsername('notfound')
+    ).willBeRejectedWith(UserNotFound);
+  }
+
+  async testThrowsErrorOnUnexpectedError() {
+    this.stubFunction(this._database.users, '_connection')
+      .throws(new Error());
+
+    await this.assertThat(
+      this._database.users.findByUsername(this.users[2].username)
+    ).willBeRejectedWith(SQLDatabaseException);
+  }
+}
+

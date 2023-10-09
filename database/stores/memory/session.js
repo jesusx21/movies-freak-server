@@ -21,4 +21,22 @@ export default class InMemorySessionsStore {
       throw error;
     }
   }
+
+  async update(session) {
+    let sessionToUpdate;
+
+    try {
+      sessionToUpdate = await this._store.findById(session.id);
+    } catch (error) {
+      if (error instanceof NotFound) {
+        throw new SessionNotFound(session.id);
+      }
+    }
+
+    sessionToUpdate._token = session.token;
+    sessionToUpdate._expiresAt = session.expiresAt;
+    sessionToUpdate._isActive = session.isActive;
+
+    return this._store.update(sessionToUpdate);
+  }
 }

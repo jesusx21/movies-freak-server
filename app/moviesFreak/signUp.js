@@ -1,3 +1,5 @@
+import { omit } from 'lodash';
+
 import { Session, User } from './entities';
 import {
   EmailAlreadyExists,
@@ -19,8 +21,9 @@ export default class SignUp {
     let userCreated;
 
     try {
-      const user = new User(this._userData);
+      const user = new User(omit(this._userData, 'password'));
 
+      user.addPassword(this._userData.password);
       userCreated = await this._database.users.create(user);
     } catch (error) {
       if (error instanceof EmailAlreadyExists) {
@@ -36,7 +39,7 @@ export default class SignUp {
 
     const session = new Session({ user: userCreated });
 
-    session.generateToken(this._userData.password)
+    session.generateToken()
       .activateToken();
 
     try {

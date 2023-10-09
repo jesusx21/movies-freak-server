@@ -38,7 +38,7 @@ export default class InMemoryUsersStore {
       return await this._store.findById(userId);
     } catch (error) {
       if (error instanceof NotFound) {
-        throw new UserNotFound(userId);
+        throw new UserNotFound({ id: userId });
       }
 
       throw error;
@@ -50,7 +50,7 @@ export default class InMemoryUsersStore {
       return await this._store.findOne({ email });
     } catch (error) {
       if (error instanceof NotFound) {
-        throw new UserNotFound(email);
+        throw new UserNotFound({ email });
       }
 
       throw error;
@@ -62,7 +62,7 @@ export default class InMemoryUsersStore {
       return await this._store.findOne({ username });
     } catch (error) {
       if (error instanceof NotFound) {
-        throw new UserNotFound(username);
+        throw new UserNotFound({ username });
       }
 
       throw error;

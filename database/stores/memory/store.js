@@ -1,5 +1,4 @@
-import cloneDeep from 'clone-deep';
-import { get } from 'lodash';
+import { cloneDeep, get } from 'lodash';
 import { v4 as uuid } from 'uuid';
 
 import { NotFound } from '../errors';
@@ -16,21 +15,22 @@ export default class Store {
     entityToSave._createdAt = new Date();
     entityToSave._updatedAt = new Date();
 
-    this._items[entity.id] = entityToSave;
+    this._items[entityToSave.id] = entityToSave;
 
-    return entity;
+    return cloneDeep(entityToSave);
   }
 
-  async update(id, entity) {
-    const entityFound = await this.findById(id);
+  async update(entity) {
+    if (!this._items[entity.id]) {
+      throw new NotFound(entity.id);
+    }
 
-    this.items[id] = {
-      ...entityFound,
-      ...entity,
-      _updatedAt: new Date()
-    };
+    // eslint-disable-next-line no-param-reassign
+    entity._updatedAt = new Date();
 
-    return this.items[id];
+    this._items[entity.id] = cloneDeep(entity);
+
+    return cloneDeep(entity);
   }
 
   async findById(entityId) {

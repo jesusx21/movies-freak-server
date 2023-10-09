@@ -70,10 +70,9 @@ export default class Session extends Entity {
     this._isActive = isActive;
   }
 
-  generateToken(secretKey) {
-    this._token = Crypto.createHash('sha256', secretKey)
-      .update(this._user.email)
-      .digest('hex');
+  generateToken() {
+    this._token = Crypto.randomBytes(32)
+      .toString('hex');
 
     this._expiresAt = null;
     this._isActive = false;

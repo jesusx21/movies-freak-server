@@ -1,6 +1,13 @@
-import { UserNotFound as DatabaseUserNotFound } from '../../database/stores/errors';
 import { Session } from './entities';
-import { CouldNotSignIn, InvalidPassword, UserNotFound } from './errors';
+import {
+  CouldNotSignIn,
+  InvalidPassword,
+  UserNotFound
+} from './errors';
+import {
+  UserNotFound as DatabaseUserNotFound,
+  SessionNotFound
+} from '../../database/stores/errors';
 
 export default class SignIn {
   constructor(database, username, password) {
@@ -17,7 +24,7 @@ export default class SignIn {
     }
 
     if (!user) {
-      throw new UserNotFound(this._username);
+      throw new UserNotFound();
     }
 
     if (!user.doesPasswordMatch(this._password)) {
@@ -28,11 +35,15 @@ export default class SignIn {
 
     try {
       session = await this._database.sessions.findActiveByUserId(user.id);
-    } catch (_error) {
+    } catch (error) {
+      if (!(error instanceof SessionNotFound)) {
+        throw new CouldNotSignIn(error);
+      }
+
       session = new Session({ user });
     }
 
-    session.generateToken(user.password)
+    session.generateToken()
       .activateToken();
 
     try {

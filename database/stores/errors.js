@@ -1,7 +1,19 @@
 import VError from 'verror';
 
-export class DatabaseError extends VError {}
-export class NotFound extends DatabaseError {}
+export class DatabaseError extends VError {
+  get name() {
+    return this.constructor.name;
+  }
+}
+
+export class NotFound extends DatabaseError {
+  constructor(query) {
+    super(...arguments);
+
+    this.query = query;
+    this.message = 'Record not found on database';
+  }
+}
 
 export class FilmNotFound extends NotFound {}
 export class SessionNotFound extends NotFound {}

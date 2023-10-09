@@ -163,4 +163,3 @@ export class FindUserByUsernameTest extends UsersStoreTest {
     ).willBeRejectedWith(SQLDatabaseException);
   }
 }
-

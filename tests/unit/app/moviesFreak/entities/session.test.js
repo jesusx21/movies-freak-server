@@ -75,7 +75,7 @@ export class SessionTest extends TestCase {
     this.session.expiresAt = new Date();
     this.session.isActive = true;
 
-    this.session.generateToken('test');
+    this.session.generateToken();
 
     this.assertThat(this.session.token).doesExist();
     this.assertThat(this.session.token).isNotEqual('fake-token');
@@ -85,7 +85,7 @@ export class SessionTest extends TestCase {
 
   testActivateToken() {
     this.session.user = this.user;
-    this.session.generateToken('test');
+    this.session.generateToken();
 
     this.session.activateToken();
 
@@ -96,7 +96,7 @@ export class SessionTest extends TestCase {
 
   testThrowsErrorTokenAlreadyActived() {
     this.session.user = this.user;
-    this.session.generateToken('test')
+    this.session.generateToken()
       .activateToken();
 
     this.assertThat(
@@ -112,7 +112,7 @@ export class SessionTest extends TestCase {
 
   testReturnFalseWhenIsExpired() {
     this.session.user = this.user;
-    this.session.generateToken('test')
+    this.session.generateToken()
       .activateToken();
 
     this.assertThat(this.session.isExpired()).isFalse();
@@ -120,7 +120,7 @@ export class SessionTest extends TestCase {
 
   testReactivateToken() {
     this.session.user = this.user;
-    this.session.generateToken('test')
+    this.session.generateToken()
       .activateToken();
 
     this.session.reactivateToken();
@@ -132,7 +132,7 @@ export class SessionTest extends TestCase {
 
   testDeactivateToken() {
     this.session.user = this.user;
-    this.session.generateToken('test')
+    this.session.generateToken()
       .activateToken();
 
     this.session.deactivateToken();

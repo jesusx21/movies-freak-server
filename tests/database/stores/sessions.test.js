@@ -41,7 +41,7 @@ export class CreateSessionTest extends SessionsStoreTest {
     await super.setUp();
 
     this.session = new Session({ user: this.user });
-    this.session.generateToken('secret')
+    this.session.generateToken()
       .activateToken();
   }
 

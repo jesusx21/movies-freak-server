@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 import sinon from 'sinon';
+import { isEmpty } from 'lodash';
 import { v4 as uuid } from 'uuid';
 
 import * as Classpuccino from '../classpuccino';
@@ -14,7 +15,6 @@ import {
   User,
   Session
 } from '../app/moviesFreak/entities';
-import { isEmpty } from 'lodash';
 
 class SandboxNotInitialized extends Error {
   get name() {
@@ -340,7 +340,7 @@ export default class TestCase extends Classpuccino.TestCase {
   async createSession(db, user) {
     const session = new Session({ user });
 
-    session.generateToken('password')
+    session.generateToken()
       .activateToken();
 
     return db.sessions.create(session);

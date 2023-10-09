@@ -45,7 +45,7 @@ export default class SQLSessionsStore {
         .update({
           ...pick(data, ['token', 'expires_at', 'is_active']),
           updated_at: new Date()
-        })
+        });
     } catch (error) {
       throw new SQLDatabaseException(error);
     }

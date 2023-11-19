@@ -1,20 +1,20 @@
 import OMDBResult from './omdb';
 
-export default class OMDBTVSerieResult extends OMDBResult {
-  constructor(rawResponse) {
+class OMDBTVSerieResult extends OMDBResult {
+  constructor(rawResponse: any) {
     super(rawResponse);
 
-    this._type = 'serie';
+    this.type = 'serie';
   }
 
   get years() {
-    const [from, to] = this._currentResponse.Year.split('–');
+    const [from, to] = this.currentResponse.Year.split('–');
 
     return { from, to };
   }
 
   get releasedAt() {
-    const [day, month, year] = this._currentResponse.Released.split(' ');
+    const [day, month, year] = this.currentResponse.Released.split(' ');
 
     const months = {
       Jan: 1,
@@ -39,7 +39,7 @@ export default class OMDBTVSerieResult extends OMDBResult {
   }
 
   get totalSeasons() {
-    return Number(this._currentResponse.totalSeasons);
+    return Number(this.currentResponse.totalSeasons);
   }
 
   isMovie() {
@@ -50,3 +50,5 @@ export default class OMDBTVSerieResult extends OMDBResult {
     return true;
   }
 }
+
+export default OMDBTVSerieResult;

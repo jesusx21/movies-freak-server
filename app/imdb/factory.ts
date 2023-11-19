@@ -2,7 +2,7 @@ import DummyGateway from './gateways/dummy/dummyGateway';
 import OMDBGateway from './gateways/omdb/omdbGateway';
 import { DriverNotSupported } from './errors';
 
-export default function imdbFactory(driverName, host = null, apiKey = null) {
+function imdbFactory(driverName: string, host?: URL, apiKey?: string) {
   if (driverName === 'dummy') {
     return new DummyGateway();
   }
@@ -13,3 +13,5 @@ export default function imdbFactory(driverName, host = null, apiKey = null) {
 
   throw new DriverNotSupported(driverName);
 }
+
+export default imdbFactory;

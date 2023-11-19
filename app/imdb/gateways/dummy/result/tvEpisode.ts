@@ -1,33 +1,33 @@
 import DummyResult, { Rating } from './dummy';
 
-export default class DummyTVEpisodeResult extends DummyResult {
+class DummyTVEpisodeResult extends DummyResult {
   constructor() {
     super();
 
-    this._type = 'episode';
+    this.type = 'episode';
   }
 
   get year() {
-    return this._currentResponse.year;
+    return this.currentResponse.year;
   }
 
   get numberOfSeason() {
-    return this._currentResponse.numberOfSeason;
+    return this.currentResponse.numberOfSeason;
   }
 
   get numberOfEpisode() {
-    return this._currentResponse.numberOfEpisode;
+    return this.currentResponse.numberOfEpisode;
   }
 
   get language() {
-    return this._currentResponse.language;
+    return this.currentResponse.language;
   }
 
   get serieIMDBId() {
-    return this._currentResponse.serieIMDBId;
+    return this.currentResponse.serieIMDBId;
   }
 
-  get _rawResponse() {
+  getRawResponse() {
     return {
       title: 'How Your Mother Met Me',
       year: '2014',
@@ -55,3 +55,5 @@ export default class DummyTVEpisodeResult extends DummyResult {
     };
   }
 }
+
+export default DummyTVEpisodeResult;

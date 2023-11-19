@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-
 import {
   DummyFilmResult,
   DummyTVEpisodeResult,
@@ -7,20 +5,22 @@ import {
   DummyTVSerieResult
 } from './result';
 
-export default class DummyGateway {
-  fetchFilmById(_imdbId) {
+class DummyGateway {
+  fetchFilmById(_imdbI: string) {
     return new DummyFilmResult();
   }
 
-  fetchTVSerieById(_imdbId) {
+  fetchTVSerieById(_imdbId: string) {
     return new DummyTVSerieResult();
   }
 
-  fetchTVSeasonBySerieId(_serieImdbId, _seasonNumber) {
+  fetchTVSeasonBySerieId(_serieImdbId: string, _seasonNumber: number) {
     return new DummyTVSeasonResult();
   }
 
-  fetchTVEpisodeById(_imdbId) {
+  fetchTVEpisodeById(_imdbId: string) {
     return new DummyTVEpisodeResult();
   }
 }
+
+export default DummyGateway;

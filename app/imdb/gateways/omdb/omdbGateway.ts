@@ -9,64 +9,73 @@ import {
   OMDBTVSerieResult
 } from './result';
 
-export default class OMDBGateway {
-  constructor(host, apiKey) {
-    this._host = host;
-    this._apiKey = apiKey;
+interface queryObject {
+  type: 'movie' | 'series' | 'episode',
+  i?: string;
+  Season?: number;
+}
+
+class OMDBGateway {
+  private host?: URL;
+  private apiKey?: string;
+
+  constructor(host?: URL, apiKey?: string) {
+    this.host = host;
+    this.apiKey = apiKey;
   }
 
-  fetchFilmById(imdbId) {
-    const query = {
+  fetchFilmById(imdbId: string) {
+    const query: queryObject = {
       type: 'movie',
       i: imdbId
     };
 
-    return this._request(query, 'film');
+    return this.request(query, 'film');
   }
 
-  fetchTVSerieById(imdbId) {
-    const query = {
+  fetchTVSerieById(imdbId: string) {
+    const query: queryObject = {
       type: 'series',
       i: imdbId
     };
 
-    return this._request(query, 'serie');
+    return this.request(query, 'serie');
   }
 
-  fetchTVSeasonBySerieId(serieImdbId, seasonNumber) {
-    const query = {
+  fetchTVSeasonBySerieId(serieImdbId: string, seasonNumber: number) {
+    const query: queryObject = {
       i: serieImdbId,
       type: 'series',
       Season: seasonNumber
     };
 
-    return this._request(query, 'season');
+    return this.request(query, 'season');
   }
 
   fetchTVEpisodeById(imdbId) {
-    const query = {
+    const query: queryObject = {
       i: imdbId,
       type: 'episode'
     };
 
-    return this._request(query, 'episode');
+    return this.request(query, 'episode');
   }
 
-  async _request(query, type) {
+  async request(query: queryObject, type: string) {
     const params = Object.keys(query)
       .map((key) => `${key}=${query[key]}`)
       .join('&');
 
-    let response;
+    let response: any: {};
 
     try {
       response = await axios
-        .get(`${this._host}?apikey=${this._apiKey}&${params}`);
+        .get(`${this.host}?apikey=${this.apiKey}&${params}`);
     } catch (error) {
       response = error.response;
     }
 
-    let omdbResult;
+    let omdbResult: any;
 
     switch (type) {
       case 'film':
@@ -92,3 +101,5 @@ export default class OMDBGateway {
     return omdbResult;
   }
 }
+
+export default OMDBGateway;

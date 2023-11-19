@@ -1,25 +1,25 @@
 import DummyResult, { Rating } from './dummy';
 
-export default class DummyTVSerieResult extends DummyResult {
+class DummyTVSerieResult extends DummyResult {
   constructor() {
     super();
 
-    this._type = 'serie';
+    this.type = 'serie';
   }
 
   get years() {
-    return this._currentResponse.years;
+    return this.currentResponse.years;
   }
 
   get releasedAt() {
-    return this._currentResponse.releasedAt;
+    return this.currentResponse.releasedAt;
   }
 
   get totalSeasons() {
-    return this._currentResponse.totalSeasons;
+    return this.currentResponse.totalSeasons;
   }
 
-  get _rawResponse() {
+  getRawResponse() {
     return {
       title: 'How I Met Your Mother',
       years: { from: '2005', to: '2014' },
@@ -47,3 +47,5 @@ export default class DummyTVSerieResult extends DummyResult {
     };
   }
 }
+
+export default DummyTVSerieResult;

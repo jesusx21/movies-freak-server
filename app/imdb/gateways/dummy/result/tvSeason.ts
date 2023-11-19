@@ -1,62 +1,62 @@
 import { isEmpty } from 'lodash';
 
+interface EpisodeRawResponse {
+  title: string;
+  releasedDate: Date;
+  numberOfEpisode: number;
+  imdbId: string;
+}
+
 class Episode {
-  constructor(rawResponse) {
-    this._rawResponse = rawResponse;
+  private rawResponse: EpisodeRawResponse;
+
+  constructor(rawResponse: EpisodeRawResponse) {
+    this.rawResponse = rawResponse;
   }
 
   get title() {
-    return this._rawResponse.title;
+    return this.rawResponse.title;
   }
 
   get releasedDate() {
-    return this._rawResponse.releasedDate;
+    return this.rawResponse.releasedDate;
   }
 
   get numberOfEpisode() {
-    return this._rawResponse.numberOfEpisode;
+    return this.rawResponse.numberOfEpisode;
   }
 
   get imdbId() {
-    return this._rawResponse.imdbId;
+    return this.rawResponse.imdbId;
   }
 }
 
-export default class DummyTVSeasonResult {
+class DummyTVSeasonResult {
+  private rawResponse: any;
+  episodes: Episode[];
+
   constructor() {
-    this._rawResponse = this._getRawResponse();
-    this._episodes = [];
+    this.rawResponse = this.getRawResponse();
+    this.episodes = this.loadEpisodes();
   }
 
   get season() {
-    return this._rawResponse.season;
+    return this.rawResponse.season;
   }
 
   get totalSeasons() {
-    return this._rawResponse.totalSeasons;
+    return this.rawResponse.totalSeasons;
   }
 
-  get episodes() {
-    if (!isEmpty(this._episodes)) {
-      return this._episodes;
-    }
-
-    this._episodes = this._rawResponse.episodes.map((episode) => new Episode(episode));
-
-    return this._episodes;
+  private loadEpisodes() {
+    return this.rawResponse.episodes.map((episode: EpisodeRawResponse) => new Episode(episode));
   }
 
   get error() {
-    if (this._error) {
-      return this._error;
-    }
-
-    this._error = this._rawResponse.Error;
-
-    return this._error;
+    return this.rawResponse.Error;
   }
 
-  _getRawResponse() {
+  getRawResponse() {
     return {
       title: 'How I Met Your Mother',
       season: 1,
@@ -198,3 +198,5 @@ export default class DummyTVSeasonResult {
     };
   }
 }
+
+export default DummyTVSeasonResult;

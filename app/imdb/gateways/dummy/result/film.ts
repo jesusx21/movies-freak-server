@@ -1,17 +1,17 @@
 import DummyResult, { Rating } from './dummy';
 
-export default class DummyFilmResult extends DummyResult {
+class DummyFilmResult extends DummyResult {
   constructor() {
     super();
 
-    this._type = 'film';
+    this.type = 'film';
   }
 
   get year() {
-    return this._currentResponse.year;
+    return this.currentResponse.year;
   }
 
-  get _rawResponse() {
+  getRawResponse() {
     return {
       title: 'The Shawshank Redemption',
       year: '1994',
@@ -39,3 +39,5 @@ export default class DummyFilmResult extends DummyResult {
     };
   }
 }
+
+export default DummyFilmResult;

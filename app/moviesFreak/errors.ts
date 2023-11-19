@@ -1,24 +1,40 @@
-import VError from 'verror';
+interface MoviesFreakErrorParams {
+  error?: Error;
+  name?: string;
+  message?: string;
+  info?: {};
+}
 
-export class MoviesFreakError extends VError {
-  get name() {
-    return this.constructor.name;
+export class MoviesFreakError extends Error {
+  readonly cause?: Error;
+  readonly info?: {};
+
+  constructor(args: MoviesFreakErrorParams = {}) {
+    super(args.message || 'Something unexpected happened');
+
+    this.name = args.name || this.constructor.name;
+    this.cause = args.error;
+    this.info = args.info || {};
   }
 }
 
 export class CouldNotCreateFilm extends MoviesFreakError {
-  constructor(cause) {
-    super();
-
-    this.cause = cause;
+  constructor(error: Error, info = {}) {
+    super({
+      error,
+      info,
+      message: 'Could not create a film succesfully'
+    });
   }
 }
 
 export class CouldNotCreateTVSerie extends MoviesFreakError {
-  constructor(cause) {
-    super();
-
-    this.cause = cause;
+  constructor(error: Error, info = {}) {
+    super({
+      error,
+      info,
+      message: 'Could not create a tv serie succesfully'
+    });
   }
 }
 

@@ -1,3 +1,5 @@
+import { Knex } from 'knex';
+
 import SQLFilmsStore from './films';
 import SQLMediaWatchlistsStore from './mediaWatchlist';
 import SQLSessionsStore from './sessions';
@@ -7,8 +9,18 @@ import SQLTVSeriesStore from './tvSeries';
 import SQLUsersStore from './users';
 import SQLWatchlistsStore from './watchlists';
 
-export default class SQLDatabase {
-  constructor(connection) {
+class SQLDatabase {
+  readonly connection: any;
+  readonly films: SQLFilmsStore;
+  readonly mediaWatchlists: SQLMediaWatchlistsStore;
+  readonly sessions: SQLSessionsStore;
+  readonly tvEpisodes: SQLTVEpisodeStore;
+  readonly tvSeasons: SQLTVSeasonStore;
+  readonly tvSeries: SQLTVSeriesStore;
+  readonly users: SQLUsersStore;
+  readonly watchlists: SQLWatchlistsStore;
+
+  constructor(connection: Knex) {
     this.connection = connection;
 
     this.films = new SQLFilmsStore(this.connection);
@@ -21,13 +33,13 @@ export default class SQLDatabase {
     this.watchlists = new SQLWatchlistsStore(this.connection);
   }
 
-  async withTransaction(fn, ...args) {
-    const transaction = await this._transaction();
+  async withTransaction(fn: Function, ...args: any[]) {
+    const transaction = await this.transaction();
 
     return fn(transaction, ...args);
   }
 
-  async _transaction() {
+  private async transaction() {
     const connection = await this.connection.transaction();
 
     await connection.raw('SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;');
@@ -37,15 +49,17 @@ export default class SQLDatabase {
 }
 
 class SQLTransactionDatabase extends SQLDatabase {
-  async commit(response) {
+  async commit(response: any) {
     await this.connection.commit();
 
     return response;
   }
 
-  async rollback(error) {
+  async rollback(error: Error) {
     await this.connection.rollback();
 
     throw error;
   }
 }
+
+export default SQLDatabase;

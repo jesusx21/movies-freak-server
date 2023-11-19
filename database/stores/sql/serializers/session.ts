@@ -2,7 +2,7 @@ import Serializer, { field } from '../serializer';
 import { Session } from '../../../../app/moviesFreak/entities';
 
 const SessionSerializer = Serializer
-  .init(Session)
+  .init<Session>(Session)
   .addSchema(
     field('id'),
     field('token'),

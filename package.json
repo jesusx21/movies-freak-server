@@ -17,6 +17,7 @@
   "type": "module",
   "dependencies": {
     "clone-deep": "^4.0.1",
+    "knex": "^3.0.1",
     "lodash": "^4.17.21",
     "uuid": "^9.0.1"
   },

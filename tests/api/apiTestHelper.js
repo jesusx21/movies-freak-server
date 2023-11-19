@@ -2,9 +2,9 @@ import request from 'supertest';
 import { omit } from 'lodash';
 import { VError } from 'verror';
 
-import TestCase from '../testHelper';
-import imdbFactory from '../../app/imdb/factory';
-import MoviesFreakApp from '../../api';
+import TestCase from '../testHelper.js';
+import imdbFactory from '../../app/imdb/factory.js';
+import MoviesFreakApp from '../../api/index.js';
 
 class InvalidSessionData extends VError {
   get name() {

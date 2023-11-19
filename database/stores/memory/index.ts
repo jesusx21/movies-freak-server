@@ -6,7 +6,15 @@ import InMemoryTVSeriesStore from './tvSeries';
 import InMemoryUsersStore from './users';
 import InMemoryWatchlistStore from './watchlists';
 
-export default class InMemoryDatabase {
+class InMemoryDatabase {
+  readonly films: InMemoryFilmsStore;
+  readonly sessions: InMemorySessionsStore;
+  readonly tvEpisodes: InMemoryTVEpisodesStore;
+  readonly tvSeasons: InMemoryTVSeasonStore;
+  readonly tvSeries: InMemoryTVSeriesStore;
+  readonly users: InMemoryUsersStore;
+  readonly watchlists: InMemoryWatchlistStore;
+
   constructor() {
     this.films = new InMemoryFilmsStore();
     this.sessions = new InMemorySessionsStore();
@@ -17,7 +25,9 @@ export default class InMemoryDatabase {
     this.watchlists = new InMemoryWatchlistStore();
   }
 
-  async withTransaction(fn, ...args) {
+  async withTransaction(fn: Function, ...args: any[]) {
     return fn(this, ...args);
   }
 }
+
+export default InMemoryDatabase;

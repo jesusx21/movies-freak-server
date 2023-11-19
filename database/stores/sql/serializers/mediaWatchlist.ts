@@ -1,8 +1,8 @@
-import { MediaWatchlist } from '../../../../app/moviesFreak/entities';
 import Serializer, { field } from '../serializer';
+import { MediaWatchlist } from '../../../../app/moviesFreak/entities';
 
 const MediaWatchlistSerializer = Serializer
-  .init(MediaWatchlist)
+  .init<MediaWatchlist>(MediaWatchlist)
   .addSchema(
     field('id'),
     field('index'),

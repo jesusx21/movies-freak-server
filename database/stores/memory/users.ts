@@ -1,4 +1,6 @@
 import Store from './store';
+import { User } from '../../../app/moviesFreak/entities';
+import { UUID } from '../../../typescript/customTypes';
 import {
   EmailAlreadyExists,
   NotFound,
@@ -6,12 +8,14 @@ import {
   UsernameAlreadyExists
 } from '../errors';
 
-export default class InMemoryUsersStore {
+class InMemoryUsersStore {
+  private store: Store<User>;
+
   constructor() {
-    this._store = new Store();
+    this.store = new Store<User>();
   }
 
-  async create(user) {
+  async create(user: User) {
     try {
       await this.findByEmail(user.email);
       throw new EmailAlreadyExists();
@@ -30,12 +34,12 @@ export default class InMemoryUsersStore {
       }
     }
 
-    return this._store.create(user);
+    return this.store.create(user);
   }
 
-  async findById(userId) {
+  async findById(userId: UUID) {
     try {
-      return await this._store.findById(userId);
+      return await this.store.findById(userId);
     } catch (error) {
       if (error instanceof NotFound) {
         throw new UserNotFound({ id: userId });
@@ -45,9 +49,9 @@ export default class InMemoryUsersStore {
     }
   }
 
-  async findByEmail(email) {
+  async findByEmail(email: string) {
     try {
-      return await this._store.findOne({ email });
+      return await this.store.findOne({ email });
     } catch (error) {
       if (error instanceof NotFound) {
         throw new UserNotFound({ email });
@@ -57,9 +61,9 @@ export default class InMemoryUsersStore {
     }
   }
 
-  async findByUsername(username) {
+  async findByUsername(username: string) {
     try {
-      return await this._store.findOne({ username });
+      return await this.store.findOne({ username });
     } catch (error) {
       if (error instanceof NotFound) {
         throw new UserNotFound({ username });
@@ -69,3 +73,5 @@ export default class InMemoryUsersStore {
     }
   }
 }
+
+export default InMemoryUsersStore;

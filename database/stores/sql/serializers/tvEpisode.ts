@@ -1,8 +1,8 @@
-import { TVEpisode } from '../../../../app/moviesFreak/entities';
 import Serializer, { field } from '../serializer';
+import { TVEpisode } from '../../../../app/moviesFreak/entities';
 
 const TVEpisodeSerializer = Serializer
-  .init(TVEpisode)
+  .init<TVEpisode>(TVEpisode)
   .addSchema(
     field('id'),
     field('name'),

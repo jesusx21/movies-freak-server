@@ -2,7 +2,7 @@ import Serializer, { field } from '../serializer';
 import { TVSeason } from '../../../../app/moviesFreak/entities';
 
 const TVSeasonSerializer = Serializer
-  .init(TVSeason)
+  .init<TVSeason>(TVSeason)
   .addSchema(
     field('id'),
     field('plot'),

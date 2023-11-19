@@ -1,8 +1,8 @@
-import { Film } from '../../../../app/moviesFreak/entities';
 import Serializer, { field } from '../serializer';
+import { Film } from '../../../../app/moviesFreak/entities';
 
 const FilmSerializer = Serializer
-  .init(Film)
+  .init<Film>(Film)
   .addSchema(
     field('id'),
     field('name'),

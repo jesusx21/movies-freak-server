@@ -6,7 +6,7 @@ import InMemoryDatabase from './stores/memory';
 
 export class UnsupportedDatabaseDriver extends Error {}
 
-export default function getDatabase(driverName, environment) {
+function getDatabase(driverName: string, environment: string) {
   if (driverName === 'sql') {
     const config = knexfile[environment];
     const connection = knex(config);
@@ -20,3 +20,5 @@ export default function getDatabase(driverName, environment) {
 
   throw new UnsupportedDatabaseDriver(driverName);
 }
+
+export default getDatabase;

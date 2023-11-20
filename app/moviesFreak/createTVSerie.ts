@@ -1,4 +1,7 @@
 /* eslint-disable no-await-in-loop */
+import Database from '../../database/stores/memory';
+import IMDB from '../imdb/gateways/dummy/dummyGateway';
+import { Episode } from '../imdb/gateways/dummy/result/tvSeason';
 import { TVEpisode, TVSeason, TVSerie } from './entities';
 import {
   CouldNotCreateTVEpisodes,
@@ -6,25 +9,29 @@ import {
   CouldNotCreateTVSerie
 } from './errors';
 
-export default class CreateTVSerie {
-  constructor(database, imdb, imdbId) {
-    this._database = database;
-    this._imdb = imdb;
-    this._imdbId = imdbId;
+class CreateTVSerie {
+  private database: Database;
+  private imdb: IMDB;
+  private imdbId: string;
+
+  constructor(database: Database, imdb: IMDB, imdbId: string) {
+    this.database = database;
+    this.imdb = imdb;
+    this.imdbId = imdbId;
   }
 
   async execute() {
-    let imdbTVSerie;
+    let imdbTVSerie: TVSerie;
 
     try {
-      imdbTVSerie = await this._fetchTVSerieFromIMDB();
+      imdbTVSerie = await this.fetchTVSerieFromIMDB();
     } catch (error) {
       throw new CouldNotCreateTVSerie(error);
     }
 
-    let tvSerie;
+    let tvSerie: TVSerie | undefined;
 
-    await this._database.withTransaction(async (database) => {
+    await this.database.withTransaction(async (database: Database) => {
       try {
         tvSerie = await database.tvSeries.create(imdbTVSerie);
       } catch (error) {
@@ -32,11 +39,15 @@ export default class CreateTVSerie {
       }
 
       for (let seasonNumber = 1; seasonNumber <= tvSerie.totalSeasons; seasonNumber += 1) {
-        let result;
-        let tvSeason;
+        let result: {
+          tvSeason: TVSeason;
+          episodes: Episode[];
+        };
+
+        let tvSeason: TVSeason;
 
         try {
-          result = await this._fetchTVSeasonFromIMDB(tvSerie, seasonNumber);
+          result = await this.fetchTVSeasonFromIMDB(tvSerie, seasonNumber);
           tvSeason = await database.tvSeasons.create(result.tvSeason);
         } catch (error) {
           throw new CouldNotCreateTVSeasons(error);
@@ -45,7 +56,7 @@ export default class CreateTVSerie {
         // eslint-disable-next-line no-restricted-syntax
         for (const episode of result.episodes) {
           try {
-            const tvEpisode = await this._fetchTVEpisodenFromIMDB(tvSeason, episode);
+            const tvEpisode = await this.fetchTVEpisodenFromIMDB(tvSeason, episode);
             await database.tvEpisodes.create(tvEpisode);
           } catch (error) {
             throw new CouldNotCreateTVEpisodes(error);
@@ -57,8 +68,8 @@ export default class CreateTVSerie {
     return tvSerie;
   }
 
-  async _fetchTVSerieFromIMDB() {
-    const result = await this._imdb.fetchTVSerieById(this._imdbId);
+  private async fetchTVSerieFromIMDB() {
+    const result = await this.imdb.fetchTVSerieById(this.imdbId);
 
     return new TVSerie({
       imdbId: result.imdbId,
@@ -76,28 +87,28 @@ export default class CreateTVSerie {
     });
   }
 
-  async _fetchTVSeasonFromIMDB(tvSerie, seasonNumber) {
-    const result = await this._imdb.fetchTVSeasonBySerieId(this._imdbId, seasonNumber);
+  private async fetchTVSeasonFromIMDB(tvSerie: TVSerie, seasonNumber: number) {
+    const result = await this.imdb.fetchTVSeasonBySerieId(this.imdbId, seasonNumber);
 
     const tvSeason = new TVSeason({
       seasonNumber,
       tvSerieId: tvSerie.id,
-      plot: result.plot || tvSerie.plot,
-      poster: result.poster || tvSerie.poster
+      plot: tvSerie.plot,
+      poster: tvSerie.poster
     });
 
     return { tvSeason, episodes: result.episodes };
   }
 
-  async _fetchTVEpisodenFromIMDB(tvSeason, episode) {
-    const result = await this._imdb.fetchTVEpisodeById(this._imdbId);
+  private async fetchTVEpisodenFromIMDB(tvSeason: TVSeason, episode: Episode) {
+    const result = await this.imdb.fetchTVEpisodeById(this.imdbId);
 
     return new TVEpisode({
       imdbId: episode.imdbId || result.imdbId,
       name: episode.title || result.title,
       year: episode.releasedDate.getFullYear(),
-      seasonNumber: tvSeason.seasonNumber || result.seasonNumber,
-      episodeNumber: episode.numberOfEpisode || result.episodeNumber,
+      seasonNumber: tvSeason.seasonNumber || result.numberOfSeason,
+      episodeNumber: episode.numberOfEpisode || result.numberOfEpisode,
       genre: result.genre,
       director: result.director,
       writers: result.writers,
@@ -114,3 +125,5 @@ export default class CreateTVSerie {
     });
   }
 }
+
+export default CreateTVSerie;

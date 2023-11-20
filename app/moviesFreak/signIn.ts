@@ -1,3 +1,4 @@
+import Database from '../../database/stores/memory';
 import { Session } from './entities';
 import {
   CouldNotSignIn,
@@ -10,31 +11,35 @@ import {
 } from '../../database/stores/errors';
 
 export default class SignIn {
-  constructor(database, username, password) {
-    this._database = database;
-    this._username = username;
-    this._password = password;
+  private database: Database;
+  private username: string;
+  private password: string;
+
+  constructor(database: Database, username: string, password: string) {
+    this.database = database;
+    this.username = username;
+    this.password = password;
   }
 
   async execute() {
-    let user = await this._findUserByEmail();
+    let user = await this.findUserByEmail();
 
     if (!user) {
-      user = await this._findUserByUsername();
+      user = await this.findUserByUsername();
     }
 
-    if (!user) {
+    if (!user || !user.id) {
       throw new UserNotFound();
     }
 
-    if (!user.doesPasswordMatch(this._password)) {
-      throw new InvalidPassword(this._password);
+    if (!user.doesPasswordMatch(this.password)) {
+      throw new InvalidPassword(this.password);
     }
 
-    let session;
+    let session: Session;
 
     try {
-      session = await this._database.sessions.findActiveByUserId(user.id);
+      session = await this.database.sessions.findActiveByUserId(user.id);
     } catch (error) {
       if (!(error instanceof SessionNotFound)) {
         throw new CouldNotSignIn(error);
@@ -48,19 +53,19 @@ export default class SignIn {
 
     try {
       if (session.id) {
-        return await this._database.sessions.update(session);
+        return await this.database.sessions.update(session);
       }
 
-      return await this._database.sessions.create(session);
+      return await this.database.sessions.create(session);
     } catch (error) {
       throw new CouldNotSignIn(error);
     }
   }
 
   // eslint-disable-next-line consistent-return
-  async _findUserByEmail() {
+  private async findUserByEmail() {
     try {
-      return await this._database.users.findByEmail(this._username);
+      return await this.database.users.findByEmail(this.username);
     } catch (error) {
       if (!(error instanceof DatabaseUserNotFound)) {
         throw new CouldNotSignIn(error);
@@ -69,9 +74,9 @@ export default class SignIn {
   }
 
   // eslint-disable-next-line consistent-return
-  async _findUserByUsername() {
+  async findUserByUsername() {
     try {
-      return await this._database.users.findByUsername(this._username);
+      return await this.database.users.findByUsername(this.username);
     } catch (error) {
       if (!(error instanceof DatabaseUserNotFound)) {
         throw new CouldNotSignIn(error);

@@ -1,23 +1,23 @@
 import Entity from './entity';
-import { UUID } from '../../../typescript/customTypes';
+import { MarathonType, UUID } from '../../../typescript/customTypes';
 
 interface WatchlistParams {
-  id: UUID;
+  id?: UUID;
   name: string;
-  type: string; //enum
+  type: MarathonType;
   description: string;
-  totalFilms: number;
-  totalTVEpisodes: number;
-  createdAt: Date;
-  updatedAt: Date;
+  totalFilms?: number;
+  totalTVEpisodes?: number;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 class Watchlist extends Entity {
   name: string;
-  type: string; //enum
+  type: MarathonType;
   description: string;
-  totalFilms: number;
-  totalTVEpisodes: number;
+  totalFilms?: number;
+  totalTVEpisodes?: number;
 
   constructor(args: WatchlistParams) {
     super(args.id, args.createdAt, args.updatedAt);

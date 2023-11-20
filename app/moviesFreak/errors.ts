@@ -50,4 +50,16 @@ export class UsernameAlreadyUsed extends MoviesFreakError {}
 
 export class InvalidType extends MoviesFreakError {}
 export class UserNotFound extends MoviesFreakError {}
-export class InvalidPassword extends MoviesFreakError {}
+
+export class InvalidPassword extends MoviesFreakError {
+  password: string;
+
+  constructor(password: string) {
+    super({
+      message: `Password ${password} invalid`,
+      info: { password }
+    });
+
+    this.password = password;
+  }
+}

@@ -6,13 +6,13 @@ import { ReadOnlyField, SessionAlreadyActive } from './errors';
 import { UUID } from '../../../typescript/customTypes';
 
 interface SessionParams {
-  id: UUID;
+  id?: UUID;
   user: User;
-  token: string;
-  expiresAt: Date;
-  isActive: boolean;
-  createdAt: Date;
-  updatedAt: Date;
+  token?: string;
+  expiresAt?: Date;
+  isActive?: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 class Session extends Entity {

@@ -1,32 +1,39 @@
+import Database from '../../database/stores/memory';
+import IMDB from '../imdb/gateways/dummy/dummyGateway';
+import { DummyFilmResult as FilmResult } from '../imdb/gateways/dummy/result';
 import { Film } from './entities';
 import { CouldNotCreateFilm } from './errors';
 
-export default class CreateFilm {
-  constructor(database, imdb, imdbId) {
-    this._database = database;
-    this._imdb = imdb;
-    this._imdbId = imdbId;
+class CreateFilm {
+  private database: Database;
+  private imdb: IMDB;
+  private imdbId: string;
+
+  constructor(database: Database, imdb: IMDB, imdbId: string) {
+    this.database = database;
+    this.imdb = imdb;
+    this.imdbId = imdbId;
   }
 
   async execute() {
-    let imdbResult;
+    let imdbResult: FilmResult;
 
     try {
-      imdbResult = await this._imdb.fetchFilmById(this._imdbId);
+      imdbResult = await this.imdb.fetchFilmById(this.imdbId);
     } catch (error) {
       throw new CouldNotCreateFilm(error);
     }
 
-    const film = this._buildFilmFromIMDBResult(imdbResult);
+    const film = this.buildFilmFromIMDBResult(imdbResult);
 
     try {
-      return await this._database.films.create(film);
+      return await this.database.films.create(film);
     } catch (error) {
       throw new CouldNotCreateFilm(error);
     }
   }
 
-  _buildFilmFromIMDBResult(imdbResult) {
+  private buildFilmFromIMDBResult(imdbResult: FilmResult) {
     return new Film({
       name: imdbResult.title,
       plot: imdbResult.plot,
@@ -45,3 +52,5 @@ export default class CreateFilm {
     });
   }
 }
+
+export default CreateFilm;

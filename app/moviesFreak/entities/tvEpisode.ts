@@ -5,7 +5,7 @@ interface TVEpisodeParams {
   id?: UUID;
   imdbId: string;
   name: string;
-  year: string;
+  year: number;
   seasonNumber: number;
   episodeNumber: number;
   genre: string[];
@@ -19,8 +19,8 @@ interface TVEpisodeParams {
   awards: string;
   imdbRating: string;
   releasedAt: Date;
-  tvSerieId: UUID;
-  tvSeasonId: UUID;
+  tvSerieId?: UUID;
+  tvSeasonId?: UUID;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -28,7 +28,7 @@ interface TVEpisodeParams {
 class TVEpisode extends Entity {
   imdbId: string;
   name: string;
-  year: string;
+  year: number;
   seasonNumber: number;
   episodeNumber: number;
   genre: string[];
@@ -42,8 +42,8 @@ class TVEpisode extends Entity {
   awards: string;
   imdbRating: string;
   releasedAt: Date;
-  tvSerieId: UUID;
-  tvSeasonId: UUID;
+  readonly tvSerieId?: UUID;
+  readonly tvSeasonId?: UUID;
 
   constructor(args: TVEpisodeParams) {
     super(args.id, args.createdAt, args.updatedAt);

@@ -3,21 +3,21 @@ import { UUID } from '../../../typescript/customTypes';
 
 interface TVSeasonParams {
   id?: UUID;
-  tvSerieId: UUID;
+  tvSerieId?: UUID;
   seasonNumber: number;
   plot: string;
   poster: URL;
-  releasedAt: Date;
+  releasedAt?: Date;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
 class TVSeason extends Entity {
-  tvSerieId: UUID;
+  tvSerieId?: UUID;
   seasonNumber: number;
   plot: string;
   poster: URL;
-  releasedAt: Date;
+  releasedAt?: Date;
 
   constructor(args: TVSeasonParams) {
     super(args.id, args.createdAt, args.updatedAt);

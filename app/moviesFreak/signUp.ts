@@ -1,5 +1,6 @@
 import { omit } from 'lodash';
 
+import Database from '../../database/stores/memory';
 import { Session, User } from './entities';
 import {
   EmailAlreadyExists,
@@ -11,20 +12,32 @@ import {
   UsernameAlreadyUsed
 } from './errors';
 
+interface UserData {
+  name: string;
+  username: string;
+  lastName: string;
+  password: string;
+  email: string;
+  birthdate: Date;
+}
+
 export default class SignUp {
-  constructor(database, userData) {
-    this._database = database;
-    this._userData = userData;
+  private database: Database;
+  private userData: UserData;
+
+  constructor(database: Database, userData: UserData) {
+    this.database = database;
+    this.userData = userData;
   }
 
   async execute() {
-    let userCreated;
+    let userCreated: User;
 
     try {
-      const user = new User(omit(this._userData, 'password'));
+      const user = new User(omit(this.userData, 'password'));
 
-      user.addPassword(this._userData.password);
-      userCreated = await this._database.users.create(user);
+      user.addPassword(this.userData.password);
+      userCreated = await this.database.users.create(user);
     } catch (error) {
       if (error instanceof EmailAlreadyExists) {
         throw new EmailAlreadyUsed();
@@ -43,7 +56,7 @@ export default class SignUp {
       .activateToken();
 
     try {
-      return await this._database.sessions.create(session);
+      return await this.database.sessions.create(session);
     } catch (error) {
       throw new CouldNotSignUp(error);
     }

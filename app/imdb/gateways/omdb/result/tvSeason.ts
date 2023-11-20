@@ -5,7 +5,7 @@ interface EpisodeRawResponse {
   imdbID: string;
 }
 
-class Episode {
+export class Episode {
   private rawResponse: EpisodeRawResponse;
 
   constructor(rawResponse: EpisodeRawResponse) {

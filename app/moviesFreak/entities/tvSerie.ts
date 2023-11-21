@@ -21,18 +21,18 @@ interface TVSerieParams {
 }
 
 class TVSerie extends Entity {
-  imdbId: string;
-  name: string;
-  plot: string;
-  years: string;
-  rated: string;
-  genre: string[];
-  writers: string[];
-  actors: string[];
-  poster: URL;
-  imdbRating: string;
-  totalSeasons: number;
-  releasedAt: Date;
+  imdbId?: string;
+  name?: string;
+  plot?: string;
+  years?: string;
+  rated?: string;
+  genre?: string[];
+  writers?: string[];
+  actors?: string[];
+  poster?: URL;
+  imdbRating?: string;
+  totalSeasons?: number;
+  releasedAt?: Date;
   private tvSeasons: TVSeason[];
 
   constructor(args: TVSerieParams) {

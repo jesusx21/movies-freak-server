@@ -5,9 +5,11 @@ import TVSerieResource from './tvSerie';
 import SignIn from './signIn';
 import SignUp from './signUp';
 
-export class MoviesFreakAPI {
+class MoviesFreakAPI {
+  private app: any;
+
   constructor(app) {
-    this._app = app;
+    this.app = app;
   }
 
   buildAPI() {
@@ -19,11 +21,13 @@ export class MoviesFreakAPI {
     const signIn = new SignIn();
     const signUp = new SignUp();
 
-    this._app.registerResource('films', filmsResource);
-    this._app.registerResource('films/:filmId', filmResource);
-    this._app.registerResource('tv-series', tvSeriesResource);
-    this._app.registerResource('tv-series/:tvSerieId', tvSerieResource);
-    this._app.registerResource('sign-in', signIn);
-    this._app.registerResource('sign-up', signUp);
+    this.app.registerResource('films', filmsResource);
+    this.app.registerResource('films/:filmId', filmResource);
+    this.app.registerResource('tv-series', tvSeriesResource);
+    this.app.registerResource('tv-series/:tvSerieId', tvSerieResource);
+    this.app.registerResource('sign-in', signIn);
+    this.app.registerResource('sign-up', signUp);
   }
 }
+
+export default MoviesFreakAPI;

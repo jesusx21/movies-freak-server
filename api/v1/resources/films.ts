@@ -1,14 +1,18 @@
 import { Monopoly } from '../../../boardGame';
+import { MultipleRespponse, SingleRespponse } from '../../../boardGame/monopoly';
 
 import CreateFilm from '../../../app/moviesFreak/createFilm';
 import { CREATED, HTTPInternalError, OK } from '../../httpResponses';
+import { Titles } from '../interfaces';
+import { Film } from '../../../app/moviesFreak/entities';
+import { QueryResponse } from '../../../database/stores/interfaces';
 
-export default class FilmsResource extends Monopoly {
-  async onPost({ body }) {
+class FilmsResource extends Monopoly<Titles> {
+  async onPost({ body }): Promise<SingleRespponse> {
     const { database, imdb, presenters } = this.getTitles();
     const useCase = new CreateFilm(database, imdb, body.imdbId);
 
-    let result;
+    let result: Film;
 
     try {
       result = await useCase.execute();
@@ -22,12 +26,12 @@ export default class FilmsResource extends Monopoly {
     };
   }
 
-  async onGet({ query }) {
+  async onGet({ query }): Promise<MultipleRespponse> {
     const { database, presenters } = this.getTitles();
     const skip = Number(query.skip || 0);
     const limit = Number(query.limit || 25);
 
-    let result;
+    let result: QueryResponse<Film>;
 
     try {
       result = await database.films.find({ skip, limit });
@@ -46,3 +50,5 @@ export default class FilmsResource extends Monopoly {
     };
   }
 }
+
+export default FilmsResource;

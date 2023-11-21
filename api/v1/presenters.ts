@@ -1,5 +1,7 @@
-export default class Presenters {
-  presentFilm(film) {
+import { Film, Session, TVSerie } from '../../app/moviesFreak/entities';
+
+class Presenters {
+  presentFilm(film: Film) {
     return {
       id: film.id,
       name: film.name,
@@ -19,11 +21,11 @@ export default class Presenters {
     };
   }
 
-  presentFilms(films) {
+  presentFilms(films: Film[]) {
     return films.map(this.presentFilm.bind(this));
   }
 
-  presentTVSerie(tvSerie) {
+  presentTVSerie(tvSerie: TVSerie) {
     return {
       id: tvSerie.id,
       imdbId: tvSerie.imdbId,
@@ -41,20 +43,22 @@ export default class Presenters {
     };
   }
 
-  presentTVSeries(tvSeries) {
+  presentTVSeries(tvSeries: TVSerie[]) {
     return tvSeries.map(this.presentTVSerie.bind(this));
   }
 
-  presentSession(session) {
+  presentSession(session: Session) {
     return {
       id: session.id,
       token: session.token,
       expiresAt: session.expiresAt,
       isActive: session.isActive,
       user: {
-        id: session.user.id,
-        name: session.user.name
+        id: session.user?.id,
+        name: session.user?.name
       }
     };
   }
 }
+
+export default Presenters;

@@ -5,13 +5,16 @@ import {
   EmailAlreadyUsed, UsernameAlreadyUsed
 } from '../../../app/moviesFreak/errors';
 import { CREATED, HTTPConflict, HTTPInternalError } from '../../httpResponses';
+import { SingleRespponse } from '../../../boardGame/monopoly';
+import { Titles } from '../interfaces';
+import { Session } from '../../../app/moviesFreak/entities';
 
-export default class SignUp extends Monopoly {
-  async onPost({ body }) {
+class SignUp extends Monopoly<Titles> {
+  async onPost({ body }): Promise<SingleRespponse> {
     const database = this.getTitle('database');
     const signUp = new Register(database, body);
 
-    let session;
+    let session: Session;
 
     try {
       session = await signUp.execute();
@@ -35,3 +38,5 @@ export default class SignUp extends Monopoly {
     };
   }
 }
+
+export default SignUp;

@@ -16,10 +16,14 @@
   "license": "MIT",
   "type": "module",
   "dependencies": {
+    "@types/node": "^20.9.2",
     "axios": "^1.6.2",
     "clone-deep": "^4.0.1",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
     "knex": "^3.0.1",
     "lodash": "^4.17.21",
+    "morgan": "^1.10.0",
     "uuid": "^9.0.1"
   },
   "devDependencies": {}

@@ -1,14 +1,17 @@
+import { TVSerie } from '../../../app/moviesFreak/entities';
 import { Monopoly } from '../../../boardGame';
+import { SingleRespponse } from '../../../boardGame/monopoly';
 
 import { TVSerieNotFound } from '../../../database/stores/errors';
 import { HTTPInternalError, HTTPNotFound, OK } from '../../httpResponses';
+import { Titles } from '../interfaces';
 
-export default class TVSerieResource extends Monopoly {
-  async onGet({ params }) {
+class TVSerieResource extends Monopoly<Titles> {
+  async onGet({ params }): Promise<SingleRespponse> {
     const { tvSerieId } = params;
     const { database, presenters } = this.getTitles();
 
-    let tvSerie;
+    let tvSerie: TVSerie;
 
     try {
       tvSerie = await database.tvSeries.findById(tvSerieId);
@@ -26,3 +29,5 @@ export default class TVSerieResource extends Monopoly {
     };
   }
 }
+
+export default TVSerieResource;

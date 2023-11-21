@@ -1,14 +1,18 @@
 import { Monopoly } from '../../../boardGame';
+import { SingleRespponse } from '../../../boardGame/monopoly';
 
-import { FilmNotFound } from '../../../database/stores/errors';
 import { HTTPInternalError, HTTPNotFound, OK } from '../../httpResponses';
+import { Film } from '../../../app/moviesFreak/entities';
+import { FilmNotFound } from '../../../database/stores/errors';
+import { Titles } from '../interfaces';
+import { UUID } from '../../../typescript/customTypes';
 
-export default class FilmResource extends Monopoly {
-  async onGet({ params }) {
+class FilmResource extends Monopoly<Titles> {
+  async onGet({ params }): Promise<SingleRespponse> {
     const { database, presenters } = this.getTitles();
-    const { filmId } = params;
+    const { filmId }: { filmId: UUID} = params;
 
-    let film;
+    let film: Film;
 
     try {
       film = await database.films.findById(filmId);
@@ -26,3 +30,5 @@ export default class FilmResource extends Monopoly {
     };
   }
 }
+
+export default FilmResource;

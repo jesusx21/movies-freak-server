@@ -20,7 +20,7 @@ class CreateTVSerie {
     this.imdbId = imdbId;
   }
 
-  async execute() {
+  async execute(): Promise<TVSerie> {
     let imdbTVSerie: TVSerie;
 
     try {
@@ -29,7 +29,7 @@ class CreateTVSerie {
       throw new CouldNotCreateTVSerie(error);
     }
 
-    let tvSerie: TVSerie | undefined;
+    let tvSerie = new TVSerie({});
 
     await this.database.withTransaction(async (database: Database) => {
       try {
@@ -114,7 +114,7 @@ class CreateTVSerie {
       writers: result.writers,
       actors: result.actors,
       plot: result.plot,
-      languages: result.languages,
+      languages: result.language,
       country: result.country,
       poster: result.poster,
       awards: result.awards,

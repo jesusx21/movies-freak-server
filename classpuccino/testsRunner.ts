@@ -5,8 +5,14 @@ import colors from 'colors';
 import fs from 'fs';
 import path from 'path';
 
-export default class TestRunner {
-  constructor(testDir) {
+class TestRunner {
+  private testDir: string;
+  private errorAndFails: {};
+  private totalPassed: number;
+  private totalFailed: number;
+  private totalErrors: number;
+
+  constructor(testDir: string) {
     this.testDir = testDir;
 
     this.errorAndFails = {};
@@ -17,7 +23,7 @@ export default class TestRunner {
   }
 
   async run() {
-    const testFilesPath = await this._getTestFilesPath();
+    const testFilesPath = await this.getTestFilesPath();
 
     // eslint-disable-next-line no-restricted-syntax
     for (const testFileDir of testFilesPath) {
@@ -34,23 +40,23 @@ export default class TestRunner {
       // eslint-disable-next-line no-restricted-syntax
       for (const Test of Object.values(TestClases)) {
         // eslint-disable-next-line no-await-in-loop
-        await this._runTest(Test, testModule);
+        await this.runTest(Test, testModule);
       }
     }
 
     Object.keys(this.errorAndFails).forEach((testModule) => {
       Object.keys(this.errorAndFails[testModule]).forEach((testClassName) => {
         Object.keys(this.errorAndFails[testModule][testClassName]).forEach(functionName => {
-          const { fail, error } = this.errorAndFails[testModule][testClassName][functionName];
+          const { fail, error }: { fail: Error, error: Error} = this.errorAndFails[testModule][testClassName][functionName];
 
           if (fail) {
             console.log(`\n${testClassName}.${functionName}`.yellow);
-            console.log('Fail:'.gray, fail.stack.gray);
+            console.log('Fail:'.gray, fail.stack?.gray);
           }
 
           if (error) {
             console.log(`\n${testClassName}.${functionName}`.red);
-            console.log('Error:'.gray, error.stack.gray);
+            console.log('Error:'.gray, error.stack?.gray);
           }
         });
       });
@@ -62,7 +68,7 @@ export default class TestRunner {
     console.error(`Error on tests: ${this.totalErrors}`.red);
   }
 
-  async _runTest(Test, testModule) {
+  private async runTest(Test: any, testModule: string) {
     colors.enable;
 
     const test = new Test();
@@ -111,21 +117,21 @@ export default class TestRunner {
     }
   }
 
-  async _getTestFilesPath(testDir) {
+  private async getTestFilesPath(testDir?: string) {
     const testPath = testDir || this.testDir;
     const directoryPath = path.join(__dirname, `${testPath}`);
 
-    if (directoryPath.endsWith('.test.js')) {
+    if (directoryPath.endsWith('.test.js') || directoryPath.endsWith('.test.ts')) {
       return [testPath];
     }
 
     const folders = fs.readdirSync(directoryPath);
 
-    let testFiles = [];
+    let testFiles: string[] = [];
 
     // eslint-disable-next-line no-restricted-syntax
     for (const folder of folders) {
-      if (folder.endsWith('.test.js')) {
+      if (folder.endsWith('.test.js') || folder.endsWith('.test.ts')) {
         testFiles.push(`${testPath}/${folder}`);
 
         // eslint-disable-next-line no-continue
@@ -138,7 +144,7 @@ export default class TestRunner {
       }
 
       // eslint-disable-next-line no-await-in-loop
-      const files = await this._getTestFilesPath(`${testPath}/${folder}`);
+      const files = await this.getTestFilesPath(`${testPath}/${folder}`);
 
       testFiles = [...testFiles, ...files];
     }
@@ -146,3 +152,5 @@ export default class TestRunner {
     return testFiles;
   }
 }
+
+export default TestRunner;

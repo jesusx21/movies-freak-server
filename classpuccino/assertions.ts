@@ -1,65 +1,67 @@
 import { difference, isEqual, isNil } from 'lodash';
 import { AssertionError } from './errors';
 
-export default class Assertions {
-  assertThat(actual) {
-    this._actual = actual;
+class Assertions {
+  private actual?: any;
+
+  assertThat(actual: any) {
+    this.actual = actual;
 
     return this;
   }
 
-  isGreaterThan(expected) {
-    if (this._actual > expected) {
+  isGreaterThan(expected: any) {
+    if (this.actual > expected) {
       return true;
     }
 
     throw new AssertionError(
-      `Expect actual (${this._actual}) to be greater than expected (${expected})`
+      `Expect actual (${this.actual}) to be greater than expected (${expected})`
     );
   }
 
-  isLessThanOrEqual(expected) {
-    if (this._actual <= expected) {
+  isLessThanOrEqual(expected: any) {
+    if (this.actual <= expected) {
       return true;
     }
 
     throw new AssertionError(
-      `Expect actual (${this._actual}) to be less than or equal to expected (${expected})`
+      `Expect actual (${this.actual}) to be less than or equal to expected (${expected})`
     );
   }
 
-  isEqual(expected) {
-    if (isEqual(this._actual, expected)) {
+  isEqual(expected: any) {
+    if (isEqual(this.actual, expected)) {
       return true;
     }
 
     throw new AssertionError(
-      `Expected ${this._actual} to be equal to ${expected}`
+      `Expected ${this.actual} to be equal to ${expected}`
     );
   }
 
-  isNotEqual(expected) {
-    if (!isEqual(this._actual, expected)) {
+  isNotEqual(expected: any) {
+    if (!isEqual(this.actual, expected)) {
       return true;
     }
 
     throw new AssertionError(
-      `Expected ${this._actual} to not be equal to ${expected}`
+      `Expected ${this.actual} to not be equal to ${expected}`
     );
   }
 
   isEmpty() {
-    if (Object.values(this._actual).length === 0) {
+    if (Object.values(this.actual).length === 0) {
       return true;
     }
 
     throw new AssertionError(
-      `Expected ${typeof this._actual} to be empty`
+      `Expected ${typeof this.actual} to be empty`
     );
   }
 
-  isInstanceOf(klass) {
-    if (this._actual instanceof klass) {
+  isInstanceOf(klass: Function) {
+    if (this.actual instanceof klass) {
       return true;
     }
 
@@ -68,9 +70,9 @@ export default class Assertions {
     );
   }
 
-  async willBeRejectedWith(errorKlass) {
+  async willBeRejectedWith(errorKlass: Function) {
     try {
-      await this._actual;
+      await this.actual;
 
       throw new AssertionError('Expected async function to be rejected, but was successful');
     } catch (error) {
@@ -89,9 +91,9 @@ export default class Assertions {
     }
   }
 
-  willThrow(errorKlass) {
+  willThrow(errorKlass: Function) {
     try {
-      this._actual();
+      this.actual();
 
       throw new AssertionError(
         `Expected sync function to throw ${errorKlass.name}, but was successful`
@@ -112,23 +114,23 @@ export default class Assertions {
   }
 
   isTrue() {
-    if (this._actual === true) {
+    if (this.actual === true) {
       return true;
     }
 
-    throw new AssertionError(`Expected value to be true, but is ${this._actual}`);
+    throw new AssertionError(`Expected value to be true, but is ${this.actual}`);
   }
 
   isFalse() {
-    if (this._actual === false) {
+    if (this.actual === false) {
       return true;
     }
 
-    throw new AssertionError(`Expected value to be false, but is ${this._actual}`);
+    throw new AssertionError(`Expected value to be false, but is ${this.actual}`);
   }
 
   doesExist() {
-    if (!isNil(this._actual)) {
+    if (!isNil(this.actual)) {
       return true;
     }
 
@@ -136,7 +138,7 @@ export default class Assertions {
   }
 
   doesNotExist() {
-    if (isNil(this._actual)) {
+    if (isNil(this.actual)) {
       return true;
     }
 
@@ -144,45 +146,47 @@ export default class Assertions {
   }
 
   isNull() {
-    if (this._actual === null) {
+    if (this.actual === null) {
       return true;
     }
 
     throw new AssertionError('Expected value to be null');
   }
 
-  hasLengthOf(length) {
-    const actualLength = Object.values(this._actual).length;
+  hasLengthOf(length: number) {
+    const actualLength = Object.values(this.actual).length;
 
     if (actualLength === length) {
       return true;
     }
 
     throw new AssertionError(
-      `Expected ${typeof this._actual} to have a length of '${length}' `
+      `Expected ${typeof this.actual} to have a length of '${length}' `
         + `but has a length of '${actualLength}'`
     );
   }
 
-  hasSubstring(substr) {
-    if (typeof this._actual !== 'string') {
-      throw new AssertionError(`Expected ${this._actual} to be a string`);
+  hasSubstring(substr: string) {
+    if (typeof this.actual !== 'string') {
+      throw new AssertionError(`Expected ${this.actual} to be a string`);
     }
 
-    if (this._actual.includes(substr)) {
+    if (this.actual.includes(substr)) {
       return true;
     }
 
-    throw new AssertionError(`Expected ${this._actual} to have a substring '${substr}'`);
+    throw new AssertionError(`Expected ${this.actual} to have a substring '${substr}'`);
   }
 
-  hasKeys(...args) {
-    if (difference(args, Object.keys(this._actual)).length === 0) {
+  hasKeys(...args: string[]) {
+    if (difference(args, Object.keys(this.actual)).length === 0) {
       return true;
     }
 
     throw new AssertionError(
-      `Expected ${JSON.stringify(this._actual)} to have a keys ${JSON.stringify(args)}`
+      `Expected ${JSON.stringify(this.actual)} to have a keys ${JSON.stringify(args)}`
     );
   }
 }
+
+export default Assertions;

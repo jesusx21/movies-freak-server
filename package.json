@@ -26,5 +26,9 @@
     "morgan": "^1.10.0",
     "uuid": "^9.0.1"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "colors": "^1.4.0",
+    "fixtures-generator": "^1.0.3",
+    "sinon": "^17.0.1"
+  }
 }

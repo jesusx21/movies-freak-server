@@ -5,12 +5,12 @@ import Entity from './entity';
 import { UUID } from '../../../typescript/customTypes';
 import { ReadOnlyField } from './errors';
 
-interface PasswordHashed {
+export interface PasswordHashed {
   hash?: string;
   salt?: string;
 }
 
-interface UserParams {
+export interface UserParams {
   id: UUID;
   name: string;
   username: string;

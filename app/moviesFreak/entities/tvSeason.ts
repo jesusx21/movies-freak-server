@@ -1,7 +1,7 @@
 import Entity from './entity';
 import { UUID } from '../../../typescript/customTypes';
 
-interface TVSeasonParams {
+export interface TVSeasonParams {
   id?: UUID;
   tvSerieId?: UUID;
   seasonNumber: number;

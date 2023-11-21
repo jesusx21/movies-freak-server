@@ -5,7 +5,7 @@ import User from './user';
 import { ReadOnlyField, SessionAlreadyActive } from './errors';
 import { UUID } from '../../../typescript/customTypes';
 
-interface SessionParams {
+export interface SessionParams {
   id?: UUID;
   user: User;
   token?: string;

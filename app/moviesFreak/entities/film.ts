@@ -1,7 +1,7 @@
 import Entity from './entity';
 import { UUID } from '../../../typescript/customTypes';
 
-interface FilmParams {
+export interface FilmParams {
   id?: UUID;
   name: string;
   plot: string;

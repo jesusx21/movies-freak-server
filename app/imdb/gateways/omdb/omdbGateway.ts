@@ -66,7 +66,7 @@ class IMDBGateway {
       .map((key) => `${key}=${query[key]}`)
       .join('&');
 
-    let response: any: {};
+    let response: { data: {} };
 
     try {
       response = await axios

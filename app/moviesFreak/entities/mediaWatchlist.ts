@@ -4,7 +4,7 @@ import TVEpisode from './tvEpisode';
 import { FilmAlreadySet, TVEpisodeAlreadySet } from './errors';
 import { UUID } from '../../../typescript/customTypes';
 
-interface MediaWatchlistParams {
+export interface MediaWatchlistParams {
   id?: UUID;
   watchlistId: UUID;
   filmId?: UUID;

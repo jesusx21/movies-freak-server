@@ -2,7 +2,7 @@ import Entity from './entity';
 import TVSeason from './tvSeason';
 import { UUID } from '../../../typescript/customTypes';
 
-interface TVSerieParams {
+export interface TVSerieParams {
   id?: UUID;
   imdbId: string;
   name: string;

@@ -1,7 +1,7 @@
 import Entity from './entity';
 import { MarathonType, UUID } from '../../../typescript/customTypes';
 
-interface WatchlistParams {
+export interface WatchlistParams {
   id?: UUID;
   name: string;
   type: MarathonType;

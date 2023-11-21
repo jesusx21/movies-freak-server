@@ -1,22 +1,22 @@
 import { Knex } from 'knex';
 import { omit } from 'lodash';
 
+import { SQLDatabaseException } from './errors';
 import { User } from '../../../app/moviesFreak/entities';
 import { UserSerializer } from './serializers';
-import { SQLDatabaseException } from './errors';
+import { UUID } from '../../../typescript/customTypes';
 import {
   EmailAlreadyExists,
-  UserNotFound,
-  UsernameAlreadyExists
+  UsernameAlreadyExists,
+  UserNotFound
 } from '../errors';
-import { UUID } from '../../../typescript/customTypes';
 
 interface userRecord {
   password_hash?: string;
   password_salt?: string;
 }
 
-export default class SQLUsersStore {
+class SQLUsersStore {
   private connection: Knex;
 
   constructor(connection: Knex) {
@@ -97,3 +97,5 @@ export default class SQLUsersStore {
     return user;
   }
 }
+
+export default SQLUsersStore;

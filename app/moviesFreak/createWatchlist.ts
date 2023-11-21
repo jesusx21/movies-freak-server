@@ -1,9 +1,7 @@
 import Database from '../../database/stores/memory';
+import { CouldNotCreateWatchlist } from './errors';
 import { MarathonType } from '../../typescript/customTypes';
 import { Watchlist } from './entities';
-import { CouldNotCreateWatchlist, InvalidType } from './errors';
-
-
 
 class CreateWatchlist {
   private database: Database;

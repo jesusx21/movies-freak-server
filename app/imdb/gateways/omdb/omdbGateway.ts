@@ -2,11 +2,11 @@ import axios from 'axios';
 
 import { IMDBError } from '../../errors';
 import {
-  OMDBFilmResult,
-  OMDBResult,
-  OMDBTVEpisodeResult,
-  OMDBTVSeasonResult,
-  OMDBTVSerieResult
+  FilmResult,
+  Result,
+  TVEpisodeResult,
+  TVSeasonResult,
+  TVSerieResult
 } from './result';
 
 interface queryObject {
@@ -15,7 +15,7 @@ interface queryObject {
   Season?: number;
 }
 
-class OMDBGateway {
+class IMDBGateway {
   private host?: URL;
   private apiKey?: string;
 
@@ -79,19 +79,19 @@ class OMDBGateway {
 
     switch (type) {
       case 'film':
-        omdbResult = new OMDBFilmResult(response.data);
+        omdbResult = new FilmResult(response.data);
         break;
       case 'serie':
-        omdbResult = new OMDBTVSerieResult(response.data);
+        omdbResult = new TVSerieResult(response.data);
         break;
       case 'season':
-        omdbResult = new OMDBTVSeasonResult(response.data);
+        omdbResult = new TVSeasonResult(response.data);
         break;
       case 'episode':
-        omdbResult = new OMDBTVEpisodeResult(response.data);
+        omdbResult = new TVEpisodeResult(response.data);
         break;
       default:
-        omdbResult = new OMDBResult(response.data);
+        omdbResult = new Result(response.data);
     }
 
     if (!omdbResult.isRequestSuccesful()) {
@@ -102,4 +102,4 @@ class OMDBGateway {
   }
 }
 
-export default OMDBGateway;
+export default IMDBGateway;

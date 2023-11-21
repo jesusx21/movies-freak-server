@@ -21,7 +21,7 @@ interface UserData {
   birthdate: Date;
 }
 
-export default class SignUp {
+class SignUp {
   private database: Database;
   private userData: UserData;
 
@@ -62,3 +62,5 @@ export default class SignUp {
     }
   }
 }
+
+export default SignUp;

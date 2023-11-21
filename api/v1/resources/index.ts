@@ -1,14 +1,14 @@
-import FilmsResource from './films';
-import TVSeriesResource from './tvSeries';
 import FilmResource from './film';
-import TVSerieResource from './tvSerie';
+import FilmsResource from './films';
 import SignIn from './signIn';
 import SignUp from './signUp';
+import TVSerieResource from './tvSerie';
+import TVSeriesResource from './tvSeries';
 
 class MoviesFreakAPI {
   private app: any;
 
-  constructor(app) {
+  constructor(app: any) {
     this.app = app;
   }
 

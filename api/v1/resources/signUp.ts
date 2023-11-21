@@ -1,16 +1,13 @@
-import { Monopoly } from '../../../boardGame';
+import { Monopoly, SingleResponse } from '../../../boardGame';
 
 import Register from '../../../app/moviesFreak/signUp';
-import {
-  EmailAlreadyUsed, UsernameAlreadyUsed
-} from '../../../app/moviesFreak/errors';
 import { CREATED, HTTPConflict, HTTPInternalError } from '../../httpResponses';
-import { SingleRespponse } from '../../../boardGame/monopoly';
-import { Titles } from '../interfaces';
+import { EmailAlreadyUsed, UsernameAlreadyUsed } from '../../../app/moviesFreak/errors';
 import { Session } from '../../../app/moviesFreak/entities';
+import { Titles } from '../interfaces';
 
 class SignUp extends Monopoly<Titles> {
-  async onPost({ body }): Promise<SingleRespponse> {
+  async onPost({ body }): Promise<SingleResponse> {
     const database = this.getTitle('database');
     const signUp = new Register(database, body);
 

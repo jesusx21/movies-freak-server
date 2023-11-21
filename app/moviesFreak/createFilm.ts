@@ -1,8 +1,8 @@
 import Database from '../../database/stores/memory';
 import IMDB from '../imdb/gateways/dummy/dummyGateway';
-import { DummyFilmResult as FilmResult } from '../imdb/gateways/dummy/result';
-import { Film } from './entities';
 import { CouldNotCreateFilm } from './errors';
+import { Film } from './entities';
+import { FilmResult } from '../imdb/gateways/dummy/result';
 
 class CreateFilm {
   private database: Database;

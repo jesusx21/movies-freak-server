@@ -1,13 +1,13 @@
 import { Knex } from 'knex';
 
-import { TVSerieNotFound } from '../errors';
-import { SQLDatabaseException } from './errors';
-import { TVSerieSerializer } from './serializers';
-import { TVSerie } from '../../../app/moviesFreak/entities';
-import { UUID } from '../../../typescript/customTypes';
 import { QueryOptions, QueryResponse } from '../interfaces';
+import { SQLDatabaseException } from './errors';
+import { TVSerie } from '../../../app/moviesFreak/entities';
+import { TVSerieNotFound } from '../errors';
+import { TVSerieSerializer } from './serializers';
+import { UUID } from '../../../typescript/customTypes';
 
-export default class SQLTVSeriesStore {
+class SQLTVSeriesStore {
   private connection: Knex;
 
   constructor(connection: Knex) {
@@ -97,3 +97,5 @@ export default class SQLTVSeriesStore {
     return TVSerieSerializer.fromJSON(data);
   }
 }
+
+export default SQLTVSeriesStore;

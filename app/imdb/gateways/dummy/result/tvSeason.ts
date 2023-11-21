@@ -1,5 +1,3 @@
-import { isEmpty } from 'lodash';
-
 interface EpisodeRawResponse {
   title: string;
   releasedDate: Date;

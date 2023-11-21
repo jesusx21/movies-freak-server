@@ -1,5 +1,3 @@
-import cloneDeep from 'clone-deep';
-
 import Store from './store';
 import { NotFound, TVEpisodeNotFound } from '../errors';
 import { QueryOptions } from '../interfaces';

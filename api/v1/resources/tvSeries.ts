@@ -1,14 +1,13 @@
-import { Monopoly } from '../../../boardGame';
-import { MultipleRespponse, SingleRespponse } from '../../../boardGame/monopoly';
+import { Monopoly, MultipleRespponse, SingleResponse } from '../../../boardGame';
 
 import CreateTVSerie from '../../../app/moviesFreak/createTVSerie';
 import { CREATED, HTTPInternalError, OK } from '../../httpResponses';
+import { QueryResponse } from '../../../database/stores/interfaces';
 import { Titles } from '../interfaces';
 import { TVSerie } from '../../../app/moviesFreak/entities';
-import { QueryResponse } from '../../../database/stores/interfaces';
 
 class TVSeriesResource extends Monopoly<Titles> {
-  async onPost({ body }): Promise<SingleRespponse> {
+  async onPost({ body }): Promise<SingleResponse> {
     const { database, imdb, presenters } = this.getTitles();
     const useCase = new CreateTVSerie(database, imdb, body.imdbId);
 

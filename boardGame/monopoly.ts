@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { TitleNotFound, TokenNotUsed } from './errors';
 
-export interface SingleRespponse {
+export interface SingleResponse {
   status: 200 | 201 | 204 | 400 | 401 | 403 | 404 | 409 | 412 | 500;
   data: any;
 }
@@ -24,19 +24,19 @@ class Monopoly<TitleInterface> {
     this.titles = {};
   }
 
-  async onPost(_request: object): Promise<SingleRespponse | MultipleRespponse> {
+  async onPost(_request: object): Promise<SingleResponse | MultipleRespponse> {
     throw new TokenNotUsed();
   }
 
-  async onGet(_request: object): Promise<SingleRespponse | MultipleRespponse> {
+  async onGet(_request: object): Promise<SingleResponse | MultipleRespponse> {
     throw new TokenNotUsed();
   }
 
-  async onPut(_request: object): Promise<SingleRespponse> {
+  async onPut(_request: object): Promise<SingleResponse> {
     throw new TokenNotUsed();
   }
 
-  async onDelete(_request: object): Promise<SingleRespponse> {
+  async onDelete(_request: object): Promise<SingleResponse> {
     throw new TokenNotUsed();
   }
 

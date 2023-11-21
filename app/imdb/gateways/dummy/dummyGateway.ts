@@ -1,26 +1,26 @@
 import {
-  DummyFilmResult,
-  DummyTVEpisodeResult,
-  DummyTVSeasonResult,
-  DummyTVSerieResult
+  FilmResult,
+  TVEpisodeResult,
+  TVSeasonResult,
+  TVSerieResult
 } from './result';
 
-class DummyGateway {
+class IMDBGateway {
   async fetchFilmById(_imdbI: string) {
-    return new DummyFilmResult();
+    return new FilmResult();
   }
 
   async fetchTVSerieById(_imdbId: string) {
-    return new DummyTVSerieResult();
+    return new TVSerieResult();
   }
 
   async fetchTVSeasonBySerieId(_serieImdbId: string, _seasonNumber: number) {
-    return new DummyTVSeasonResult();
+    return new TVSeasonResult();
   }
 
   async fetchTVEpisodeById(_imdbId: string) {
-    return new DummyTVEpisodeResult();
+    return new TVEpisodeResult();
   }
 }
 
-export default DummyGateway;
+export default IMDBGateway;

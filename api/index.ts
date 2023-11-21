@@ -8,9 +8,8 @@ import IMDB from '../app/imdb/gateways/dummy/dummyGateway';
 import MoviesFreakAPI from './v1/resources';
 import Presenters from './v1/presenters';
 import { HTTPError, HTTPInternalError } from './httpResponses';
-import { Monopoly } from '../boardGame';
+import { Monopoly, MultipleRespponse, SingleResponse } from '../boardGame';
 import { Titles } from './v1/interfaces';
-import { MultipleRespponse, SingleRespponse } from '../boardGame/monopoly';
 
 interface EndpointParams {
   path: string;
@@ -180,7 +179,7 @@ class MoviesFreakApp {
 
   private buildController(resource: Monopoly<Titles>, tokenName: string) {
     return async (req: express.Request, res: express.Router): Promise<express.Response> => {
-      let result: SingleRespponse | MultipleRespponse;
+      let result: SingleResponse | MultipleRespponse;
 
       resource.setTitle('database', this.database);
       resource.setTitle('imdb', this.imdb);

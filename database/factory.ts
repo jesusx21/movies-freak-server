@@ -1,8 +1,8 @@
 import knex from 'knex';
 
 import knexfile from '../knexfile';
-import SQLDatabase from './stores/sql';
 import InMemoryDatabase from './stores/memory';
+import SQLDatabase from './stores/sql';
 
 export class UnsupportedDatabaseDriver extends Error {}
 

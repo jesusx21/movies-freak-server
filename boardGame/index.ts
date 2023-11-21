@@ -1,2 +1,2 @@
-export { default as Monopoly } from './monopoly';
+export { default as Monopoly, SingleResponse, MultipleRespponse } from './monopoly';
 export * from './errors';

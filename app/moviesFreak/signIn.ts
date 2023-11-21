@@ -10,7 +10,7 @@ import {
   SessionNotFound
 } from '../../database/stores/errors';
 
-export default class SignIn {
+class SignIn {
   private database: Database;
   private username: string;
   private password: string;
@@ -84,3 +84,5 @@ export default class SignIn {
     }
   }
 }
+
+export default SignIn;

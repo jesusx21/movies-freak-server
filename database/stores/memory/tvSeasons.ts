@@ -1,7 +1,7 @@
 import Store from './store';
 import { NotFound, TVSeasonNotFound } from '../errors';
-import { TVSeason } from '../../../app/moviesFreak/entities';
 import { QueryOptions } from '../interfaces';
+import { TVSeason } from '../../../app/moviesFreak/entities';
 import { UUID } from '../../../typescript/customTypes';
 
 class InMemoryTVSeasonStore {

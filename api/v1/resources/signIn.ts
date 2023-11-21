@@ -1,6 +1,8 @@
+import { Monopoly, SingleResponse } from '../../../boardGame';
+
 import Login from '../../../app/moviesFreak/signIn';
-import { Monopoly } from '../../../boardGame';
 import { InvalidPassword, UserNotFound } from '../../../app/moviesFreak/errors';
+import { Session } from '../../../app/moviesFreak/entities';
 import { Titles } from '../interfaces';
 import {
   HTTPConflict,
@@ -8,11 +10,9 @@ import {
   HTTPNotFound,
   OK
 } from '../../httpResponses';
-import { SingleRespponse } from '../../../boardGame/monopoly';
-import { Session } from '../../../app/moviesFreak/entities';
 
 class SignIn extends Monopoly<Titles> {
-  async onPost({ body }): Promise<SingleRespponse> {
+  async onPost({ body }): Promise<SingleResponse> {
     const database = this.getTitle('database');
     const login = new Login(database, body.username, body.password);
 

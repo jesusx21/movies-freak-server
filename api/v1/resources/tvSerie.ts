@@ -1,13 +1,12 @@
-import { TVSerie } from '../../../app/moviesFreak/entities';
-import { Monopoly } from '../../../boardGame';
-import { SingleRespponse } from '../../../boardGame/monopoly';
+import { Monopoly, SingleResponse } from '../../../boardGame';
 
-import { TVSerieNotFound } from '../../../database/stores/errors';
 import { HTTPInternalError, HTTPNotFound, OK } from '../../httpResponses';
 import { Titles } from '../interfaces';
+import { TVSerie } from '../../../app/moviesFreak/entities';
+import { TVSerieNotFound } from '../../../database/stores/errors';
 
 class TVSerieResource extends Monopoly<Titles> {
-  async onGet({ params }): Promise<SingleRespponse> {
+  async onGet({ params }): Promise<SingleResponse> {
     const { tvSerieId } = params;
     const { database, presenters } = this.getTitles();
 

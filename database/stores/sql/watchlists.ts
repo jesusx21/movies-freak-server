@@ -10,7 +10,7 @@ interface watchlistRecord {
   total_tv_episodes?: number;
 }
 
-export default class SQLWatchlistsStore {
+class SQLWatchlistsStore {
   private connection: Knex;
 
   constructor(connection: Knex) {
@@ -46,3 +46,5 @@ export default class SQLWatchlistsStore {
     return WatchlistSerializer.fromJSON(data);
   }
 }
+
+export default SQLWatchlistsStore;

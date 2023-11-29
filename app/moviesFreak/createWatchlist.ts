@@ -5,10 +5,10 @@ import { MarathonType } from '../../typescript/customTypes';
 import { Watchlist } from './entities';
 
 class CreateWatchlist {
-  private database: Database;
-  private name: string;
-  private type: MarathonType;
-  private description: string;
+  database: Database;
+  name: string;
+  type: MarathonType;
+  description: string;
 
   constructor(database: Database, name: string, type: MarathonType, description?: string) {
     this.database = database;

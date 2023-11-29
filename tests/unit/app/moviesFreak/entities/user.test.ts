@@ -3,6 +3,8 @@ import TestCase from '../../../../testHelper';
 import { User } from '../../../../../app/moviesFreak/entities';
 
 export class UserTest extends TestCase {
+  user: User;
+
   setUp() {
     super.setUp();
 
@@ -10,17 +12,18 @@ export class UserTest extends TestCase {
       name: 'Charles',
       lastName: 'Bartowski',
       username: 'chuck',
-      email: 'chuck@nerdherd.com'
+      email: 'chuck@nerdherd.com',
+      birthdate: new Date(1989, 7, 16)
     });
   }
 
   testAddPassword() {
     this.user.addPassword('Password1');
 
-    this.assertThat(this.user._password).doesExist();
-    this.assertThat(this.user._password).hasKeys('salt', 'hash');
-    this.assertThat(this.user._password.salt).doesExist();
-    this.assertThat(this.user._password.hash).doesExist();
+    this.assertThat(this.user.password).doesExist();
+    this.assertThat(this.user.password).hasKeys('salt', 'hash');
+    this.assertThat(this.user.password.salt).doesExist();
+    this.assertThat(this.user.password.hash).doesExist();
   }
 
   testDoesPasswordMatchReturnsTrueWhenPasswordMatch() {

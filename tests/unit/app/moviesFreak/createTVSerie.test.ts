@@ -8,14 +8,16 @@ import DummyGateway from '../../../../app/imdb/gateways/dummy/dummyGateway';
 import { CouldNotCreateTVSeasons, CouldNotCreateTVSerie } from '../../../../app/moviesFreak/errors';
 import { TVSerie } from '../../../../app/moviesFreak/entities';
 import {
-  OMDBTVEpisodeResult,
-  OMDBTVSeasonResult,
-  OMDBTVSerieResult
+  TVEpisodeResult,
+  TVSeasonResult,
+  TVSerieResult
 } from '../../../../app/imdb/gateways/omdb/result';
 
 const IMDB_ID = 'tt0212671';
 
 export default class CreateTVSerieTest extends TestCase {
+  useCase: CreateTVSerie;
+
   setUp() {
     super.setUp();
 
@@ -26,17 +28,17 @@ export default class CreateTVSerieTest extends TestCase {
   }
 
   async testCreateTVSerie() {
-    const tvSerieResponse = new OMDBTVSerieResult(IMDB_TV_SERIE_RESPONSE.data);
+    const tvSerieResponse = new TVSerieResult(IMDB_TV_SERIE_RESPONSE.data);
 
-    this.stubFunction(this.useCase._imdb, 'fetchTVSerieById')
+    this.stubFunction(this.useCase.imdb, 'fetchTVSerieById')
       .resolves(tvSerieResponse);
 
-    const tvSeasonResponse = new OMDBTVSeasonResult(IMDB_TV_SEASON_RESPONSE.data);
-    this.stubFunction(this.useCase._imdb, 'fetchTVSeasonBySerieId')
+    const tvSeasonResponse = new TVSeasonResult(IMDB_TV_SEASON_RESPONSE.data);
+    this.stubFunction(this.useCase.imdb, 'fetchTVSeasonBySerieId')
       .resolves(tvSeasonResponse);
 
-    const tvEpisodeResponse = new OMDBTVEpisodeResult(IMDB_TV_EPISODE_RESPONSE.data);
-    this.stubFunction(this.useCase._imdb, 'fetchTVEpisodeById')
+    const tvEpisodeResponse = new TVEpisodeResult(IMDB_TV_EPISODE_RESPONSE.data);
+    this.stubFunction(this.useCase.imdb, 'fetchTVEpisodeById')
       .resolves(tvEpisodeResponse);
 
     const tvSerie = await this.useCase.execute();
@@ -67,7 +69,7 @@ export default class CreateTVSerieTest extends TestCase {
   }
 
   async testThrowErrorWhenIMDBFails() {
-    this.stubFunction(this.useCase._imdb, 'fetchTVSerieById')
+    this.stubFunction(this.useCase.imdb, 'fetchTVSerieById')
       .throws(new Error());
 
     await this.assertThat(
@@ -76,7 +78,7 @@ export default class CreateTVSerieTest extends TestCase {
   }
 
   async testThrowErrorWhenSavingTVSerieFails() {
-    this.stubFunction(this.useCase._database.tvSeries, 'create')
+    this.stubFunction(this.useCase.database.tvSeries, 'create')
       .throws(new Error());
 
     await this.assertThat(
@@ -85,7 +87,7 @@ export default class CreateTVSerieTest extends TestCase {
   }
 
   async testThrowErrorWhenSavingTVSeasonsFails() {
-    this.stubFunction(this.useCase._database.tvSeasons, 'create')
+    this.stubFunction(this.useCase.database.tvSeasons, 'create')
       .throws(new Error());
 
     await this.assertThat(
@@ -94,7 +96,7 @@ export default class CreateTVSerieTest extends TestCase {
   }
 
   async testThrowErrorWhenSavingTVEpisodesFails() {
-    this.stubFunction(this.useCase._database.tvEpisodes, 'create')
+    this.stubFunction(this.useCase.database.tvEpisodes, 'create')
       .throws(new Error());
 
     await this.assertThat(

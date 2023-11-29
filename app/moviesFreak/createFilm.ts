@@ -5,9 +5,9 @@ import { Film } from './entities';
 import { FilmResult } from '../imdb/gateways/dummy/result';
 
 class CreateFilm {
-  private database: Database;
-  private imdb: IMDB;
-  private imdbId: string;
+  database: Database;
+  imdb: IMDB;
+  imdbId: string;
 
   constructor(database: Database, imdb: IMDB, imdbId: string) {
     this.database = database;

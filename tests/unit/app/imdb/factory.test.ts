@@ -5,7 +5,7 @@ import DummyGateway from '../../../../app/imdb/gateways/dummy/dummyGateway';
 import OMDBGateway from '../../../../app/imdb/gateways/omdb/omdbGateway';
 import { DriverNotSupported } from '../../../../app/imdb/errors';
 
-export default class IMDBFactoryTest extends TestCase {
+export class IMDBFactoryTest extends TestCase {
   testReturnDummyGateway() {
     const gateway = imdbFactory('dummy');
 

@@ -1,6 +1,6 @@
 import TestCase from '../../../testHelper';
 
-import SignUp from '../../../../app/moviesFreak/signUp';
+import SignUp, { UserData } from '../../../../app/moviesFreak/signUp';
 import { Session, User } from '../../../../app/moviesFreak/entities';
 import {
   CouldNotSignUp,
@@ -8,12 +8,18 @@ import {
   UsernameAlreadyUsed
 } from '../../../../app/moviesFreak/errors';
 import { DatabaseError } from '../../../../database/stores/errors';
+import { Database } from '../../../../database';
+import { UserParams } from '../../../../app/moviesFreak/entities/user';
 
 export class SignUpTest extends TestCase {
+  database: Database;
+  useCase: SignUp;
+  userData: UserData;
+
   setUp() {
     super.setUp();
 
-    this._database = this.getDatabase();
+    this.database = this.getDatabase();
     this.userData = {
       name: 'Edward',
       lastName: 'Cullen',
@@ -23,7 +29,7 @@ export class SignUpTest extends TestCase {
       birthdate: new Date('1895-12-31')
     };
 
-    this.useCase = new SignUp(this._database, this.userData);
+    this.useCase = new SignUp(this.database, this.userData);
   }
 
   async testSignUpUser() {
@@ -35,18 +41,18 @@ export class SignUpTest extends TestCase {
     this.assertThat(session.isActive).isTrue();
 
     this.assertThat(session.user).isInstanceOf(User);
-    this.assertThat(session.user.name).isEqual('Edward');
-    this.assertThat(session.user.lastName).isEqual('Cullen');
-    this.assertThat(session.user.username).isEqual('eddy');
-    this.assertThat(session.user.email).isEqual('eddy@yahoo.com');
-    this.assertThat(session.user.birthdate).isEqual(this.userData.birthdate);
+    this.assertThat(session.user?.name).isEqual('Edward');
+    this.assertThat(session.user?.lastName).isEqual('Cullen');
+    this.assertThat(session.user?.username).isEqual('eddy');
+    this.assertThat(session.user?.email).isEqual('eddy@yahoo.com');
+    this.assertThat(session.user?.birthdate).isEqual(this.userData.birthdate);
   }
 
   async testThrowErrorOnEmailAlreadyUsed() {
     await this.useCase.execute();
     this.userData.username = 'edward';
 
-    const useCase = new SignUp(this._database, this.userData);
+    const useCase = new SignUp(this.database, this.userData);
 
     await this.assertThat(
       useCase.execute()
@@ -57,7 +63,7 @@ export class SignUpTest extends TestCase {
     await this.useCase.execute();
     this.userData.email = 'edddy@hotmail.com';
 
-    const useCase = new SignUp(this._database, this.userData);
+    const useCase = new SignUp(this.database, this.userData);
 
     await this.assertThat(
       useCase.execute()
@@ -65,7 +71,7 @@ export class SignUpTest extends TestCase {
   }
 
   async testThrowErrorWhenSavingUser() {
-    this.stubFunction(this._database.users, 'create')
+    this.stubFunction(this.database.users, 'create')
       .throws(new DatabaseError());
 
     await this.assertThat(
@@ -74,7 +80,7 @@ export class SignUpTest extends TestCase {
   }
 
   async testThrowErrorWhenCreateSession() {
-    this.stubFunction(this._database.sessions, 'create')
+    this.stubFunction(this.database.sessions, 'create')
       .throws(new DatabaseError());
 
     await this.assertThat(

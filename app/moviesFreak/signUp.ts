@@ -12,7 +12,7 @@ import {
   UsernameAlreadyUsed
 } from './errors';
 
-interface UserData {
+export interface UserData {
   name: string;
   username: string;
   lastName: string;
@@ -22,8 +22,8 @@ interface UserData {
 }
 
 class SignUp {
-  private database: Database;
-  private userData: UserData;
+  database: Database;
+  userData: UserData;
 
   constructor(database: Database, userData: UserData) {
     this.database = database;

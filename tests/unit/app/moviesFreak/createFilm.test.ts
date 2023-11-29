@@ -2,12 +2,14 @@ import TestCase from '../../../testHelper';
 
 import CreateFilm from '../../../../app/moviesFreak/createFilm';
 import DummyGateway from '../../../../app/imdb/gateways/dummy/dummyGateway';
-import { Film } from '../../../../app/moviesFreak/entities';
 import { CouldNotCreateFilm } from '../../../../app/moviesFreak/errors';
+import { Film } from '../../../../app/moviesFreak/entities';
 
 const IMDB_ID = 'tt0111161';
 
-export default class CreateFilmTest extends TestCase {
+export class CreateFilmTest extends TestCase {
+  useCase: CreateFilm;
+
   setUp() {
     super.setUp();
 
@@ -45,7 +47,7 @@ export default class CreateFilmTest extends TestCase {
   }
 
   async testThrowErrorWhenIMDBFails() {
-    this.stubFunction(this.useCase._imdb, 'fetchFilmById')
+    this.stubFunction(this.useCase.imdb, 'fetchFilmById')
       .throws(new Error());
 
     await this.assertThat(
@@ -54,7 +56,7 @@ export default class CreateFilmTest extends TestCase {
   }
 
   async testThrowErrorWhenDatabaseFails() {
-    this.stubFunction(this.useCase._database.films, 'create')
+    this.stubFunction(this.useCase.database.films, 'create')
       .throws(new Error());
 
     await this.assertThat(

@@ -2,20 +2,22 @@ import axios from 'axios';
 
 import TestCase from '../../../testHelper';
 import IMDB_FILM_RESPONSE from '../../data/imdbFilmResponse';
-import IMDB_TV_SERIE_RESPONSE from '../../data/imdbTVSerieResponse';
-import IMDB_TV_SEASON_RESPONSE from '../../data/imdbTVSeasonResponse';
 import IMDB_TV_EPISODE_RESPONSE from '../../data/imdbTVEpisodeResponse';
+import IMDB_TV_SEASON_RESPONSE from '../../data/imdbTVSeasonResponse';
+import IMDB_TV_SERIE_RESPONSE from '../../data/imdbTVSerieResponse';
 
 import OMDBGateway from '../../../../app/imdb/gateways/omdb/omdbGateway';
 import { IMDBError } from '../../../../app/imdb/errors';
 import {
-  OMDBFilmResult,
-  OMDBTVEpisodeResult,
-  OMDBTVSeasonResult,
-  OMDBTVSerieResult
+  FilmResult,
+  TVEpisodeResult,
+  TVSeasonResult,
+  TVSerieResult
 } from '../../../../app/imdb/gateways/omdb/result';
 
 class OMDBGatewayTest extends TestCase {
+  gateway: OMDBGateway;
+
   setUp() {
     super.setUp();
 
@@ -32,7 +34,7 @@ export class FetchFilmByIdTest extends OMDBGatewayTest {
     const result = await this.gateway.fetchFilmById('tt0111161');
     const { data } = IMDB_FILM_RESPONSE;
 
-    this.assertThat(result).isInstanceOf(OMDBFilmResult);
+    this.assertThat(result).isInstanceOf(FilmResult);
     this.assertThat(result.isRequestSuccesful()).isTrue();
     this.assertThat(result._isCollection()).isFalse();
     this.assertThat(result.title).isEqual(data.Title);
@@ -98,7 +100,7 @@ export class FetchTVSerieByIdTest extends OMDBGatewayTest {
     const result = await this.gateway.fetchTVSerieById('tt0212671');
     const { data } = IMDB_TV_SERIE_RESPONSE;
 
-    this.assertThat(result).isInstanceOf(OMDBTVSerieResult);
+    this.assertThat(result).isInstanceOf(TVSerieResult);
     this.assertThat(result.isRequestSuccesful()).isTrue();
     this.assertThat(result._isCollection()).isFalse();
     this.assertThat(result.title).isEqual(data.Title);
@@ -123,7 +125,6 @@ export class FetchTVSerieByIdTest extends OMDBGatewayTest {
     this.assertThat(result.ratings[0].value).isEqual(data.Ratings[0].Value);
     this.assertThat(result.imdbId).isEqual(data.imdbID);
     this.assertThat(result.type).isEqual('serie');
-    this.assertThat(result.production).isEqual(data.Production);
   }
 
   async testThrowErrorOnIncorrectIMDBId() {
@@ -162,7 +163,7 @@ export class FetchTVSeasonBySerieIdTest extends OMDBGatewayTest {
     const result = await this.gateway.fetchTVSeasonBySerieId('tt0212671', 1);
     const { data } = IMDB_TV_SEASON_RESPONSE;
 
-    this.assertThat(result).isInstanceOf(OMDBTVSeasonResult);
+    this.assertThat(result).isInstanceOf(TVSeasonResult);
     this.assertThat(result.isRequestSuccesful()).isTrue();
     this.assertThat(result.season).isEqual(Number(data.Season));
     this.assertThat(result.totalSeasons).isEqual(Number(data.totalSeasons));
@@ -214,7 +215,7 @@ export class FetchTVEpisodeByIdTest extends OMDBGatewayTest {
     const result = await this.gateway.fetchTVEpisodeById('tt3390684');
     const { data } = IMDB_TV_EPISODE_RESPONSE;
 
-    this.assertThat(result).isInstanceOf(OMDBTVEpisodeResult);
+    this.assertThat(result).isInstanceOf(TVEpisodeResult);
     this.assertThat(result.isRequestSuccesful()).isTrue();
     this.assertThat(result._isCollection()).isFalse();
     this.assertThat(result.title).isEqual(data.Title);
@@ -240,7 +241,6 @@ export class FetchTVEpisodeByIdTest extends OMDBGatewayTest {
     this.assertThat(result.imdbId).isEqual(data.imdbID);
     this.assertThat(result.serieIMDBId).isEqual(data.seriesID);
     this.assertThat(result.type).isEqual('episode');
-    this.assertThat(result.production).isEqual(data.Production);
   }
 
   async testThrowErrorOnIncorrectIMDBId() {

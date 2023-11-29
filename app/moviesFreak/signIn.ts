@@ -11,9 +11,9 @@ import {
 } from '../../database/stores/errors';
 
 class SignIn {
-  private database: Database;
-  private username: string;
-  private password: string;
+  database: Database;
+  username: string;
+  password: string;
 
   constructor(database: Database, username: string, password: string) {
     this.database = database;

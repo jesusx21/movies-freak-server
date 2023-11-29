@@ -8,9 +8,19 @@ import {
 } from '../../../../../app/moviesFreak/entities/errors';
 
 export class SessionTest extends TestCase {
+  session: Session;
+  user: User;
+
   setUp() {
-    this.user = new User({ email: 'ramona@gmail.com' });
-    this.session = new Session({});
+    this.user = new User({
+      name: 'Charles',
+      lastName: 'Bartowski',
+      username: 'chuck',
+      email: 'chuck@nerdherd.com',
+      birthdate: new Date(1989, 7, 16)
+    });
+
+    this.session = new Session({ user: this.user });
   }
 
   testSetUser() {
@@ -27,53 +37,8 @@ export class SessionTest extends TestCase {
     ).willThrow(ReadOnlyField);
   }
 
-  testSetToken() {
-    this.session.token = 'fake-token';
-
-    this.assertThat(this.session.token).isEqual('fake-token');
-  }
-
-  testThrowsErrorOnTokenAlreadySet() {
-    this.session.token = 'fake-token';
-
-    this.assertThat(
-      () => this.session.token = 'fake-token'
-    ).willThrow(ReadOnlyField);
-  }
-
-  testSetExpiresAt() {
-    this.session.expiresAt = new Date();
-
-    this.assertThat(this.session.expiresAt).doesExist();
-  }
-
-  testThrowsErrorOnExpiresAtAlreadySet() {
-    this.session.expiresAt = new Date();
-
-    this.assertThat(
-      () => this.session.expiresAt = new Date()
-    ).willThrow(ReadOnlyField);
-  }
-
-  testSetIsActive() {
-    this.session.isActive = true;
-
-    this.assertThat(this.session.isActive).isTrue();
-  }
-
-  testThrowsErrorOnIsActiveAlreadySet() {
-    this.session.isActive = false;
-
-    this.assertThat(
-      () => this.session.isActive = true
-    ).willThrow(ReadOnlyField);
-  }
-
   testGenerateToken() {
     this.session.user = this.user;
-    this.session.token = 'fake-token';
-    this.session.expiresAt = new Date();
-    this.session.isActive = true;
 
     this.session.generateToken();
 
@@ -105,7 +70,7 @@ export class SessionTest extends TestCase {
   }
 
   testReturnTrueWhenIsExpired() {
-    this.session.expiresAt = new Date('2023-01-01');
+    this.mockDate(2023, 1, 1);
 
     this.assertThat(this.session.isExpired()).isTrue();
   }

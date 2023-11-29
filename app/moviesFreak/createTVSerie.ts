@@ -1,6 +1,6 @@
 /* eslint-disable no-await-in-loop */
-import { Database } from '../../database';
 import IMDB from '../imdb/gateways/dummy/dummyGateway';
+import { Database } from '../../database';
 import { Episode } from '../imdb/gateways/dummy/result/tvSeason';
 import { TVEpisode, TVSeason, TVSerie } from './entities';
 import {
@@ -10,9 +10,9 @@ import {
 } from './errors';
 
 class CreateTVSerie {
-  private database: Database;
-  private imdb: IMDB;
-  private imdbId: string;
+  database: Database;
+  imdb: IMDB;
+  imdbId: string;
 
   constructor(database: Database, imdb: IMDB, imdbId: string) {
     this.database = database;
@@ -29,16 +29,16 @@ class CreateTVSerie {
       throw new CouldNotCreateTVSerie(error);
     }
 
-    let tvSerie = new TVSerie({});
+    return this.database.withTransaction(async (database: Database) => {
+      let tvSerie: TVSerie;
 
-    await this.database.withTransaction(async (database: Database) => {
       try {
         tvSerie = await database.tvSeries.create(imdbTVSerie);
       } catch (error) {
         throw new CouldNotCreateTVSerie(error);
       }
 
-      for (let seasonNumber = 1; seasonNumber <= tvSerie.totalSeasons; seasonNumber += 1) {
+      for (let seasonNumber = 1; seasonNumber <= tvSerie?.totalSeasons; seasonNumber += 1) {
         let result: {
           tvSeason: TVSeason;
           episodes: Episode[];
@@ -63,9 +63,9 @@ class CreateTVSerie {
           }
         }
       }
-    });
 
-    return tvSerie;
+      return tvSerie;
+    });
   }
 
   private async fetchTVSerieFromIMDB() {

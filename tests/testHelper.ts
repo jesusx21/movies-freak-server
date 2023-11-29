@@ -78,6 +78,16 @@ class TestCase extends Classpuccino.TestCase {
     return this.sandbox.mock(target);
   }
 
+  mockDate(year: number, month: number, day: number) {
+    if (!this.sandbox) {
+      throw new SandboxNotInitialized();
+    }
+
+    const date = new Date(year, month - 1, day);
+
+    return this.sandbox.sinon.useFakeTimers(date);
+  }
+
   mockFunction(instance: any, functionName: string) {
     if (!this.sandbox) {
       throw new SandboxNotInitialized();

@@ -47,7 +47,7 @@ class Field {
 }
 
 class Serializer<T> {
-  private schema: Schema;
+  schema: Schema;
   private target: T | any;
 
   constructor(target: T) {

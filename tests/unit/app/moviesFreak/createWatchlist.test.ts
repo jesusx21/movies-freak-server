@@ -1,10 +1,13 @@
 import TestCase from '../../../testHelper';
 
 import CreateWatchlist from '../../../../app/moviesFreak/createWatchlist';
+import { CouldNotCreateWatchlist } from '../../../../app/moviesFreak/errors';
+import { MarathonType } from '../../../../typescript/customTypes';
 import { Watchlist } from '../../../../app/moviesFreak/entities';
-import { CouldNotCreateWatchlist, InvalidType } from '../../../../app/moviesFreak/errors';
 
 export default class CreateWatchlistTest extends TestCase {
+  useCase: CreateWatchlist;
+
   setUp() {
     super.setUp();
 
@@ -13,7 +16,7 @@ export default class CreateWatchlistTest extends TestCase {
     this.useCase = new CreateWatchlist(
       database,
       'Horroctober',
-      'marathon',
+      MarathonType.marathon,
       'This is a decription'
     );
   }
@@ -28,16 +31,8 @@ export default class CreateWatchlistTest extends TestCase {
     this.assertThat(watchlist.description).isEqual('This is a decription');
   }
 
-  async testThrowErrorOnInvalidType() {
-    this.useCase._type = 'invalid-type';
-
-    this.assertThat(
-      this.useCase.execute()
-    ).willBeRejectedWith(InvalidType);
-  }
-
   async testThrowErrorWhenDatabaseFails() {
-    this.stubFunction(this.useCase._database.watchlists, 'create')
+    this.stubFunction(this.useCase.database.watchlists, 'create')
       .throws(new Error());
 
     await this.assertThat(

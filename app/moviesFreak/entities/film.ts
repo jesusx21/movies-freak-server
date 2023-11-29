@@ -10,7 +10,7 @@ export interface FilmParams {
   rated: string;
   runtime: string;
   director: string;
-  poster: URL;
+  poster: string;
   production: string;
   genre: string[];
   writers: string[];
@@ -29,7 +29,7 @@ class Film extends Entity {
   rated: string;
   runtime: string;
   director: string;
-  poster: URL;
+  poster: string;
   production: string;
   genre: string[];
   writers: string[];

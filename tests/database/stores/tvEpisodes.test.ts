@@ -1,17 +1,23 @@
 import SQLTestCase from '../testHelper';
 
-import { TVEpisode } from '../../../app/moviesFreak/entities';
-import { SQLDatabaseException } from '../../../database/stores/sql/errors';
+import SQLDatabase from '../../../database/stores/sql';
+import { TVEpisode, TVSeason, TVSerie } from '../../../app/moviesFreak/entities';
 import { TVEpisodeNotFound } from '../../../database/stores/errors';
+import { SQLDatabaseException } from '../../../database/stores/sql/errors';
+import { UUID } from '../../../typescript/customTypes';
 
 class TVEpisodesStoreTest extends SQLTestCase {
+  database: SQLDatabase;
+  tvSerie: TVSerie;
+  tvSeason: TVSeason;
+
   async setUp() {
     super.setUp();
 
-    this._database = this.getDatabase();
+    this.database = this.getDatabase();
 
-    this.tvSerie = await this.createTVSerie(this._database);
-    this.tvSeason = await this.createTVSeason(this._database, this.tvSerie);
+    this.tvSerie = await this.createTVSerie(this.database);
+    this.tvSeason = await this.createTVSeason(this.database, this.tvSerie);
   }
 
   async tearDown() {
@@ -22,21 +28,35 @@ class TVEpisodesStoreTest extends SQLTestCase {
 }
 
 export class CreateTVEpisodeTest extends TVEpisodesStoreTest {
+  tvEpisode: TVEpisode;
+
   async setUp() {
     await super.setUp();
 
     this.tvEpisode = new TVEpisode({
-      tvSeasonId: this.tvSeason.id,
-      tvSerieId: this.tvSerie.id,
-      name: 'How You Mother Met Me',
       imdbId: 'tt3390684',
+      name: 'How You Mother Met Me',
+      year: 2013,
+      seasonNumber: 9,
       episodeNumber: 16,
-      seasonNumber: 9
+      genre: ['Comedy', 'Romantic'],
+      director: 'Jon Doe',
+      writers: ['Jon Doe', 'Jane Doe'],
+      actors: ['Neil Patrick Harris', 'Cobbie Smulders'],
+      plot: 'I dont remember what plot is this',
+      languages: ['English'],
+      country: 'United States',
+      poster: 'http://series.com.tv/himymPoster.jpg',
+      awards: 'Grammy',
+      imdbRating: '8/10',
+      releasedAt: new Date(2013, 3, 5),
+      tvSeasonId: this.tvSeason?.id,
+      tvSerieId: this.tvSerie?.id,
     });
   }
 
   async testCreateTVEpisode() {
-    const tvEpsiodeCreated = await this._database.tvEpisodes.create(this.tvEpisode);
+    const tvEpsiodeCreated = await this.database.tvEpisodes.create(this.tvEpisode);
 
     this.assertThat(tvEpsiodeCreated).isInstanceOf(TVEpisode);
     this.assertThat(tvEpsiodeCreated.id).doesExist();
@@ -47,21 +67,24 @@ export class CreateTVEpisodeTest extends TVEpisodesStoreTest {
   }
 
   async testThrowErrorOnSQLException() {
-    this.stubFunction(this._database.tvSeries, '_connection')
+    this.stubFunction(this.database.tvEpisodes, 'connection')
       .throws(new Error());
 
     await this.assertThat(
-      this._database.tvEpisodes.create(this.tvSerie)
+      this.database.tvEpisodes.create(this.tvEpisode)
     ).willBeRejectedWith(SQLDatabaseException);
   }
 }
 
 export class FindByIdTest extends TVEpisodesStoreTest {
+  tvEpisodeId: UUID;
+  tvEpisodes: TVEpisode[];
+
   async setUp() {
     await super.setUp();
 
     this.tvEpisodes = await this.createTVEpisodes(
-      this._database,
+      this.database,
       this.tvSeason,
       [
         { seasonNumber: 7, episodeNumber: 1 },
@@ -69,39 +92,43 @@ export class FindByIdTest extends TVEpisodesStoreTest {
         { seasonNumber: 7, episodeNumber: 3 }
       ]
     );
+
+    this.tvEpisodeId = this.tvEpisodes[1]?.id || this.generateUUID();
   }
 
   async testFindTvEpisodeById() {
-    const tvEpisodeFound = await this._database.tvEpisodes.findById(this.tvEpisodes[1].id);
+    const tvEpisodeFound = await this.database.tvEpisodes.findById(this.tvEpisodeId);
 
     this.assertThat(tvEpisodeFound).isInstanceOf(TVEpisode);
-    this.assertThat(tvEpisodeFound.id).isEqual(this.tvEpisodes[1].id);
+    this.assertThat(tvEpisodeFound.id).isEqual(this.tvEpisodeId);
     this.assertThat(tvEpisodeFound.seasonNumber).isEqual(7);
     this.assertThat(tvEpisodeFound.episodeNumber).isEqual(2);
   }
 
   async testThrowsErrorWhenTVEpisodeIsNotFound() {
     await this.assertThat(
-      this._database.tvEpisodes.findById(this.generateUUID())
+      this.database.tvEpisodes.findById(this.generateUUID())
     ).willBeRejectedWith(TVEpisodeNotFound);
   }
 
   async testThrowsErrorOnUnexpectedError() {
-    this.stubFunction(this._database.tvEpisodes, '_connection')
+    this.stubFunction(this.database.tvEpisodes, 'connection')
       .throws(new Error());
 
     await this.assertThat(
-      this._database.tvEpisodes.findById(this.tvEpisodes[2].id)
+      this.database.tvEpisodes.findById(this.tvEpisodeId)
     ).willBeRejectedWith(SQLDatabaseException);
   }
 }
 
 export class FindByTVSeasonIdTest extends TVEpisodesStoreTest {
+  tvSeasonId: UUID;
+
   async setUp() {
     await super.setUp();
 
     await this.createTVEpisodes(
-      this._database,
+      this.database,
       this.tvSeason,
       [
         { seasonNumber: 3, episodeNumber: 1 },
@@ -111,12 +138,14 @@ export class FindByTVSeasonIdTest extends TVEpisodesStoreTest {
         { seasonNumber: 3, episodeNumber: 5 }
       ]
     );
+
+    this.tvSeasonId = this.tvSeason?.id || this.generateUUID();
   }
 
   async testFindTVSeasonEpisodes() {
-    const { totalItems, items: tvEpisodes } = await this._database
+    const { totalItems, items: tvEpisodes } = await this.database
       .tvEpisodes
-      .findByTVSeasonId(this.tvSeason.id);
+      .findByTVSeasonId(this.tvSeasonId);
 
     this.assertThat(tvEpisodes).hasLengthOf(5);
     this.assertThat(totalItems).isEqual(5);
@@ -128,9 +157,9 @@ export class FindByTVSeasonIdTest extends TVEpisodesStoreTest {
   }
 
   async testFindWithSkip() {
-    const { totalItems, items: tvEpisodes } = await this._database
+    const { totalItems, items: tvEpisodes } = await this.database
       .tvEpisodes
-      .findByTVSeasonId(this.tvSeason.id, { skip: 2 });
+      .findByTVSeasonId(this.tvSeasonId, { skip: 2 });
 
     this.assertThat(tvEpisodes).hasLengthOf(3);
     this.assertThat(totalItems).isEqual(5);
@@ -140,9 +169,9 @@ export class FindByTVSeasonIdTest extends TVEpisodesStoreTest {
   }
 
   async testFindWithLimit() {
-    const { totalItems, items: tvEpisodes } = await this._database
+    const { totalItems, items: tvEpisodes } = await this.database
       .tvEpisodes
-      .findByTVSeasonId(this.tvSeason.id, { limit: 3 });
+      .findByTVSeasonId(this.tvSeasonId, { limit: 3 });
 
     this.assertThat(tvEpisodes).hasLengthOf(3);
     this.assertThat(totalItems).isEqual(5);
@@ -152,9 +181,9 @@ export class FindByTVSeasonIdTest extends TVEpisodesStoreTest {
   }
 
   async testFindWithSkipAndLimit() {
-    const { totalItems, items: tvEpisodes } = await this._database
+    const { totalItems, items: tvEpisodes } = await this.database
       .tvEpisodes
-      .findByTVSeasonId(this.tvSeason.id, { skip: 1, limit: 2 });
+      .findByTVSeasonId(this.tvSeasonId, { skip: 1, limit: 2 });
 
     this.assertThat(tvEpisodes).hasLengthOf(2);
     this.assertThat(totalItems).isEqual(5);
@@ -163,22 +192,23 @@ export class FindByTVSeasonIdTest extends TVEpisodesStoreTest {
   }
 
   async testReturnEmptyListWhenThereIsNotTVEpisodes() {
-    const tvSeason = await this.createTVSeason(this._database, this.tvSerie);
+    const tvSeason = await this.createTVSeason(this.database, this.tvSerie);
+    const tvSeasonId = tvSeason.id || this.generateUUID();
 
-    const { totalItems, items: tvEpisodes } = await this._database
+    const { totalItems, items: tvEpisodes } = await this.database
       .tvEpisodes
-      .findByTVSeasonId(tvSeason.id);
+      .findByTVSeasonId(tvSeasonId);
 
     this.assertThat(tvEpisodes).isEmpty();
     this.assertThat(totalItems).isEqual(0);
   }
 
   async testThrowErrorOnUnexpectedError() {
-    this.stubFunction(this._database.tvEpisodes, '_connection')
+    this.stubFunction(this.database.tvEpisodes, 'connection')
       .throws(new Error());
 
     await this.assertThat(
-      this._database.tvEpisodes.findByTVSeasonId(this.tvSeason.id)
+      this.database.tvEpisodes.findByTVSeasonId(this.tvSeasonId)
     ).willBeRejectedWith(SQLDatabaseException);
   }
 }

@@ -1,16 +1,19 @@
 import SQLTestCase from '../testHelper';
 
+import Serializer, { SerializerError } from '../../../database/stores/sql/serializer';
+import SQLDatabase from '../../../database/stores/sql';
 import { Film } from '../../../app/moviesFreak/entities';
-import { SerializerError } from '../../../database/stores/sql/serializer';
-import { FilmSerializer } from '../../../database/stores/sql/serializers';
-import { SQLDatabaseException } from '../../../database/stores/sql/errors';
 import { FilmNotFound } from '../../../database/stores/errors';
+import { SQLDatabaseException } from '../../../database/stores/sql/errors';
+import { UUID } from '../../../typescript/customTypes';
 
 class FilmsStoreTest extends SQLTestCase {
+  database: SQLDatabase;
+
   setUp() {
     super.setUp();
 
-    this._database = this.getDatabase();
+    this.database = this.getDatabase();
   }
 
   async tearDown() {
@@ -21,6 +24,8 @@ class FilmsStoreTest extends SQLTestCase {
 }
 
 export class CreateFilmTest extends FilmsStoreTest {
+  private film: Film;
+
   setUp() {
     super.setUp();
 
@@ -43,10 +48,10 @@ export class CreateFilmTest extends FilmsStoreTest {
   }
 
   async testCreateFilm() {
-    const filmCreated = await this._database.films.create(this.film);
+    const filmCreated = await this.database.films.create(this.film);
 
     this.assertThat(filmCreated).isInstanceOf(Film);
-    this.assertThat(filmCreated.id).exists;
+    this.assertThat(filmCreated.id).doesExist();
     this.assertThat(filmCreated.name).isEqual('It Chapter I');
     this.assertThat(filmCreated.plot).isEqual('Is about a serial clown killer');
     this.assertThat(filmCreated.title).isEqual('It');
@@ -64,10 +69,10 @@ export class CreateFilmTest extends FilmsStoreTest {
   }
 
   async testThrowErrorWhenUniqueFieldIsRepeated() {
-    await this._database.films.create(this.film);
+    await this.database.films.create(this.film);
 
-    const error = await this.assertThat(
-      this._database.films.create(this.film)
+    const error: SQLDatabaseException = await this.assertThat(
+      this.database.films.create(this.film)
     ).willBeRejectedWith(SQLDatabaseException);
 
     this.assertThat(error.message).hasSubstring(
@@ -76,41 +81,50 @@ export class CreateFilmTest extends FilmsStoreTest {
   }
 
   async testThrowErrorOnSerializationError() {
-    this.mockClass(FilmSerializer, 'static')
+    this.mockClass(Serializer<Film>, 'static')
       .expects('fromJSON')
       .throws(new SerializerError());
 
     await this.assertThat(
-      this._database.films.create(this.film)
+      this.database.films.create(this.film)
     ).willBeRejectedWith(SerializerError);
   }
 
   async testThrowErrorOnSQLException() {
-    this.stubFunction(this._database.films, '_connection')
+    this.stubFunction(this.database.films, 'connection')
       .throws(new SerializerError());
 
     await this.assertThat(
-      this._database.films.create(this.film)
+      this.database.films.create(this.film)
     ).willBeRejectedWith(SQLDatabaseException);
   }
 }
 
 export class FindByIdTest extends FilmsStoreTest {
+  private films: Film[];
+  private filmId: UUID;
+
   async setUp() {
     super.setUp();
 
     this.films = await this.createFilms(
-      this._database,
+      this.database,
       [
         { name: 'It Chapter I', plot: 'A Horror Movie' },
         { name: 'It Chapter III', plot: 'A Third Horror Movie' },
         { name: 'It Chapter II', plot: 'Another Horror Movie' }
       ]
     );
+
+    if (this.films[2]?.id) {
+      this.filmId = this.films[2].id;
+    } else {
+      this.filmId = this.generateUUID();
+    }
   }
 
   async testFindFilmById() {
-    const filmFound = await this._database.films.findById(this.films[2].id);
+    const filmFound = await this.database.films.findById(this.filmId);
 
     this.assertThat(filmFound).isInstanceOf(Film);
     this.assertThat(filmFound.id).isEqual(this.films[2].id);
@@ -120,25 +134,25 @@ export class FindByIdTest extends FilmsStoreTest {
 
   async testThrowsErrorWhenFilmIsNotFound() {
     await this.assertThat(
-      this._database.films.findById(this.generateUUID())
+      this.database.films.findById(this.generateUUID())
     ).willBeRejectedWith(FilmNotFound);
   }
 
   async testThrowsErrorOnUnexpectedError() {
-    this.stubFunction(this._database.films, '_connection')
+    this.stubFunction(this.database.films, 'connection')
       .throws(new SerializerError());
 
     await this.assertThat(
-      this._database.films.findById(this.films[2].id)
+      this.database.films.findById(this.filmId)
     ).willBeRejectedWith(SQLDatabaseException);
   }
 }
 
 export class FindTest extends FilmsStoreTest {
   async testFindAllFilms() {
-    await this.createFilms(this._database, 5);
+    await this.createFilms(this.database, 5);
 
-    const { totalItems, items: films } = await this._database.films.find();
+    const { totalItems, items: films } = await this.database.films.find();
 
     this.assertThat(films).hasLengthOf(5);
     this.assertThat(totalItems).isEqual(5);
@@ -147,7 +161,7 @@ export class FindTest extends FilmsStoreTest {
 
   async testFindWithSkip() {
     await this.createFilms(
-      this._database,
+      this.database,
       [
         { name: 'Midsomar' },
         { name: 'Nimona' },
@@ -157,7 +171,7 @@ export class FindTest extends FilmsStoreTest {
       ]
     );
 
-    const { totalItems, items: films } = await this._database.films.find({ skip: 2 });
+    const { totalItems, items: films } = await this.database.films.find({ skip: 2 });
 
     this.assertThat(films).hasLengthOf(3);
     this.assertThat(totalItems).isEqual(5);
@@ -168,7 +182,7 @@ export class FindTest extends FilmsStoreTest {
 
   async testFindWithLimit() {
     await this.createFilms(
-      this._database,
+      this.database,
       [
         { name: 'Midsomar' },
         { name: 'Nimona' },
@@ -178,7 +192,7 @@ export class FindTest extends FilmsStoreTest {
       ]
     );
 
-    const { totalItems, items: films } = await this._database.films.find({ limit: 3 });
+    const { totalItems, items: films } = await this.database.films.find({ limit: 3 });
 
     this.assertThat(films).hasLengthOf(3);
     this.assertThat(totalItems).isEqual(5);
@@ -189,7 +203,7 @@ export class FindTest extends FilmsStoreTest {
 
   async testFindWithSkipAndLimit() {
     await this.createFilms(
-      this._database,
+      this.database,
       [
         { name: 'Midsomar' },
         { name: 'Nimona' },
@@ -199,7 +213,7 @@ export class FindTest extends FilmsStoreTest {
       ]
     );
 
-    const { totalItems, items: films } = await this._database.films.find({ limit: 2, skip: 1 });
+    const { totalItems, items: films } = await this.database.films.find({ limit: 2, skip: 1 });
 
     this.assertThat(films).hasLengthOf(2);
     this.assertThat(totalItems).isEqual(5);
@@ -208,18 +222,18 @@ export class FindTest extends FilmsStoreTest {
   }
 
   async testReturnEmptyListWhenThereIsNotFilms() {
-    const { totalItems, items: films } = await this._database.films.find();
+    const { totalItems, items: films } = await this.database.films.find();
 
     this.assertThat(films).isEmpty();
     this.assertThat(totalItems).isEqual(0);
   }
 
   async testThrowErrorOnUnexpectedError() {
-    this.stubFunction(this._database.films, '_connection')
+    this.stubFunction(this.database.films, 'connection')
       .throws(new SerializerError());
 
     await this.assertThat(
-      this._database.films.find()
+      this.database.films.find()
     ).willBeRejectedWith(SQLDatabaseException);
   }
 }

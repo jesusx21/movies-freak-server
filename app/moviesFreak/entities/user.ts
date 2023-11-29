@@ -11,21 +11,21 @@ export interface PasswordHashed {
 }
 
 export interface UserParams {
-  id: UUID;
+  id?: UUID;
   name: string;
   username: string;
-  lastName: string;
+  lastName?: string;
   email: string; // email
   birthdate: Date;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 class User extends Entity {
   private _password: PasswordHashed
   name: string;
   username: string;
-  lastName: string;
+  lastName?: string;
   email: string; // email
   birthdate: Date;
 

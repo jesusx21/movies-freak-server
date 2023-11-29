@@ -7,14 +7,19 @@ import {
   UserNotFound,
   UsernameAlreadyExists
 } from '../../../database/stores/errors';
+import SQLDatabase from '../../../database/stores/sql';
+import { UUID } from '../../../typescript/customTypes';
 
 class UsersStoreTest extends SQLTestCase {
+  database: SQLDatabase;
+  users: User[];
+
   async setUp() {
     super.setUp();
 
-    this._database = this.getDatabase();
+    this.database = this.getDatabase();
 
-    this.users = await this.createUsers(this._database, 5, [
+    this.users = await this.createUsers(this.database, 5, [
       { username: 'rocky', email: 'rocky@gmail.com' },
       { username: 'columbia', email: 'columbia@gmail.com' },
       { username: 'magenta', email: 'magenta@gmail.com' }
@@ -29,6 +34,8 @@ class UsersStoreTest extends SQLTestCase {
 }
 
 export class CreateUserTest extends UsersStoreTest {
+  user: User;
+
   async setUp() {
     await super.setUp();
 
@@ -44,7 +51,7 @@ export class CreateUserTest extends UsersStoreTest {
   }
 
   async testCreateUser() {
-    const userCreated = await this._database.users.create(this.user);
+    const userCreated = await this.database.users.create(this.user);
 
     this.assertThat(userCreated).isInstanceOf(User);
     this.assertThat(userCreated.id).doesExist();
@@ -54,44 +61,52 @@ export class CreateUserTest extends UsersStoreTest {
     this.assertThat(userCreated.email).isEqual('peterb@gmail.com');
     this.assertThat(userCreated.birthdate).isEqual(this.user.birthdate);
 
-    this.assertThat(userCreated._password).isNotEqual('Password1.');
-    this.assertThat(userCreated._password.salt).doesExist();
-    this.assertThat(userCreated._password.hash).doesExist();
+    this.assertThat(userCreated.password).isNotEqual('Password1.');
+    this.assertThat(userCreated.password.salt).doesExist();
+    this.assertThat(userCreated.password.hash).doesExist();
   }
 
   async testThrownErrorOnRepeatedEmail() {
-    await this._database.users.create(this.user);
+    await this.database.users.create(this.user);
 
     this.user.username = 'peter';
 
     await this.assertThat(
-      this._database.users.create(this.user)
+      this.database.users.create(this.user)
     ).willBeRejectedWith(EmailAlreadyExists);
   }
 
   async testThrownErrorOnRepeatedUsername() {
-    await this._database.users.create(this.user);
+    await this.database.users.create(this.user);
 
     this.user.email = 'peterb@gmail.com';
 
     await this.assertThat(
-      this._database.users.create(this.user)
+      this.database.users.create(this.user)
     ).willBeRejectedWith(UsernameAlreadyExists);
   }
 
   async testThrowErrorOnSQLException() {
-    this.stubFunction(this._database.users, '_connection')
+    this.stubFunction(this.database.users, 'connection')
       .throws(new Error());
 
     await this.assertThat(
-      this._database.users.create(this.user)
+      this.database.users.create(this.user)
     ).willBeRejectedWith(SQLDatabaseException);
   }
 }
 
 export class FindUserByIdTest extends UsersStoreTest {
+  userId: UUID;
+
+  async setUp() {
+    await super.setUp();
+
+    this.userId = this.users[1].id || this.generateUUID();
+  }
+
   async testFindById() {
-    const user = await this._database.users.findById(this.users[1].id);
+    const user = await this.database.users.findById(this.userId);
 
     this.assertThat(user).isInstanceOf(User);
     this.assertThat(user.username).isEqual('columbia');
@@ -100,23 +115,23 @@ export class FindUserByIdTest extends UsersStoreTest {
 
   async testThrowsErrorWhenUserIsNotFound() {
     await this.assertThat(
-      this._database.users.findById(this.generateUUID())
+      this.database.users.findById(this.generateUUID())
     ).willBeRejectedWith(UserNotFound);
   }
 
   async testThrowsErrorOnUnexpectedError() {
-    this.stubFunction(this._database.users, '_connection')
+    this.stubFunction(this.database.users, 'connection')
       .throws(new Error());
 
     await this.assertThat(
-      this._database.users.findById(this.users[2].id)
+      this.database.users.findById(this.userId)
     ).willBeRejectedWith(SQLDatabaseException);
   }
 }
 
 export class FindUserByEmailTest extends UsersStoreTest {
   async testFindByEmail() {
-    const user = await this._database.users.findByEmail(this.users[1].email);
+    const user = await this.database.users.findByEmail(this.users[1].email);
 
     this.assertThat(user).isInstanceOf(User);
     this.assertThat(user.username).isEqual('columbia');
@@ -125,23 +140,23 @@ export class FindUserByEmailTest extends UsersStoreTest {
 
   async testThrowsErrorWhenUserIsNotFound() {
     await this.assertThat(
-      this._database.users.findByEmail('notfound@mail.com')
+      this.database.users.findByEmail('notfound@mail.com')
     ).willBeRejectedWith(UserNotFound);
   }
 
   async testThrowsErrorOnUnexpectedError() {
-    this.stubFunction(this._database.users, '_connection')
+    this.stubFunction(this.database.users, 'connection')
       .throws(new Error());
 
     await this.assertThat(
-      this._database.users.findByEmail(this.users[2].email)
+      this.database.users.findByEmail(this.users[2].email)
     ).willBeRejectedWith(SQLDatabaseException);
   }
 }
 
 export class FindUserByUsernameTest extends UsersStoreTest {
   async testFindByUsername() {
-    const user = await this._database.users.findByUsername(this.users[1].username);
+    const user = await this.database.users.findByUsername(this.users[1].username);
 
     this.assertThat(user).isInstanceOf(User);
     this.assertThat(user.username).isEqual('columbia');
@@ -150,16 +165,16 @@ export class FindUserByUsernameTest extends UsersStoreTest {
 
   async testThrowsErrorWhenUserIsNotFound() {
     await this.assertThat(
-      this._database.users.findByUsername('notfound')
+      this.database.users.findByUsername('notfound')
     ).willBeRejectedWith(UserNotFound);
   }
 
   async testThrowsErrorOnUnexpectedError() {
-    this.stubFunction(this._database.users, '_connection')
+    this.stubFunction(this.database.users, 'connection')
       .throws(new Error());
 
     await this.assertThat(
-      this._database.users.findByUsername(this.users[2].username)
+      this.database.users.findByUsername(this.users[2].username)
     ).willBeRejectedWith(SQLDatabaseException);
   }
 }

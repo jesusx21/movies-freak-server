@@ -2,8 +2,10 @@ import FixturesGenerator from 'fixtures-generator';
 
 import * as schemas from './schemas';
 
+export * from './interface';
+
 export interface FixturesGeneratorOptions {
-  type: string;
+  type?: string;
   quantity?: number;
   recipe?: {}[],
 }

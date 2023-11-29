@@ -1,5 +1,5 @@
 /* eslint-disable no-await-in-loop */
-import Database from '../../database/stores/memory';
+import { Database } from '../../database';
 import IMDB from '../imdb/gateways/dummy/dummyGateway';
 import { Episode } from '../imdb/gateways/dummy/result/tvSeason';
 import { TVEpisode, TVSeason, TVSerie } from './entities';

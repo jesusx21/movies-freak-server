@@ -6,6 +6,8 @@ import SQLDatabase from './stores/sql';
 
 export class UnsupportedDatabaseDriver extends Error {}
 
+export type Database = InMemoryDatabase | SQLDatabase;
+
 function getDatabase(driverName: string, environment: string) {
   if (driverName === 'sql') {
     const config = knexfile[environment];

@@ -1,21 +1,26 @@
 import SignIn from '../../../app/moviesFreak/signIn';
-import APITestCase from '../apiTestHelper';
+import APITestCase, { UserFixture } from '../apiTestHelper';
+import { Database } from '../../../database';
+import { Session } from '../../../app/moviesFreak/entities';
 
 export class SignInTest extends APITestCase {
-  async setUp() {
-    await super.setUp();
+  private user: UserFixture;
 
-    const database = this.getDatabase();
+  async setUp() {
+    super.setUp();
+
+    const database: Database = this.getDatabase();
 
     this.buildTestApp(database);
 
-    const result = await this.registerUser({
+    this.user = await this.registerUser({
+      name: 'Charles',
+      lastName: 'Lee Ray',
       username: 'chucky',
       email: 'chucky@gmail.com',
-      password: 'Password123'
+      password: 'Password123',
+      birthdate: new Date(1972, 3, 14)
     });
-
-    this.user = result.user;
   }
 
   async testSignInWithEmail() {
@@ -28,7 +33,7 @@ export class SignInTest extends APITestCase {
       statusCode: 200
     });
 
-    this.assertThat(body.id).doesExist();
+    this.assertThat(body?.id).doesExist();
     this.assertThat(body.token).doesExist();
     this.assertThat(new Date(body.expiresAt)).isGreaterThan(new Date());
     this.assertThat(body.isActive).isTrue();

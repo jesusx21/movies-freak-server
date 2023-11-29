@@ -6,7 +6,7 @@ export interface TVSeasonParams {
   tvSerieId?: UUID;
   seasonNumber: number;
   plot: string;
-  poster: URL;
+  poster: string;
   releasedAt?: Date;
   createdAt?: Date;
   updatedAt?: Date;
@@ -16,7 +16,7 @@ class TVSeason extends Entity {
   tvSerieId?: UUID;
   seasonNumber: number;
   plot: string;
-  poster: URL;
+  poster: string;
   releasedAt?: Date;
 
   constructor(args: TVSeasonParams) {

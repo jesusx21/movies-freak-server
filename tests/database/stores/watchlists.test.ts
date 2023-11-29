@@ -1,15 +1,19 @@
 import SQLTestCase from '../testHelper';
 
-import { Watchlist } from '../../../app/moviesFreak/entities';
-import { WatchlistSerializer } from '../../../database/stores/sql/serializers';
+import SQLDatabase from '../../../database/stores/sql';
+import { MarathonType } from '../../../typescript/customTypes';
 import { SerializerError } from '../../../database/stores/sql/serializer';
 import { SQLDatabaseException } from '../../../database/stores/sql/errors';
+import { Watchlist } from '../../../app/moviesFreak/entities';
+import { WatchlistSerializer } from '../../../database/stores/sql/serializers';
 
 class WatchlistsStoreTest extends SQLTestCase {
+  database: SQLDatabase;
+
   setUp() {
     super.setUp();
 
-    this._database = this.getDatabase();
+    this.database = this.getDatabase();
   }
 
   async tearDown() {
@@ -20,12 +24,14 @@ class WatchlistsStoreTest extends SQLTestCase {
 }
 
 export class CreateWatchlistTest extends WatchlistsStoreTest {
+  watchlist: Watchlist;
+
   setUp() {
     super.setUp();
 
     this.watchlist = new Watchlist({
       name: 'Maraton de Halloween',
-      type: 'all',
+      type: MarathonType.all,
       description: 'This is a nice watchlist',
       totalFilms: 0,
       totalTVEpisodes: 0
@@ -33,7 +39,7 @@ export class CreateWatchlistTest extends WatchlistsStoreTest {
   }
 
   async testCreateWatchlist() {
-    const watchlistCreated = await this._database.watchlists.create(this.watchlist);
+    const watchlistCreated = await this.database.watchlists.create(this.watchlist);
 
     this.assertThat(watchlistCreated).isInstanceOf(Watchlist);
     this.assertThat(watchlistCreated.id).doesExist();
@@ -50,16 +56,16 @@ export class CreateWatchlistTest extends WatchlistsStoreTest {
       .throws(new SerializerError());
 
     await this.assertThat(
-      this._database.watchlists.create(this.watchlist)
+      this.database.watchlists.create(this.watchlist)
     ).willBeRejectedWith(SerializerError);
   }
 
   async testThrowErrorOnSQLException() {
-    this.stubFunction(this._database.watchlists, '_connection')
+    this.stubFunction(this.database.watchlists, 'connection')
       .throws(new Error());
 
     await this.assertThat(
-      this._database.watchlists.create(this.watchlist)
+      this.database.watchlists.create(this.watchlist)
     ).willBeRejectedWith(SQLDatabaseException);
   }
 }

@@ -1,14 +1,15 @@
-import MoviesFreakApp from '../../api';
 import imdbFactory from '../../app/imdb/factory';
+import MoviesFreakApp from '../../api';
+import { Database } from '../../database';
 
-export default function buildTestApp(database) {
+function buildTestApp(database: Database) {
   const imdbGateway = imdbFactory('dummy');
   const moviesFreakApp = new MoviesFreakApp(database, imdbGateway);
 
   moviesFreakApp.build();
 
-  moviesFreakApp.database = database;
-  moviesFreakApp.imdb = imdbGateway;
-
   return moviesFreakApp;
 }
+
+export default buildTestApp;
+

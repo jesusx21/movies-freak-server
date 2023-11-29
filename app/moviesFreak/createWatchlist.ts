@@ -1,5 +1,6 @@
-import Database from '../../database/stores/memory';
+
 import { CouldNotCreateWatchlist } from './errors';
+import { Database } from '../../database';
 import { MarathonType } from '../../typescript/customTypes';
 import { Watchlist } from './entities';
 

@@ -34,7 +34,9 @@ const tvSerie = JSON(
     imdbId: IMDB_ID,
     imdbRating: RATING,
     totalSeasons: INTEGER({ min: 1, max: 100 }),
-    releasedAt: DATETIME
+    releasedAt: DATETIME,
+    createAt: DATETIME,
+    updatedAt: DATETIME
   },
   ['id', 'imdbId', 'name', 'plot', 'totalSeasons']
 );

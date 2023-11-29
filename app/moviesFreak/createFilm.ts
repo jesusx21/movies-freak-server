@@ -1,5 +1,5 @@
-import Database from '../../database/stores/memory';
 import IMDB from '../imdb/gateways/dummy/dummyGateway';
+import { Database } from '../../database';
 import { CouldNotCreateFilm } from './errors';
 import { Film } from './entities';
 import { FilmResult } from '../imdb/gateways/dummy/result';

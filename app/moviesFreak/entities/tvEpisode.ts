@@ -15,7 +15,7 @@ export interface TVEpisodeParams {
   plot: string;
   languages: string[];
   country: string;
-  poster: URL;
+  poster: string;
   awards: string;
   imdbRating: string;
   releasedAt: Date;
@@ -38,7 +38,7 @@ class TVEpisode extends Entity {
   plot: string;
   languages: string[];
   country: string;
-  poster: URL;
+  poster: string;
   awards: string;
   imdbRating: string;
   releasedAt: Date;

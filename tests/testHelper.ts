@@ -2,36 +2,38 @@
 import FixturesGenerator from 'fixtures-generator';
 import sinon from 'sinon';
 import * as Classpuccino from '../classpuccino';
-import { isEmpty } from 'lodash';
+import { isEmpty, omit } from 'lodash';
 import { v4 as uuid } from 'uuid';
 
-import buildFixtureGenerator, { FixturesGeneratorOptions } from './fixtures';
-import Database from '../database/stores/memory';
-import getDatabase from '../database/factory';
-import { FilmParams } from '../app/moviesFreak/entities/film';
-import { PasswordHashed, UserParams } from '../app/moviesFreak/entities/user';
-import { TVEpisodeParams } from '../app/moviesFreak/entities/tvEpisode';
-import { TVSeasonParams } from '../app/moviesFreak/entities/tvSeason';
-import { TVSerieParams } from '../app/moviesFreak/entities/tvSerie';
-import { WatchlistParams } from '../app/moviesFreak/entities/watchlist';
+import getDatabase, { Database } from '../database';
+import buildFixtureGenerator, {
+  FilmFixture,
+  FixturesGeneratorOptions,
+  TVEpisodeFixture,
+  TVSerieFixture,
+  UserFixture,
+  WatchlistFixture
+} from './fixtures';
 import {
   Film,
   TVSerie,
   TVSeason,
   TVEpisode,
   Watchlist,
-  User,
-  Session
+  Session,
+  User
 } from '../app/moviesFreak/entities';
+import { FilmParams } from '../app/moviesFreak/entities/film';
+import { TVEpisodeParams } from '../app/moviesFreak/entities/tvEpisode';
+import { TVSeasonParams } from '../app/moviesFreak/entities/tvSeason';
+import { TVSerieParams } from '../app/moviesFreak/entities/tvSerie';
+import { UUID } from '../typescript/customTypes';
+import { WatchlistParams } from '../app/moviesFreak/entities/watchlist';
 
 class SandboxNotInitialized extends Error {
   get name() {
     return 'SandboxNotInitialized';
   }
-}
-
-interface UserFixture extends UserParams {
-  password: PasswordHashed;
 }
 
 class TestCase extends Classpuccino.TestCase {
@@ -66,7 +68,7 @@ class TestCase extends Classpuccino.TestCase {
     return this.sandbox;
   }
 
-  mockClass(klass: Function, functionType = 'instance') {
+  mockClass(klass: any, functionType = 'instance') {
     if (!this.sandbox) {
       throw new SandboxNotInitialized();
     }
@@ -93,7 +95,7 @@ class TestCase extends Classpuccino.TestCase {
     this.sandbox.restore();
   }
 
-  stubFunction(target: Function, fn: string) {
+  stubFunction(target: object, fn: string) {
     if (!this.sandbox) {
       throw new SandboxNotInitialized();
     }
@@ -101,7 +103,7 @@ class TestCase extends Classpuccino.TestCase {
     return this.sandbox.stub(target, fn);
   }
 
-  generateUUID() {
+  generateUUID(): UUID {
     return uuid();
   }
 
@@ -111,8 +113,11 @@ class TestCase extends Classpuccino.TestCase {
       recipe: [data]
     });
 
-    const user = new User(userData);
-    user.password = userData.password;
+    const user = new User(omit(userData, 'password'));
+
+    if (userData.password) {
+      user.password = userData.password;
+    }
 
     return database.users.create(user);
   }
@@ -129,9 +134,12 @@ class TestCase extends Classpuccino.TestCase {
     // For is use instead of map to make sure the creation respects the index order
     // eslint-disable-next-line no-restricted-syntax
     for (const userData of fixtures) {
-      const user = new User(userData);
+      const user = new User(omit(userData, 'password'));
 
-      user.password = userData.password;
+      if (userData.password) {
+        user.password = userData.password;
+      }
+
       // eslint-disable-next-line no-await-in-loop
       const userSaved = await database.users.create(user);
 
@@ -141,8 +149,8 @@ class TestCase extends Classpuccino.TestCase {
     return result;
   }
 
-  async createFilm(database: Database, data?: FilmParams) {
-    const recipe = data ? [data] : []
+  async createFilm(database: Database, data?: FilmFixture) {
+    const recipe = data ? [data] : [];
     const [filmData] = this.generateFixtures<FilmParams>({
       recipe,
       type: 'film'
@@ -174,7 +182,7 @@ class TestCase extends Classpuccino.TestCase {
     return result;
   }
 
-  createTVSerie(database: Database, data?: TVSerieParams) {
+  createTVSerie(database: Database, data?: TVSerieFixture) {
     const recipe = data ? [data] : [];
 
     const [tvSerieData] = this.generateFixtures<TVSerieParams>({
@@ -229,15 +237,16 @@ class TestCase extends Classpuccino.TestCase {
 
   async createTVSeasons(database: Database, ...args: any[]) {
     let tvSerie: TVSerie;
-    let params = args;
+    let params: any[];
 
     if (args[0] instanceof TVSerie) {
       [tvSerie, ...params] = args;
     } else {
+      params = args;
       tvSerie = await this.createTVSerie(database);
     }
 
-    const options = this.getFixturesGeneratorOptions(...args);
+    const options = this.getFixturesGeneratorOptions(...params);
     const fixtures = this.generateFixtures<TVSeasonParams>({
       type: 'tvSeason',
       ...options
@@ -259,7 +268,7 @@ class TestCase extends Classpuccino.TestCase {
 
   async createTVEpisode(database: Database, ...args: any[]) {
     let tvSeason: TVSeason;
-    let data: TVEpisodeParams = args[0];
+    let data: TVEpisodeFixture = args[0];
 
     if (args[0] instanceof TVSeason) {
       [tvSeason, data] = args;
@@ -267,7 +276,7 @@ class TestCase extends Classpuccino.TestCase {
       tvSeason = await this.createTVSeason(database);
     }
 
-    const [tvEpisodeData] = this.generateFixtures<TVEpisode>({
+    const [tvEpisodeData] = this.generateFixtures<TVEpisodeParams>({
       type: 'tvEpisode',
       recipe: [{
         ...data,
@@ -283,15 +292,16 @@ class TestCase extends Classpuccino.TestCase {
 
   async createTVEpisodes(database: Database, ...args: any[]) {
     let tvSeason: TVSeason;
-    let data: TVEpisodeParams = args[0];
+    let params: any[];
 
     if (args[0] instanceof TVSeason) {
-      [tvSeason, data] = args;
+      [tvSeason, ...params] = args;
     } else {
+      params = args;
       tvSeason = await this.createTVSeason(database);
     }
 
-    const options = this.getFixturesGeneratorOptions(...args);
+    const options = this.getFixturesGeneratorOptions(...params);
     const fixtures = this.generateFixtures<TVEpisodeParams>({
       type: 'tvEpisode',
       ...options
@@ -315,7 +325,7 @@ class TestCase extends Classpuccino.TestCase {
     return result;
   }
 
-  async createWatchlist(database: Database, data?: Watchlist) {
+  async createWatchlist(database: Database, data?: WatchlistFixture) {
     const recipe = data ? [data] : [];
     const [watchlistData] = this.generateFixtures<WatchlistParams>({
       recipe,
@@ -327,7 +337,7 @@ class TestCase extends Classpuccino.TestCase {
     return database.watchlists.create(watchlist);
   }
 
-  async createWhatchlists(database: Database, ...args: any[]) {
+  async createWatchlists(database: Database, ...args: any[]) {
     const options = this.getFixturesGeneratorOptions(...args);
     const fixtures = this.generateFixtures<WatchlistParams>({
       type: 'watchlist',

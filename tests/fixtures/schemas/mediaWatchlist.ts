@@ -1,5 +1,6 @@
 import {
   BOOLEAN,
+  DATETIME,
   INTEGER,
   JSON,
   UUID
@@ -12,7 +13,9 @@ const mediaWatchlist = JSON(
     filmId: UUID,
     tvEpisodeId: UUID,
     index: INTEGER({ min: 0, max: 200 }),
-    watched: BOOLEAN
+    watched: BOOLEAN,
+    createAt: DATETIME,
+    updatedAt: DATETIME
   },
   ['id', 'watchlistId', 'filmId', 'tvEpisodeId', 'index']
 );

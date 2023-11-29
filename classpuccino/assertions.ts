@@ -76,6 +76,12 @@ class Assertions {
 
       throw new AssertionError('Expected async function to be rejected, but was successful');
     } catch (error) {
+      if (!(error instanceof Error)) {
+        throw new AssertionError(
+          `Error throw ${error} is not an instance of any Error class`
+        );
+      }
+
       if (error instanceof errorKlass) {
         return error;
       }

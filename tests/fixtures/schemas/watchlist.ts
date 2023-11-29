@@ -1,4 +1,5 @@
 import {
+  DATETIME,
   ENUM,
   INTEGER,
   JSON,
@@ -13,7 +14,9 @@ const watchlist = JSON(
     type: ENUM('films', 'tv-episodes', 'all'),
     description: STRING({ min: 10, max: 500 }),
     totalFilms: INTEGER({ min: 0, max: 250 }),
-    totalTVEpisodes: INTEGER({ min: 0, max: 250 })
+    totalTVEpisodes: INTEGER({ min: 0, max: 250 }),
+    createAt: DATETIME,
+    updatedAt: DATETIME
   },
   ['id', 'name', 'description', 'totalFilms', 'totalTVEpisodes']
 );

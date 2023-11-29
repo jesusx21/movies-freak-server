@@ -4,17 +4,17 @@ export const NOT_FOUND = 404;
 export const CONFLICT = 409;
 export const SERVER_ERROR = 500;
 
-enum HTTPErrorCodes {
-  badRequest = 400;
-  unauthorized = 401;
-  forbidden = 403;
-  notFound = 404;
-  conflict = 409;
-  preconditionFailed = 412;
+export enum HTTPErrorCodes {
+  badRequest = 400,
+  unauthorized = 401,
+  forbidden = 403,
+  notFound = 404,
+  conflict = 409,
+  preconditionFailed = 412,
   serverError = 500
 }
 
-interface Payload {
+export interface ErrorPayload {
   code: string,
   error?: {}
 }
@@ -33,7 +33,7 @@ export class HTTPError extends Error {
   }
 
   get payload() {
-    const payload: Payload = {
+    const payload: ErrorPayload = {
       code: this.code
     };
 

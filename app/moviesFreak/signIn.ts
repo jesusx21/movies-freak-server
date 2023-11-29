@@ -1,4 +1,4 @@
-import Database from '../../database/stores/memory';
+import { Database } from '../../database';
 import { Session } from './entities';
 import {
   CouldNotSignIn,

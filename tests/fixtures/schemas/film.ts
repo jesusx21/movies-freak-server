@@ -1,5 +1,6 @@
 import {
   ARRAY,
+  DATETIME,
   FULL_NAME,
   GENRE,
   IMDB_ID,
@@ -28,7 +29,9 @@ const film = JSON(
     writers: ARRAY(FULL_NAME, { min: 1, max: 5 }),
     actors: ARRAY(FULL_NAME, { min: 1, max: 5 }),
     imdbId: IMDB_ID,
-    imdbRating: RATING
+    imdbRating: RATING,
+    createAt: DATETIME,
+    updatedAt: DATETIME
   },
   ['id', 'imdbId', 'name', 'plot']
 );

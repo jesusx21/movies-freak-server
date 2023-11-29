@@ -7,12 +7,15 @@ export interface TVSerieParams {
   imdbId: string;
   name: string;
   plot: string;
-  years: string;
+  years: {
+    from: string;
+    to: string;
+  };
   rated: string;
   genre: string[];
   writers: string[];
   actors: string[];
-  poster: URL;
+  poster: string;
   imdbRating: string;
   totalSeasons: number;
   releasedAt: Date;
@@ -24,12 +27,15 @@ class TVSerie extends Entity {
   imdbId?: string;
   name?: string;
   plot?: string;
-  years?: string;
+  years?: {
+    from?: string;
+    to?: string;
+  };
   rated?: string;
   genre?: string[];
   writers?: string[];
   actors?: string[];
-  poster?: URL;
+  poster?: string;
   imdbRating?: string;
   totalSeasons?: number;
   releasedAt?: Date;

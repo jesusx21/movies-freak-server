@@ -1,4 +1,4 @@
-import Database from "../../database/stores/memory";
+import { Database } from "../../database";
 import DummyGateway from "../../app/imdb/gateways/dummy/dummyGateway";
 import Presenters from "./presenters";
 

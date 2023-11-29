@@ -1,6 +1,6 @@
 import { omit } from 'lodash';
 
-import Database from '../../database/stores/memory';
+import { Database } from '../../database';
 import { Session, User } from './entities';
 import {
   EmailAlreadyExists,

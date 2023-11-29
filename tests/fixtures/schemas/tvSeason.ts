@@ -14,7 +14,9 @@ const TVSeason = JSON(
     plot: STRING({ min: 10, max: 500 }),
     poster: URL,
     seasonNumber: INTEGER({ min: 1, max: 100 }),
-    releasedAt: DATETIME
+    releasedAt: DATETIME,
+    createAt: DATETIME,
+    updatedAt: DATETIME
   },
   ['id', 'tvSerieId', 'seasonNumber']
 );

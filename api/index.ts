@@ -3,7 +3,7 @@ import express from 'express';
 import morgan from 'morgan';
 import 'express-async-errors';
 
-import Database from '../database/stores/memory';
+import { Database } from '../database';
 import IMDB from '../app/imdb/gateways/dummy/dummyGateway';
 import MoviesFreakAPI from './v1/resources';
 import Presenters from './v1/presenters';
@@ -29,10 +29,9 @@ const ENDPOINTS = {};
 
 class MoviesFreakApp {
   private app: express;
-  private database: Database;
-  private imdb: IMDB;
+  readonly database: Database;
+  readonly imdb: IMDB;
   private presenters: Presenters;
-  private apiPath: string;
   private router: express.Router;
 
   constructor(database: Database, imdbGateway: IMDB) {
@@ -42,7 +41,6 @@ class MoviesFreakApp {
     this.imdb = imdbGateway;
     this.presenters = new Presenters();
 
-    this.apiPath = '/movies-freak/api';
     this.router = express.Router();
   }
 
@@ -66,7 +64,7 @@ class MoviesFreakApp {
     return this;
   }
 
-  start(host: URL, port: number) {
+  start(host: string, port: number) {
     this.app.listen(port, host, () => {
       // eslint-disable-next-line no-console
       console.log(`Movies Freak Server listening on ${host}:${port}`);

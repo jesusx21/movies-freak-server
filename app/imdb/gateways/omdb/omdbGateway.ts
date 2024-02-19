@@ -1,6 +1,8 @@
 import axios from 'axios';
+import { get as getKey } from 'lodash';
 
-import { IMDBError } from '../../errors';
+import { IMDBError, IncorrectIMDBId, InvalidAPIKey } from '../../errors';
+import { IMDBQueryObject, IMDBResultType, IMDBType } from '../../../../types/app';
 import {
   FilmResult,
   Result,
@@ -9,61 +11,55 @@ import {
   TVSerieResult
 } from './result';
 
-interface queryObject {
-  type: 'movie' | 'series' | 'episode',
-  i?: string;
-  Season?: number;
-}
+class OMDBGateway {
+  private host: string;
+  private apiKey: string;
 
-class IMDBGateway {
-  private host?: URL;
-  private apiKey?: string;
-
-  constructor(host?: URL, apiKey?: string) {
+  constructor(host: string, apiKey: string) {
     this.host = host;
     this.apiKey = apiKey;
   }
 
   fetchFilmById(imdbId: string) {
-    const query: queryObject = {
-      type: 'movie',
+    const query: IMDBQueryObject = {
+      type: IMDBType.MOVIE,
       i: imdbId
     };
 
-    return this.request(query, 'film');
+    return this.request<FilmResult>(query, IMDBResultType.FILM);
   }
 
   fetchTVSerieById(imdbId: string) {
-    const query: queryObject = {
-      type: 'series',
+    const query: IMDBQueryObject = {
+      type: IMDBType.SERIES,
       i: imdbId
     };
 
-    return this.request(query, 'serie');
+    return this.request<TVSerieResult>(query, IMDBResultType.SERIE);
   }
 
   fetchTVSeasonBySerieId(serieImdbId: string, seasonNumber: number) {
-    const query: queryObject = {
+    const query: IMDBQueryObject = {
       i: serieImdbId,
-      type: 'series',
+      type: IMDBType.SERIES,
       Season: seasonNumber
     };
 
-    return this.request(query, 'season');
+    return this.request<TVSeasonResult>(query, IMDBResultType.SEASON);
   }
 
-  fetchTVEpisodeById(imdbId) {
-    const query: queryObject = {
+  fetchTVEpisodeById(imdbId: string) {
+    const query: IMDBQueryObject = {
       i: imdbId,
-      type: 'episode'
+      type: IMDBType.EPISODE
     };
 
-    return this.request(query, 'episode');
+    return this.request<TVEpisodeResult>(query, IMDBResultType.EPISODE);
   }
 
-  async request(query: queryObject, type: string) {
+  async request<T>(query: IMDBQueryObject, type: IMDBResultType): Promise<T> {
     const params = Object.keys(query)
-      .map((key) => `${key}=${query[key]}`)
+      .map((key) => `${key}=${getKey(query, key)}`)
       .join('&');
 
     let response: { data: {} };
@@ -71,35 +67,51 @@ class IMDBGateway {
     try {
       response = await axios
         .get(`${this.host}?apikey=${this.apiKey}&${params}`);
-    } catch (error) {
+    } catch (error: any) {
       response = error.response;
     }
 
     let omdbResult: any;
 
     switch (type) {
-      case 'film':
+      case IMDBResultType.FILM:
         omdbResult = new FilmResult(response.data);
         break;
-      case 'serie':
+      case IMDBResultType.SERIE:
         omdbResult = new TVSerieResult(response.data);
         break;
-      case 'season':
+      case IMDBResultType.SEASON:
         omdbResult = new TVSeasonResult(response.data);
         break;
-      case 'episode':
+      case IMDBResultType.EPISODE:
         omdbResult = new TVEpisodeResult(response.data);
         break;
       default:
         omdbResult = new Result(response.data);
     }
 
-    if (!omdbResult.isRequestSuccesful()) {
-      throw new IMDBError(omdbResult.error);
+    if (omdbResult.isRequestSuccesful()) {
+      return omdbResult;
     }
 
-    return omdbResult;
+    if (this.isIMDBIdError(omdbResult.error)) {
+      throw new IncorrectIMDBId();
+    }
+
+    if (this.isInvalidAPIKeyError(omdbResult.error)) {
+      throw new InvalidAPIKey();
+    }
+
+    throw new IMDBError(omdbResult.error);
+  }
+
+  private isIMDBIdError(error?: string) {
+    return error === 'Incorrect IMDb ID.';
+  }
+
+  private isInvalidAPIKeyError(error?: string) {
+    return error === 'Invalid API key!';
   }
 }
 
-export default IMDBGateway;
+export default OMDBGateway;

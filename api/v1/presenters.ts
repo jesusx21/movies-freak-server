@@ -52,7 +52,7 @@ class Presenters {
       id: session.id,
       token: session.token,
       expiresAt: session.expiresAt,
-      isActive: session.isActive,
+      isActive: session.isActive(),
       user: {
         id: session.user?.id,
         name: session.user?.name

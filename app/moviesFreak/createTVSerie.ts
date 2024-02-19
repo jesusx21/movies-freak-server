@@ -1,7 +1,6 @@
 /* eslint-disable no-await-in-loop */
-import IMDB from '../imdb/gateways/dummy/dummyGateway';
-import { Database } from '../../database';
-import { Episode } from '../imdb/gateways/dummy/result/tvSeason';
+import { IMDBEpisode, IMDBGateway } from '../../types/app';
+import { Database } from '../../types/database';
 import { TVEpisode, TVSeason, TVSerie } from './entities';
 import {
   CouldNotCreateTVEpisodes,
@@ -11,10 +10,10 @@ import {
 
 class CreateTVSerie {
   database: Database;
-  imdb: IMDB;
+  imdb: IMDBGateway;
   imdbId: string;
 
-  constructor(database: Database, imdb: IMDB, imdbId: string) {
+  constructor(database: Database, imdb: IMDBGateway, imdbId: string) {
     this.database = database;
     this.imdb = imdb;
     this.imdbId = imdbId;
@@ -25,7 +24,7 @@ class CreateTVSerie {
 
     try {
       imdbTVSerie = await this.fetchTVSerieFromIMDB();
-    } catch (error) {
+    } catch (error: any) {
       throw new CouldNotCreateTVSerie(error);
     }
 
@@ -34,14 +33,14 @@ class CreateTVSerie {
 
       try {
         tvSerie = await database.tvSeries.create(imdbTVSerie);
-      } catch (error) {
+      } catch (error: any) {
         throw new CouldNotCreateTVSerie(error);
       }
 
       for (let seasonNumber = 1; seasonNumber <= tvSerie?.totalSeasons; seasonNumber += 1) {
         let result: {
           tvSeason: TVSeason;
-          episodes: Episode[];
+          episodes: IMDBEpisode[];
         };
 
         let tvSeason: TVSeason;
@@ -49,7 +48,7 @@ class CreateTVSerie {
         try {
           result = await this.fetchTVSeasonFromIMDB(tvSerie, seasonNumber);
           tvSeason = await database.tvSeasons.create(result.tvSeason);
-        } catch (error) {
+        } catch (error: any) {
           throw new CouldNotCreateTVSeasons(error);
         }
 
@@ -58,7 +57,7 @@ class CreateTVSerie {
           try {
             const tvEpisode = await this.fetchTVEpisodenFromIMDB(tvSeason, episode);
             await database.tvEpisodes.create(tvEpisode);
-          } catch (error) {
+          } catch (error: any) {
             throw new CouldNotCreateTVEpisodes(error);
           }
         }
@@ -100,7 +99,7 @@ class CreateTVSerie {
     return { tvSeason, episodes: result.episodes };
   }
 
-  private async fetchTVEpisodenFromIMDB(tvSeason: TVSeason, episode: Episode) {
+  private async fetchTVEpisodenFromIMDB(tvSeason: TVSeason, episode: IMDBEpisode) {
     const result = await this.imdb.fetchTVEpisodeById(this.imdbId);
 
     return new TVEpisode({

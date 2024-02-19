@@ -2,20 +2,10 @@ import Entity from './entity';
 import Film from './film';
 import TVEpisode from './tvEpisode';
 import { FilmAlreadySet, TVEpisodeAlreadySet } from './errors';
-import { UUID } from '../../../typescript/customTypes';
+import { MediaWatchlistEntity } from '../../../types/entities';
+import { UUID } from '../../../types/common';
 
-export interface MediaWatchlistParams {
-  id?: UUID;
-  watchlistId: UUID;
-  filmId?: UUID;
-  tvEpisodeId?: UUID;
-  index: number;
-  watched: boolean;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
-
-class MediaWatchlist extends Entity {
+class MediaWatchlist extends Entity implements MediaWatchlistEntity {
   private _filmId?: UUID;
   private _tvEpisodeId?: UUID;
 
@@ -25,7 +15,7 @@ class MediaWatchlist extends Entity {
   film?: Film;
   tvEpisode?: TVEpisode;
 
-  constructor(args: MediaWatchlistParams) {
+  constructor(args: MediaWatchlistEntity) {
     super(args.id, args.createdAt, args.updatedAt);
 
     this.watchlistId = args.watchlistId;

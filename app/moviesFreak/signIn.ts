@@ -1,4 +1,4 @@
-import { Database } from '../../database';
+import { Database } from '../../types/database';
 import { Session } from './entities';
 import {
   CouldNotSignIn,
@@ -40,7 +40,7 @@ class SignIn {
 
     try {
       session = await this.database.sessions.findActiveByUserId(user.id);
-    } catch (error) {
+    } catch (error: any) {
       if (!(error instanceof SessionNotFound)) {
         throw new CouldNotSignIn(error);
       }
@@ -57,7 +57,7 @@ class SignIn {
       }
 
       return await this.database.sessions.create(session);
-    } catch (error) {
+    } catch (error: any) {
       throw new CouldNotSignIn(error);
     }
   }
@@ -66,7 +66,7 @@ class SignIn {
   private async findUserByEmail() {
     try {
       return await this.database.users.findByEmail(this.username);
-    } catch (error) {
+    } catch (error: any) {
       if (!(error instanceof DatabaseUserNotFound)) {
         throw new CouldNotSignIn(error);
       }
@@ -77,7 +77,7 @@ class SignIn {
   async findUserByUsername() {
     try {
       return await this.database.users.findByUsername(this.username);
-    } catch (error) {
+    } catch (error: any) {
       if (!(error instanceof DatabaseUserNotFound)) {
         throw new CouldNotSignIn(error);
       }

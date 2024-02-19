@@ -1,0 +1,5 @@
+{
+  "watch": ["api", "app", "database", "typescript"],
+  "ext": ".ts,.js",
+  "exec": "ts-node index.ts"
+}

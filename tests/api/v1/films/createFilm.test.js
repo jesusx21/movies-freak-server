@@ -1,5 +1,5 @@
-import APITestCase from '../../apiTestHelper.js';
-import CreateFilm from '../../../../app/moviesFreak/createFilm.js';
+import APITestCase from '../../apiTestHelper';
+import CreateFilm from '../../../../app/moviesFreak/createFilm';
 
 export default class CreateFilmTest extends APITestCase {
   setUp() {

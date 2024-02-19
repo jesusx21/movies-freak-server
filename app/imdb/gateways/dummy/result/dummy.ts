@@ -1,3 +1,4 @@
+import { Json } from '../../../../../types/common';
 import { ResultIsNotACollection } from '../../../errors';
 
 export class Rating {
@@ -27,17 +28,18 @@ export class Rating {
 }
 
 abstract class DummyResult {
-  private collection?: {}[];
-  protected currentResponse: any;
-  private index: number;
+  private collection?: Json[];
+  protected currentResponse: Json;
+  private index?: number;
   type: string;
   error?: Error;
 
   constructor(type = 'film') {
-    this.currentResponse = this.getRawResponse(type);
+    this.type = type;
+    this.currentResponse = this.getRawResponse();
   }
 
-  setCollection(collection: {}[]) {
+  setCollection(collection: Json[]) {
     this.collection = collection;
     this.index = 0;
     this.currentResponse = this.collection[this.index];
@@ -101,7 +103,7 @@ abstract class DummyResult {
     return this.currentResponse.poster;
   }
 
-  get ratings() {
+  get ratings(): Rating[] {
     return this.currentResponse.ratings;
   }
 
@@ -146,6 +148,10 @@ abstract class DummyResult {
   }
 
   private setNextIndex() {
+    if (!this.index) {
+      this.index = 1;
+    }
+
     this.index += 1;
   }
 
@@ -158,6 +164,10 @@ abstract class DummyResult {
       this.collection = []
     }
 
+    if (!this.index) {
+      this.index = 0;
+    }
+
     this.currentResponse = this.collection[this.index];
   }
 
@@ -165,7 +175,7 @@ abstract class DummyResult {
     return !!this.collection;
   }
 
-  abstract getRawResponse(): {}
+  abstract getRawResponse(): Json
 }
 
 export default DummyResult;

@@ -1,7 +1,17 @@
 import APITestCase from '../apiTestHelper';
 import SignUp from '../../../app/moviesFreak/signUp';
+import { Json } from '../../../types/common';
+import { Error, Session } from '../../../types/api';
 
 export class SignUpTest extends APITestCase {
+  private userData: Json
+
+  constructor() {
+    super();
+
+    this.userData = this.buildUserData();
+  }
+
   setUp() {
     super.setUp();
 
@@ -19,7 +29,7 @@ export class SignUpTest extends APITestCase {
   }
 
   async testSignUpUser() {
-    const result = await this.simulatePost({
+    const result = await this.simulatePost<Session>({
       path: '/sign-up',
       payload: this.userData
     });
@@ -33,14 +43,14 @@ export class SignUpTest extends APITestCase {
   }
 
   async testReturnsErrorOnEmailAlreadyUsed() {
-    await this.simulatePost({
+    await this.simulatePost<Session>({
       path: '/sign-up',
       payload: this.userData
     });
 
     this.userData.username = 'pete';
 
-    const result = await this.simulatePost({
+    const result = await this.simulatePost<Error>({
       path: '/sign-up',
       payload: this.userData,
       statusCode: 409
@@ -50,14 +60,14 @@ export class SignUpTest extends APITestCase {
   }
 
   async testReturnsErrorOnUsernameAlreadyUsed() {
-    await this.simulatePost({
+    await this.simulatePost<Session>({
       path: '/sign-up',
       payload: this.userData
     });
 
     this.userData.email = 'pete@gmail.com';
 
-    const result = await this.simulatePost({
+    const result = await this.simulatePost<Error>({
       path: '/sign-up',
       payload: this.userData,
       statusCode: 409
@@ -71,12 +81,23 @@ export class SignUpTest extends APITestCase {
       .expects('execute')
       .throws(new Error('database fails'));
 
-    const result = await this.simulatePost({
+    const result = await this.simulatePost<Error>({
       path: '/sign-up',
       payload: this.userData,
       statusCode: 500
     });
 
     this.assertThat(result.code).isEqual('UNEXPECTED_ERROR');
+  }
+
+  private buildUserData() {
+    return {
+      name: 'Evan',
+      lastName: 'Peters',
+      email: 'evan@gmail.com',
+      username: 'evan',
+      password: 'americanHorrorStory12',
+      birthdate: new Date('1989-04-29')
+    };
   }
 }

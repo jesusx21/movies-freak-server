@@ -11,7 +11,7 @@ const resolve = () => {
   process.exit(0);
 };
 
-const reject = (error) => {
+const reject = (error: any) => {
   console.info('Error runing tests');
   console.error('Error:', error);
   process.exit(1);

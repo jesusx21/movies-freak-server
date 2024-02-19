@@ -1,6 +1,6 @@
 import imdbFactory from '../../app/imdb/factory';
 import MoviesFreakApp from '../../api';
-import { Database } from '../../database';
+import { Database } from '../../types/database';
 
 function buildTestApp(database: Database) {
   const imdbGateway = imdbFactory('dummy');

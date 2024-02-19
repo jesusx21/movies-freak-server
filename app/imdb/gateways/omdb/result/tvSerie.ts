@@ -1,4 +1,5 @@
 import OMDBResult from './omdb';
+import { IMDBMonth } from '../../../../../types/app';
 
 class OMDBTVSerieResult extends OMDBResult {
   constructor(rawResponse: any) {
@@ -14,22 +15,24 @@ class OMDBTVSerieResult extends OMDBResult {
   }
 
   get releasedAt() {
-    const [day, month, year] = this.currentResponse.Released.split(' ');
-
     const months = {
-      Jan: 1,
-      Feb: 2,
-      Mar: 3,
-      Apr: 4,
-      May: 5,
-      Jun: 6,
-      Jul: 7,
-      Aug: 8,
-      Sep: 9,
-      Oct: 10,
-      Nov: 11,
-      Dec: 12
+      [IMDBMonth.JAN]: 1,
+      [IMDBMonth.FEB]: 2,
+      [IMDBMonth.MAR]: 3,
+      [IMDBMonth.APR]: 4,
+      [IMDBMonth.MAY]: 5,
+      [IMDBMonth.JUN]: 6,
+      [IMDBMonth.JUL]: 7,
+      [IMDBMonth.AUG]: 8,
+      [IMDBMonth.SEP]: 9,
+      [IMDBMonth.OCT]: 10,
+      [IMDBMonth.NOV]: 11,
+      [IMDBMonth.DEC]: 12
     };
+
+    const [day, month, year] : [string, IMDBMonth, string] = this.currentResponse
+      .Released
+      .split(' ');
 
     return new Date(
       Number(year),

@@ -1,13 +1,10 @@
-interface DatabaseErrorParams {
-  error?: Error;
-  name?: string;
-  message?: string;
-  info?: {};
-}
+import { DatabaseErrorParams } from '../../types/database';
+import { Json } from '../../types/common';
+
 
 export class DatabaseError extends Error {
-  readonly cause?: Error;
-  readonly info?: {};
+  readonly cause?: Json;
+  readonly info?: Json;
 
   constructor(args: DatabaseErrorParams = {}) {
     super(args.message || 'Something unexpected happened');
@@ -40,3 +37,11 @@ export class UserNotFound extends NotFound {}
 
 export class EmailAlreadyExists extends DatabaseError {}
 export class UsernameAlreadyExists extends DatabaseError {}
+
+export class IMDBIdAlreadyExists extends  DatabaseError {
+  constructor(imdbId?: string) {
+    const info = imdbId ? { imdbId } : {};
+
+    super({ info });
+  }
+}

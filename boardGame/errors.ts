@@ -1,9 +1,4 @@
-interface BoardGameErrorParams {
-  error?: Error;
-  name?: string;
-  message?: string;
-  info?: {};
-}
+import { BoardGameErrorParams } from './types';
 
 export class BoardGameError extends Error {
   readonly cause?: Error;

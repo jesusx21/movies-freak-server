@@ -1,20 +1,11 @@
-import FixturesGenerator from 'fixtures-generator';
-
-import * as schemas from './schemas';
-
-export * from './interface';
-
-export interface FixturesGeneratorOptions {
-  type?: string;
-  quantity?: number;
-  recipe?: {}[],
-}
+import FixturesGenerator from './generator';
+import schemas from './schemas';
 
 const options = {
   optionalsProbability: 0.5
 };
 
-function buildFixtureGenerator(): FixturesGenerator {
+function buildFixtureGenerator() {
   const fixtureGenerator = new FixturesGenerator(schemas, options);
 
   return fixtureGenerator;

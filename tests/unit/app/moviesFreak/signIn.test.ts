@@ -1,22 +1,28 @@
 import Sinon from 'sinon';
 
+import MoviesFreakTestCase from './testHelper';
 import SignIn from '../../../../app/moviesFreak/signIn';
-import TestCase from '../../../testHelper';
+import { Database } from '../../../../types/database';
 import { CouldNotSignIn, InvalidPassword, UserNotFound } from '../../../../app/moviesFreak/errors';
-import { Database } from '../../../../database';
 import { Session, User } from '../../../../app/moviesFreak/entities';
-import { UserParams } from '../../../../app/moviesFreak/entities/user';
+import { UserEntity } from '../../../../types/entities';
 
-export class SignInTest extends TestCase {
-  database: Database
-  user: User;
+export class SignInTest extends MoviesFreakTestCase {
+  database: Database;
+  user?: User;
+
+  constructor() {
+    super();
+
+    this.database = this.getDatabase();
+  }
 
   async setUp() {
     super.setUp();
 
     this.database = this.getDatabase();
 
-    const [userData] = this.generateFixtures<UserParams>({
+    const [userData] = await this.generateFixtures<UserEntity>({
       type: 'user',
       recipe: [
         { username: 'jon', email: 'jon@gmail.com' }
@@ -26,7 +32,9 @@ export class SignInTest extends TestCase {
     const user = new User(userData);
     user.addPassword('Password123');
 
-    this.user = await this.database.users.create(user);
+    this.user = await this.database
+      .users
+      .create(user);
   }
 
   async testSignIWithUsername() {
@@ -37,9 +45,9 @@ export class SignInTest extends TestCase {
     this.assertThat(session.id).doesExist();
     this.assertThat(session.token).doesExist();
     this.assertThat(session.expiresAt).isGreaterThan(new Date());
-    this.assertThat(session.isActive).isTrue();
+    this.assertThat(session.isActive()).isTrue();
     this.assertThat(session.user).isInstanceOf(User);
-    this.assertThat(session.user?.id).isEqual(this.user.id);
+    this.assertThat(session.user?.id).isEqual(this.user?.id);
   }
 
   async testSignIWithEmail() {
@@ -50,9 +58,9 @@ export class SignInTest extends TestCase {
     this.assertThat(session.id).doesExist();
     this.assertThat(session.token).doesExist();
     this.assertThat(session.expiresAt).isGreaterThan(new Date());
-    this.assertThat(session.isActive).isTrue();
+    this.assertThat(session.isActive()).isTrue();
     this.assertThat(session.user).isInstanceOf(User);
-    this.assertThat(session.user?.id).isEqual(this.user.id);
+    this.assertThat(session.user?.id).isEqual(this.user?.id);
   }
 
   async testUpdateAlreadyExistentActiveSession() {
@@ -70,7 +78,7 @@ export class SignInTest extends TestCase {
     this.assertThat(sessionTwo.token).isNotEqual(sessionOne.token);
     this.assertThat(sessionTwo.expiresAt).isGreaterThan(new Date());
     this.assertThat(sessionTwo.expiresAt).isNotEqual(sessionOne.expiresAt);
-    this.assertThat(sessionTwo.isActive).isTrue();
+    this.assertThat(sessionTwo.isActive()).isTrue();
     this.assertThat(sessionTwo.user).isInstanceOf(User);
     this.assertThat(sessionTwo.user?.id).isEqual(sessionOne.user?.id);
   }

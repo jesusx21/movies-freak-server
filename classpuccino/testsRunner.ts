@@ -4,10 +4,11 @@
 import colors from 'colors';
 import fs from 'fs';
 import path from 'path';
+import { ErrorAndFails, FailTestResponse } from './type';
 
 class TestRunner {
   private testDir: string;
-  private errorAndFails: {};
+  private errorAndFails: ErrorAndFails;
   private totalPassed: number;
   private totalFailed: number;
   private totalErrors: number;
@@ -47,7 +48,9 @@ class TestRunner {
     Object.keys(this.errorAndFails).forEach((testModule) => {
       Object.keys(this.errorAndFails[testModule]).forEach((testClassName) => {
         Object.keys(this.errorAndFails[testModule][testClassName]).forEach(functionName => {
-          const { fail, error }: { fail: Error, error: Error} = this.errorAndFails[testModule][testClassName][functionName];
+          const { fail, error }: FailTestResponse = (
+            this.errorAndFails[testModule][testClassName][functionName]
+          );
 
           if (fail) {
             console.log(`\n${testClassName}.${functionName}`.yellow);
@@ -100,7 +103,7 @@ class TestRunner {
         console.log(`${functionName.padEnd(99, '.')}.ok`.green);
 
         this.totalPassed += 1;
-      } catch (error) {
+      } catch (error: any) {
         await test.tearDown();
 
         if (error.constructor.name === 'AssertionError') {

@@ -1,15 +1,14 @@
-import IMDB from '../imdb/gateways/dummy/dummyGateway';
-import { Database } from '../../database';
 import { CouldNotCreateFilm } from './errors';
+import { Database } from '../../types/database';
 import { Film } from './entities';
-import { FilmResult } from '../imdb/gateways/dummy/result';
+import { FilmResult, IMDBGateway } from '../../types/app';
 
 class CreateFilm {
   database: Database;
-  imdb: IMDB;
+  imdb: IMDBGateway;
   imdbId: string;
 
-  constructor(database: Database, imdb: IMDB, imdbId: string) {
+  constructor(database: Database, imdb: IMDBGateway, imdbId: string) {
     this.database = database;
     this.imdb = imdb;
     this.imdbId = imdbId;
@@ -20,7 +19,7 @@ class CreateFilm {
 
     try {
       imdbResult = await this.imdb.fetchFilmById(this.imdbId);
-    } catch (error) {
+    } catch (error: any) {
       throw new CouldNotCreateFilm(error);
     }
 
@@ -28,7 +27,7 @@ class CreateFilm {
 
     try {
       return await this.database.films.create(film);
-    } catch (error) {
+    } catch (error: any) {
       throw new CouldNotCreateFilm(error);
     }
   }

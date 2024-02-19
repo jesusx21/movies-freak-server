@@ -1,14 +1,14 @@
 import Store from './store';
 import { Film } from '../../../app/moviesFreak/entities';
 import { FilmNotFound, NotFound } from '../errors';
-import { QueryOptions } from '../interfaces';
-import { UUID } from '../../../typescript/customTypes';
+import { QueryOptions } from '../../../types/database';
+import { UUID } from '../../../types/common';
 
 class InMemoryFilmsStore {
   private store: Store<Film>;
 
   constructor() {
-    this.store = new Store<Film>();
+    this.store = new Store();
   }
 
   create(film: Film) {
@@ -18,7 +18,7 @@ class InMemoryFilmsStore {
   async findById(filmId: UUID) {
     try {
       return await this.store.findById(filmId);
-    } catch (error) {
+    } catch (error: any) {
       if (error instanceof NotFound) {
         throw new FilmNotFound(filmId);
       }

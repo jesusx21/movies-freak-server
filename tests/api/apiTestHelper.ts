@@ -5,21 +5,11 @@ import { ClasspuccinoError } from '../../classpuccino/errors';
 import buildTestApp from './testApp';
 import MoviesFreakApp from '../../api/index';
 import TestCase from '../testHelper';
-import { Database } from '../../database';
-import { UserParams } from '../../app/moviesFreak/entities/user';
-
-enum HTTPStatusCode {
-  ok = 200,
-  created = 201,
-  noContent = 204,
-  badRequest = 400,
-  unauthorized = 401,
-  forbidden = 403,
-  notFound = 404,
-  conflict = 409,
-  preconditionFailed = 412,
-  serverError = 500
-}
+import { Database } from '../../types/database';
+import { HTTPStatusCode } from '../../boardGame/types';
+import { SignUpData } from '../../types/app';
+import { Session } from '../../types/api';
+import { UserEntity } from '../../types/entities';
 
 interface RequestParams {
   path: string;
@@ -35,7 +25,7 @@ interface GetRequestParams extends RequestParams{
   query: {}
 }
 
-export interface UserFixture extends UserParams {
+export interface UserFixture extends UserEntity {
   password: string;
 }
 
@@ -46,12 +36,18 @@ class InvalidSessionData extends ClasspuccinoError {
 }
 
 class APITestCase extends TestCase {
-  private app: MoviesFreakApp;
+  private moviesFreakApp: MoviesFreakApp;
+
+  constructor() {
+    super();
+
+    this.moviesFreakApp = this.buildTestApp(this.getDatabase());
+  }
 
   buildTestApp(database: Database) {
-    this.app = buildTestApp(database);
+    this.moviesFreakApp = buildTestApp(database);
 
-    return this.app;
+    return this.moviesFreakApp;
   }
 
   async simulatePost<T>(params: PostRequestParams): Promise<T> {
@@ -61,7 +57,7 @@ class APITestCase extends TestCase {
       statusCode = 201
     } = params;
 
-    const { body } = await request(this.app)
+    const { body } = await request(this.moviesFreakApp.getExpressApp())
       .post(`/movies-freak/api/v1${path}`)
       .send(payload)
       .expect(statusCode);
@@ -76,7 +72,7 @@ class APITestCase extends TestCase {
       statusCode = 200
     } = params;
 
-    const { body } = await request(this.app)
+    const { body } = await request(this.moviesFreakApp.getExpressApp())
       .get(`/movies-freak/api/v1${path}`)
       .query(query)
       .expect(statusCode);
@@ -84,8 +80,8 @@ class APITestCase extends TestCase {
     return body;
   }
 
-  async registerUser(data: UserFixture) {
-    const [userData] = this.generateFixtures({
+  async registerUser(data: SignUpData) {
+    const [userData] = await this.generateFixtures<UserFixture>({
       type: 'user',
       recipe: [omit(data, 'password')]
     });
@@ -98,10 +94,12 @@ class APITestCase extends TestCase {
       throw new InvalidSessionData('Password is required for register user');
     }
 
-    return this.simulatePost<UserFixture>({
+    const session = await this.simulatePost<Session>({
       path: '/sign-up',
       payload: { ...omit(userData, ['id', 'createdAt', 'updatedAt']), password: data.password }
     });
+
+    return session
   }
 }
 

@@ -1,6 +1,6 @@
 import APITestCase from '../../apiTestHelper';
 
-export default class GetFilmById extends APITestCase {
+export default class GetFilmByIdTest extends APITestCase {
   async setUp() {
     super.setUp();
 

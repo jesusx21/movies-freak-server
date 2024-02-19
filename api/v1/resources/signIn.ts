@@ -1,18 +1,17 @@
-import { Monopoly, SingleResponse } from '../../../boardGame';
+import { Monopoly  } from '../../../boardGame';
+import { HTTPStatusCode, Request, SingleResponse } from '../../../boardGame/types';
 
 import Login from '../../../app/moviesFreak/signIn';
 import { InvalidPassword, UserNotFound } from '../../../app/moviesFreak/errors';
 import { Session } from '../../../app/moviesFreak/entities';
-import { Titles } from '../interfaces';
 import {
   HTTPConflict,
   HTTPInternalError,
-  HTTPNotFound,
-  OK
+  HTTPNotFound
 } from '../../httpResponses';
 
-class SignIn extends Monopoly<Titles> {
-  async onPost({ body }): Promise<SingleResponse> {
+class SignIn extends Monopoly {
+  async onPost({ body }: Request): Promise<SingleResponse> {
     const database = this.getTitle('database');
     const login = new Login(database, body.username, body.password);
 
@@ -20,7 +19,7 @@ class SignIn extends Monopoly<Titles> {
 
     try {
       session = await login.execute();
-    } catch (error) {
+    } catch (error: any) {
       if (error instanceof UserNotFound) {
         throw new HTTPNotFound('USER_NOT_FOUND');
       }
@@ -35,7 +34,7 @@ class SignIn extends Monopoly<Titles> {
     const presenter = this.getTitle('presenters');
 
     return {
-      status: OK,
+      status: HTTPStatusCode.OK,
       data: presenter.presentSession(session)
     };
   }

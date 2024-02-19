@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "target": "ES2016",
+    "allowJs": true,
+    "strict": true,
+    "sourceMap": true,
+    "inlineSources": true,
+    "declaration": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "allowSyntheticDefaultImports": true,
+    "declarationDir": "dist/types",
+    "typeRoots": [
+      "./types",
+      "./node_modules/@types/"
+    ]
+  },
+  "include": [
+    "./types/**/*",
+    "./**/*.ts"
+  ],
+  "exclude": [
+    "./migration/*",
+    "./node_modules/**/*",
+    "./tests/**/*",
+    "./dist/**/*"
+  ]
+}

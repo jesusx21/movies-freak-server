@@ -18,6 +18,15 @@ const IMDB_ID = 'tt0212671';
 export default class CreateTVSerieTest extends TestCase {
   useCase: CreateTVSerie;
 
+  constructor() {
+    super();
+
+    const database = this.getDatabase();
+    const imdb = new DummyGateway();
+
+    this.useCase = new CreateTVSerie(database, imdb, IMDB_ID);
+  }
+
   setUp() {
     super.setUp();
 

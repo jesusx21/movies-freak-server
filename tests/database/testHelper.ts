@@ -1,12 +1,13 @@
-import knex, { Knex } from 'knex';
+import knex from 'knex';
 import knexCleaner from 'knex-cleaner';
 
 import knexfile from '../../knexfile';
 import SQLDatabase from '../../database/stores/sql';
 import TestCase from '../testHelper';
+import { Environment } from '../../types/common';
 
 class SQLTestCase extends TestCase {
-  private connection?: Knex;
+  private connection?: any;
   database?: SQLDatabase;
 
   async cleanDatabase() {
@@ -26,7 +27,7 @@ class SQLTestCase extends TestCase {
       return this.connection;
     }
 
-    const { test: config } = knexfile;
+    const config = knexfile[Environment.TEST];
     this.connection = knex(config);
 
     return this.connection;

@@ -1,11 +1,11 @@
 import { Knex } from 'knex';
 
-import { QueryOptions, QueryResponse } from '../interfaces';
+import { QueryOptions, QueryResponse } from '../../../types/database';
 import { SQLDatabaseException } from './errors';
 import { TVEpisode } from '../../../app/moviesFreak/entities';
 import { TVEpisodeNotFound } from '../errors';
 import { TVEpisodeSerializer } from './serializers';
-import { UUID } from '../../../typescript/customTypes';
+import { UUID } from '../../../types/common';
 
 class SQLTVEpisodeStore {
   private connection: Knex;
@@ -23,7 +23,7 @@ class SQLTVEpisodeStore {
       [result] = await this.connection('tv_episodes')
         .returning('*')
         .insert(dataToInsert);
-    } catch (error) {
+    } catch (error: any) {
       throw new SQLDatabaseException(error);
     }
 
@@ -50,7 +50,7 @@ class SQLTVEpisodeStore {
       }
 
       items = await query.orderBy('episode_number');
-    } catch (error) {
+    } catch (error: any) {
       throw new SQLDatabaseException(error);
     }
 
@@ -68,7 +68,7 @@ class SQLTVEpisodeStore {
         .first();
 
       return Number(result?.count);
-    } catch (error) {
+    } catch (error: any) {
       throw new SQLDatabaseException(error);
     }
   }
@@ -80,7 +80,7 @@ class SQLTVEpisodeStore {
       result = await this.connection('tv_episodes')
         .where(query)
         .first();
-    } catch (error) {
+    } catch (error: any) {
       throw new SQLDatabaseException(error);
     }
 

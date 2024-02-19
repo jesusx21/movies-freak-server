@@ -11,7 +11,7 @@ import {
   STRING,
   UUID,
   YEAR
-} from '../types';
+} from './types';
 
 const tvSerie = JSON(
   {

@@ -1,15 +1,13 @@
 import SQLTestCase from '../testHelper';
 
-import SQLDatabase from '../../../database/stores/sql';
 import { TVEpisode, TVSeason, TVSerie } from '../../../app/moviesFreak/entities';
 import { TVEpisodeNotFound } from '../../../database/stores/errors';
 import { SQLDatabaseException } from '../../../database/stores/sql/errors';
-import { UUID } from '../../../typescript/customTypes';
+import { UUID } from '../../../types/common';
 
 class TVEpisodesStoreTest extends SQLTestCase {
-  database: SQLDatabase;
-  tvSerie: TVSerie;
-  tvSeason: TVSeason;
+  tvSerie?: TVSerie;
+  tvSeason?: TVSeason;
 
   async setUp() {
     super.setUp();
@@ -28,12 +26,32 @@ class TVEpisodesStoreTest extends SQLTestCase {
 }
 
 export class CreateTVEpisodeTest extends TVEpisodesStoreTest {
-  tvEpisode: TVEpisode;
+  async testCreateTVEpisode() {
+    const tvEpsiodeCreated = await this.getDatabase()
+      .tvEpisodes
+      .create(this.buildTVEpisode());
 
-  async setUp() {
-    await super.setUp();
+    this.assertThat(tvEpsiodeCreated).isInstanceOf(TVEpisode);
+    this.assertThat(tvEpsiodeCreated.id).doesExist();
+    this.assertThat(tvEpsiodeCreated.tvSerieId).isEqual(this.tvSerie?.id);
+    this.assertThat(tvEpsiodeCreated.tvSeasonId).isEqual(this.tvSeason?.id);
+    this.assertThat(tvEpsiodeCreated.name).isEqual('How You Mother Met Me');
+    this.assertThat(tvEpsiodeCreated.imdbId).isEqual('tt3390684');
+  }
 
-    this.tvEpisode = new TVEpisode({
+  async testThrowErrorOnSQLException() {
+    const database = this.getDatabase();
+
+    this.stubFunction(database.tvEpisodes, 'connection')
+      .throws(new Error());
+
+    await this.assertThat(
+      database.tvEpisodes.create(this.buildTVEpisode())
+    ).willBeRejectedWith(SQLDatabaseException);
+  }
+
+  private buildTVEpisode() {
+    return new TVEpisode({
       imdbId: 'tt3390684',
       name: 'How You Mother Met Me',
       year: 2013,
@@ -54,37 +72,23 @@ export class CreateTVEpisodeTest extends TVEpisodesStoreTest {
       tvSerieId: this.tvSerie?.id,
     });
   }
-
-  async testCreateTVEpisode() {
-    const tvEpsiodeCreated = await this.database.tvEpisodes.create(this.tvEpisode);
-
-    this.assertThat(tvEpsiodeCreated).isInstanceOf(TVEpisode);
-    this.assertThat(tvEpsiodeCreated.id).doesExist();
-    this.assertThat(tvEpsiodeCreated.tvSerieId).isEqual(this.tvSerie.id);
-    this.assertThat(tvEpsiodeCreated.tvSeasonId).isEqual(this.tvSeason.id);
-    this.assertThat(tvEpsiodeCreated.name).isEqual('How You Mother Met Me');
-    this.assertThat(tvEpsiodeCreated.imdbId).isEqual('tt3390684');
-  }
-
-  async testThrowErrorOnSQLException() {
-    this.stubFunction(this.database.tvEpisodes, 'connection')
-      .throws(new Error());
-
-    await this.assertThat(
-      this.database.tvEpisodes.create(this.tvEpisode)
-    ).willBeRejectedWith(SQLDatabaseException);
-  }
 }
 
 export class FindByIdTest extends TVEpisodesStoreTest {
-  tvEpisodeId: UUID;
+  tvEpisodeId?: UUID;
   tvEpisodes: TVEpisode[];
+
+  constructor() {
+    super();
+
+    this.tvEpisodes = [];
+  }
 
   async setUp() {
     await super.setUp();
 
     this.tvEpisodes = await this.createTVEpisodes(
-      this.database,
+      this.getDatabase(),
       this.tvSeason,
       [
         { seasonNumber: 7, episodeNumber: 1 },
@@ -93,30 +97,38 @@ export class FindByIdTest extends TVEpisodesStoreTest {
       ]
     );
 
-    this.tvEpisodeId = this.tvEpisodes[1]?.id || this.generateUUID();
   }
 
   async testFindTvEpisodeById() {
-    const tvEpisodeFound = await this.database.tvEpisodes.findById(this.tvEpisodeId);
+    const tvEpisodeId = this.tvEpisodes[1]?.id || this.generateUUID();
+
+    const tvEpisodeFound = await this.getDatabase().
+      tvEpisodes
+      .findById(tvEpisodeId);
 
     this.assertThat(tvEpisodeFound).isInstanceOf(TVEpisode);
-    this.assertThat(tvEpisodeFound.id).isEqual(this.tvEpisodeId);
+    this.assertThat(tvEpisodeFound.id).isEqual(tvEpisodeId);
     this.assertThat(tvEpisodeFound.seasonNumber).isEqual(7);
     this.assertThat(tvEpisodeFound.episodeNumber).isEqual(2);
   }
 
   async testThrowsErrorWhenTVEpisodeIsNotFound() {
     await this.assertThat(
-      this.database.tvEpisodes.findById(this.generateUUID())
+      this.getDatabase()
+        .tvEpisodes
+        .findById(this.generateUUID())
     ).willBeRejectedWith(TVEpisodeNotFound);
   }
 
   async testThrowsErrorOnUnexpectedError() {
-    this.stubFunction(this.database.tvEpisodes, 'connection')
+    const database = this.getDatabase();
+    const tvEpisodeId = this.tvEpisodes[1]?.id || this.generateUUID();
+
+    this.stubFunction(database.tvEpisodes, 'connection')
       .throws(new Error());
 
     await this.assertThat(
-      this.database.tvEpisodes.findById(this.tvEpisodeId)
+      database.tvEpisodes.findById(tvEpisodeId)
     ).willBeRejectedWith(SQLDatabaseException);
   }
 }
@@ -124,11 +136,17 @@ export class FindByIdTest extends TVEpisodesStoreTest {
 export class FindByTVSeasonIdTest extends TVEpisodesStoreTest {
   tvSeasonId: UUID;
 
+  constructor() {
+    super();
+
+    this.tvSeasonId = this.generateUUID();
+  }
+
   async setUp() {
     await super.setUp();
 
     await this.createTVEpisodes(
-      this.database,
+      this.getDatabase(),
       this.tvSeason,
       [
         { seasonNumber: 3, episodeNumber: 1 },
@@ -143,7 +161,7 @@ export class FindByTVSeasonIdTest extends TVEpisodesStoreTest {
   }
 
   async testFindTVSeasonEpisodes() {
-    const { totalItems, items: tvEpisodes } = await this.database
+    const { totalItems, items: tvEpisodes } = await this.getDatabase()
       .tvEpisodes
       .findByTVSeasonId(this.tvSeasonId);
 
@@ -152,12 +170,12 @@ export class FindByTVSeasonIdTest extends TVEpisodesStoreTest {
 
     tvEpisodes.forEach((tvEpisode) => {
       this.assertThat(tvEpisode).isInstanceOf(TVEpisode);
-      this.assertThat(tvEpisode.tvSerieId).isEqual(this.tvSerie.id);
+      this.assertThat(tvEpisode.tvSerieId).isEqual(this.tvSerie?.id);
     });
   }
 
   async testFindWithSkip() {
-    const { totalItems, items: tvEpisodes } = await this.database
+    const { totalItems, items: tvEpisodes } = await this.getDatabase()
       .tvEpisodes
       .findByTVSeasonId(this.tvSeasonId, { skip: 2 });
 
@@ -169,7 +187,7 @@ export class FindByTVSeasonIdTest extends TVEpisodesStoreTest {
   }
 
   async testFindWithLimit() {
-    const { totalItems, items: tvEpisodes } = await this.database
+    const { totalItems, items: tvEpisodes } = await this.getDatabase()
       .tvEpisodes
       .findByTVSeasonId(this.tvSeasonId, { limit: 3 });
 
@@ -181,7 +199,7 @@ export class FindByTVSeasonIdTest extends TVEpisodesStoreTest {
   }
 
   async testFindWithSkipAndLimit() {
-    const { totalItems, items: tvEpisodes } = await this.database
+    const { totalItems, items: tvEpisodes } = await this.getDatabase()
       .tvEpisodes
       .findByTVSeasonId(this.tvSeasonId, { skip: 1, limit: 2 });
 
@@ -192,10 +210,10 @@ export class FindByTVSeasonIdTest extends TVEpisodesStoreTest {
   }
 
   async testReturnEmptyListWhenThereIsNotTVEpisodes() {
-    const tvSeason = await this.createTVSeason(this.database, this.tvSerie);
+    const tvSeason = await this.createTVSeason(this.getDatabase(), this.tvSerie);
     const tvSeasonId = tvSeason.id || this.generateUUID();
 
-    const { totalItems, items: tvEpisodes } = await this.database
+    const { totalItems, items: tvEpisodes } = await this.getDatabase()
       .tvEpisodes
       .findByTVSeasonId(tvSeasonId);
 
@@ -204,11 +222,13 @@ export class FindByTVSeasonIdTest extends TVEpisodesStoreTest {
   }
 
   async testThrowErrorOnUnexpectedError() {
-    this.stubFunction(this.database.tvEpisodes, 'connection')
+    const database = this.getDatabase();
+
+    this.stubFunction(database.tvEpisodes, 'connection')
       .throws(new Error());
 
     await this.assertThat(
-      this.database.tvEpisodes.findByTVSeasonId(this.tvSeasonId)
+      database.tvEpisodes.findByTVSeasonId(this.tvSeasonId)
     ).willBeRejectedWith(SQLDatabaseException);
   }
 }

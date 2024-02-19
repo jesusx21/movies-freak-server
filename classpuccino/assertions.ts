@@ -75,7 +75,7 @@ class Assertions {
       await this.actual;
 
       throw new AssertionError('Expected async function to be rejected, but was successful');
-    } catch (error) {
+    } catch (error: any) {
       if (!(error instanceof Error)) {
         throw new AssertionError(
           `Error throw ${error} is not an instance of any Error class`
@@ -104,7 +104,7 @@ class Assertions {
       throw new AssertionError(
         `Expected sync function to throw ${errorKlass.name}, but was successful`
       );
-    } catch (error) {
+    } catch (error: any) {
       if (error instanceof errorKlass) {
         return error;
       }

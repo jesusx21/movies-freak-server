@@ -1,16 +1,12 @@
 import Entity from './entity';
 import TVSeason from './tvSeason';
-import { UUID } from '../../../typescript/customTypes';
+import { TVSerieEntity } from '../../../types/entities';
 
-export interface TVSerieParams {
-  id?: UUID;
+
+class TVSerie extends Entity implements TVSerieEntity {
   imdbId: string;
   name: string;
   plot: string;
-  years: {
-    from: string;
-    to: string;
-  };
   rated: string;
   genre: string[];
   writers: string[];
@@ -19,29 +15,14 @@ export interface TVSerieParams {
   imdbRating: string;
   totalSeasons: number;
   releasedAt: Date;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
-
-class TVSerie extends Entity {
-  imdbId: string;
-  name: string;
-  plot: string;
   years: {
     from: string;
     to: string;
   };
-  rated: string;
-  genre: string[];
-  writers: string[];
-  actors: string[];
-  poster: string;
-  imdbRating: string;
-  totalSeasons: number;
-  releasedAt: Date;
+
   private tvSeasons: TVSeason[];
 
-  constructor(args: TVSerieParams) {
+  constructor(args: TVSerieEntity) {
     super(args.id, args.createdAt, args.updatedAt);
 
     this.imdbId = args.imdbId;

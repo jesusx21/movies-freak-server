@@ -7,7 +7,7 @@ import IMDB_TV_SEASON_RESPONSE from '../../data/imdbTVSeasonResponse';
 import IMDB_TV_SERIE_RESPONSE from '../../data/imdbTVSerieResponse';
 
 import OMDBGateway from '../../../../app/imdb/gateways/omdb/omdbGateway';
-import { IMDBError } from '../../../../app/imdb/errors';
+import { IMDBError, IncorrectIMDBId, InvalidAPIKey } from '../../../../app/imdb/errors';
 import {
   FilmResult,
   TVEpisodeResult,
@@ -15,15 +15,23 @@ import {
   TVSerieResult
 } from '../../../../app/imdb/gateways/omdb/result';
 
+
 class OMDBGatewayTest extends TestCase {
   gateway: OMDBGateway;
+
+  constructor() {
+    super()
+
+    this.gateway = new OMDBGateway('http://fake-image.com', 'fake-api-key');
+  }
 
   setUp() {
     super.setUp();
 
-    this.gateway = new OMDBGateway();
+    this.gateway = new OMDBGateway('http://fake-image.com', 'fake-api-key');
   }
 }
+
 
 export class FetchFilmByIdTest extends OMDBGatewayTest {
   async testRequestFilmByIMDBId() {
@@ -36,7 +44,6 @@ export class FetchFilmByIdTest extends OMDBGatewayTest {
 
     this.assertThat(result).isInstanceOf(FilmResult);
     this.assertThat(result.isRequestSuccesful()).isTrue();
-    this.assertThat(result._isCollection()).isFalse();
     this.assertThat(result.title).isEqual(data.Title);
     this.assertThat(result.year).isEqual(data.Year);
     this.assertThat(result.rated).isEqual(data.Rated);
@@ -69,11 +76,9 @@ export class FetchFilmByIdTest extends OMDBGatewayTest {
       .expects('get')
       .resolves({ data: { Response: 'False', Error: 'Incorrect IMDb ID.' } });
 
-    const error = await this.assertThat(
+    await this.assertThat(
       this.gateway.fetchFilmById('tt0111161')
-    ).willBeRejectedWith(IMDBError);
-
-    this.assertThat(error.message).isEqual('Incorrect IMDb ID.');
+    ).willBeRejectedWith(IncorrectIMDBId);
   }
 
   async testErrorOnInvalidApiKey() {
@@ -83,13 +88,12 @@ export class FetchFilmByIdTest extends OMDBGatewayTest {
       .expects('get')
       .rejects({ response: { data } });
 
-    const error = await this.assertThat(
+    await this.assertThat(
       this.gateway.fetchFilmById('tt011161')
-    ).willBeRejectedWith(IMDBError);
-
-    this.assertThat(error.message).isEqual('Invalid API key!');
+    ).willBeRejectedWith(InvalidAPIKey);
   }
 }
+
 
 export class FetchTVSerieByIdTest extends OMDBGatewayTest {
   async testRequestForATVSerieByIMDBId() {
@@ -102,7 +106,6 @@ export class FetchTVSerieByIdTest extends OMDBGatewayTest {
 
     this.assertThat(result).isInstanceOf(TVSerieResult);
     this.assertThat(result.isRequestSuccesful()).isTrue();
-    this.assertThat(result._isCollection()).isFalse();
     this.assertThat(result.title).isEqual(data.Title);
     this.assertThat(result.years).isEqual({ from: '2000', to: '2006' });
     this.assertThat(result.rated).isEqual(data.Rated);
@@ -132,11 +135,9 @@ export class FetchTVSerieByIdTest extends OMDBGatewayTest {
       .expects('get')
       .resolves({ data: { Response: 'False', Error: 'Incorrect IMDb ID.' } });
 
-    const error = await this.assertThat(
+    await this.assertThat(
       this.gateway.fetchTVSerieById('tt0111161')
-    ).willBeRejectedWith(IMDBError);
-
-    this.assertThat(error.message).isEqual('Incorrect IMDb ID.');
+    ).willBeRejectedWith(IncorrectIMDBId);
   }
 
   async testErrorOnInvalidApiKey() {
@@ -146,13 +147,12 @@ export class FetchTVSerieByIdTest extends OMDBGatewayTest {
       .expects('get')
       .rejects({ response: { data } });
 
-    const error = await this.assertThat(
+    await this.assertThat(
       this.gateway.fetchTVSerieById('tt011161')
-    ).willBeRejectedWith(IMDBError);
-
-    this.assertThat(error.message).isEqual('Invalid API key!');
+    ).willBeRejectedWith(InvalidAPIKey);
   }
 }
+
 
 export class FetchTVSeasonBySerieIdTest extends OMDBGatewayTest {
   async testRequestForATVSeasonByIMDBId() {
@@ -184,11 +184,9 @@ export class FetchTVSeasonBySerieIdTest extends OMDBGatewayTest {
       .expects('get')
       .resolves({ data: { Response: 'False', Error: 'Incorrect IMDb ID.' } });
 
-    const error = await this.assertThat(
+    await this.assertThat(
       this.gateway.fetchTVSeasonBySerieId('tt0212671', 1)
-    ).willBeRejectedWith(IMDBError);
-
-    this.assertThat(error.message).isEqual('Incorrect IMDb ID.');
+    ).willBeRejectedWith(IncorrectIMDBId);
   }
 
   async testErrorOnInvalidApiKey() {
@@ -198,13 +196,12 @@ export class FetchTVSeasonBySerieIdTest extends OMDBGatewayTest {
       .expects('get')
       .rejects({ response: { data } });
 
-    const error = await this.assertThat(
+    await this.assertThat(
       this.gateway.fetchTVSeasonBySerieId('tt0212671', 1)
-    ).willBeRejectedWith(IMDBError);
-
-    this.assertThat(error.message).isEqual('Invalid API key!');
+    ).willBeRejectedWith(InvalidAPIKey);
   }
 }
+
 
 export class FetchTVEpisodeByIdTest extends OMDBGatewayTest {
   async testRequestTVEpisodeByIMDBId() {
@@ -217,7 +214,6 @@ export class FetchTVEpisodeByIdTest extends OMDBGatewayTest {
 
     this.assertThat(result).isInstanceOf(TVEpisodeResult);
     this.assertThat(result.isRequestSuccesful()).isTrue();
-    this.assertThat(result._isCollection()).isFalse();
     this.assertThat(result.title).isEqual(data.Title);
     this.assertThat(result.year).isEqual(data.Year);
     this.assertThat(result.numberOfSeason).isEqual(Number(data.Season));
@@ -248,11 +244,9 @@ export class FetchTVEpisodeByIdTest extends OMDBGatewayTest {
       .expects('get')
       .resolves({ data: { Response: 'False', Error: 'Incorrect IMDb ID.' } });
 
-    const error = await this.assertThat(
+    await this.assertThat(
       this.gateway.fetchTVEpisodeById('tt0111161')
-    ).willBeRejectedWith(IMDBError);
-
-    this.assertThat(error.message).isEqual('Incorrect IMDb ID.');
+    ).willBeRejectedWith(IncorrectIMDBId);
   }
 
   async testErrorOnInvalidApiKey() {
@@ -262,10 +256,8 @@ export class FetchTVEpisodeByIdTest extends OMDBGatewayTest {
       .expects('get')
       .rejects({ response: { data } });
 
-    const error = await this.assertThat(
+    await this.assertThat(
       this.gateway.fetchTVEpisodeById('tt011161')
-    ).willBeRejectedWith(IMDBError);
-
-    this.assertThat(error.message).isEqual('Invalid API key!');
+    ).willBeRejectedWith(InvalidAPIKey);
   }
 }

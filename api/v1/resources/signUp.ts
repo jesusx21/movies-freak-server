@@ -1,13 +1,24 @@
-import { Monopoly, SingleResponse } from '../../../boardGame';
+import { Monopoly } from '../../../boardGame';
+import { HTTPStatusCode, Request, SingleResponse } from '../../../boardGame/types';
 
 import Register from '../../../app/moviesFreak/signUp';
-import { CREATED, HTTPConflict, HTTPInternalError } from '../../httpResponses';
+import { HTTPConflict, HTTPInternalError } from '../../httpResponses';
 import { EmailAlreadyUsed, UsernameAlreadyUsed } from '../../../app/moviesFreak/errors';
 import { Session } from '../../../app/moviesFreak/entities';
-import { Titles } from '../interfaces';
 
-class SignUp extends Monopoly<Titles> {
-  async onPost({ body }): Promise<SingleResponse> {
+interface SignUpRequest extends Request {
+  body: {
+    name: string;
+    username: string;
+    lastName: string;
+    password: string;
+    email: string;
+    birthdate: Date;
+  }
+}
+
+class SignUp extends Monopoly {
+  async onPost({ body }: SignUpRequest): Promise<SingleResponse> {
     const database = this.getTitle('database');
     const signUp = new Register(database, body);
 
@@ -15,7 +26,7 @@ class SignUp extends Monopoly<Titles> {
 
     try {
       session = await signUp.execute();
-    } catch (error) {
+    } catch (error: any) {
       if (error instanceof EmailAlreadyUsed) {
         throw new HTTPConflict('EMAIL_ALREADY_USED');
       }
@@ -30,7 +41,7 @@ class SignUp extends Monopoly<Titles> {
     const presenter = this.getTitle('presenters');
 
     return {
-      status: CREATED,
+      status: HTTPStatusCode.CREATED,
       data: presenter.presentSession(session)
     };
   }

@@ -30,4 +30,22 @@ export class DriverNotSupported extends IMDBError {
     this.driver = driver;
   }
 }
+
+export class IncorrectIMDBId extends IMDBError {
+  constructor() {
+    super({
+      message: 'Incorrect IMDB Id'
+    });
+  }
+}
+
+export class InvalidAPIKey extends IMDBError {
+  constructor() {
+    super({
+      message: 'Invalid API key'
+    });
+  }
+}
+
+export class MissingIMDBCredentials extends IMDBError {}
 export class ResultIsNotACollection extends IMDBError {}

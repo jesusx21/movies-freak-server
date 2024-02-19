@@ -1,18 +1,26 @@
 // Update with your config settings.
 
-/**
- * @type { Object.<string, import("knex").Knex.Config> }
- */
-module.exports = {
-  test: {
+import { Knex } from 'knex';
+import { Environment } from './types/common';
+
+type knexConfig = {
+  [Environment.TEST]: Knex.Config;
+  [Environment.DEVELOPMENT]: Knex.Config;
+  [Environment.STAGING]: Knex.Config;
+  [Environment.PRODUCTION]: Knex.Config;
+};
+
+const knexConfig: knexConfig = {
+  [Environment.TEST]: {
     client: 'postgres',
     connection: {
       database: 'movies_freak_test',
-      user: 'postgres'
+      user: 'postgres',
+      password: 'postgres'
     }
   },
 
-  development: {
+  [Environment.DEVELOPMENT]: {
     client: 'postgres',
     connection: {
       database: 'movies_freak_dev',
@@ -20,7 +28,7 @@ module.exports = {
     }
   },
 
-  staging: {
+  [Environment.STAGING]: {
     client: 'postgresql',
     connection: {
       database: 'my_db',
@@ -36,7 +44,7 @@ module.exports = {
     }
   },
 
-  production: {
+  [Environment.PRODUCTION]: {
     client: 'postgresql',
     connection: {
       database: 'my_db',
@@ -52,3 +60,5 @@ module.exports = {
     }
   }
 };
+
+export default knexConfig;

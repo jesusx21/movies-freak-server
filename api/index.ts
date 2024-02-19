@@ -3,17 +3,22 @@ import express from 'express';
 import morgan from 'morgan';
 import 'express-async-errors';
 
-import { Database } from '../database';
-import IMDB from '../app/imdb/gateways/dummy/dummyGateway';
+import { Monopoly } from '../boardGame';
+import { TokenNotUsed } from '../boardGame/errors';
+import { Response } from '../boardGame/types';
+
 import MoviesFreakAPI from './v1/resources';
 import Presenters from './v1/presenters';
 import { HTTPError, HTTPInternalError } from './httpResponses';
-import { Monopoly, MultipleRespponse, SingleResponse } from '../boardGame';
-import { Titles } from './v1/interfaces';
+import { IMDBGateway } from '../types/app';
+import { Database } from '../types/database';
+
+class TokenNotSupported extends Error {}
+class PlayNotSupported extends Error {}
 
 interface EndpointParams {
   path: string;
-  resourceInstance: Monopoly<Titles>;
+  resourceInstance: Monopoly;
   middlewares: Function[];
 }
 
@@ -25,16 +30,20 @@ const RESOURCE_EVENTS_SUPPORTED = [
   'onDelete'
 ];
 
-const ENDPOINTS = {};
+interface Endpoints {
+  [resource: string]: EndpointParams[];
+};
+
+const ENDPOINTS: Endpoints = {};
 
 class MoviesFreakApp {
-  private app: express;
+  private app: express.Application;
   readonly database: Database;
-  readonly imdb: IMDB;
+  readonly imdb: IMDBGateway;
   private presenters: Presenters;
   private router: express.Router;
 
-  constructor(database: Database, imdbGateway: IMDB) {
+  constructor(database: Database, imdbGateway: IMDBGateway) {
     this.app = express();
 
     this.database = database;
@@ -73,6 +82,10 @@ class MoviesFreakApp {
     return this;
   }
 
+  getExpressApp() {
+    return this.app;
+  }
+
   getDatabase() {
     return this.database;
   }
@@ -87,7 +100,7 @@ class MoviesFreakApp {
     moviesFreakAPI.buildAPI();
   }
 
-  registerResource(resourcePath: string, resourceInstance: Monopoly<Titles>, middlewares: Function[] = []) {
+  registerResource(resourcePath: string, resourceInstance: Monopoly, middlewares: Function[] = []) {
     const [resource, path = ''] = resourcePath.split('/');
 
     if (!ENDPOINTS[resource]) {
@@ -110,15 +123,39 @@ class MoviesFreakApp {
         RESOURCE_EVENTS_SUPPORTED.forEach((eventName) => {
           const verb = eventName.substring(2).toLowerCase();
 
-          if (!resourceInstance[eventName]) {
-            return;
+          let play: Function;
+
+          switch (verb) {
+            case 'delete':
+              play = resourceRouter.delete.bind(resourceRouter);
+              break;
+            case 'get':
+              play = resourceRouter.get.bind(resourceRouter);
+              break;
+            case 'post':
+              play = resourceRouter.post.bind(resourceRouter);
+              break;
+            case 'put':
+              play = resourceRouter.put.bind(resourceRouter);
+              break;
+            default:
+              // throw new PlayNotSupported(verb);
+              return;
           }
 
-          resourceRouter[verb](
-            `/${path}`,
-            middlewares,
-            this.buildController(resourceInstance, eventName)
-          );
+          try {
+            play(
+              `/${path}`,
+              middlewares,
+              this.buildController(resourceInstance, eventName)
+            );
+          } catch (error: any) {
+            if (error instanceof TokenNotUsed) {
+              return;
+            }
+
+            throw error;
+          }
         });
       });
 
@@ -175,17 +212,40 @@ class MoviesFreakApp {
     return process.env.NODE_ENV !== 'production';
   }
 
-  private buildController(resource: Monopoly<Titles>, tokenName: string) {
-    return async (req: express.Request, res: express.Router): Promise<express.Response> => {
-      let result: SingleResponse | MultipleRespponse;
+  private buildController(resource: Monopoly, tokenName: string) {
+    return async (req: express.Request, res: express.Response): Promise<express.Response> => {
+      let result: Response;
 
       resource.setTitle('database', this.database);
       resource.setTitle('imdb', this.imdb);
       resource.setTitle('presenters', this.presenters);
 
+      let moveToken: Function;
+
+      switch (tokenName) {
+        case 'onGet':
+          moveToken = resource.onGet.bind(resource);
+          break;
+        case 'onPost':
+          moveToken = resource.onPost.bind(resource);
+          break;
+        case 'onPut':
+          moveToken = resource.onPut.bind(resource);
+          break;
+        case 'onDelete':
+          moveToken = resource.onDelete.bind(resource);
+          break;
+        default:
+          throw new TokenNotSupported(tokenName);
+      }
+
       try {
-        result = await resource[tokenName](req);
-      } catch (error) {
+        result = await moveToken(req);
+      } catch (error: any) {
+        if (error instanceof TokenNotUsed) {
+          throw error;
+        }
+
         if (!(error instanceof HTTPError)) {
           // eslint-disable-next-line no-ex-assign
           error = new HTTPInternalError(error);

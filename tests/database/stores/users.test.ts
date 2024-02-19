@@ -1,18 +1,25 @@
 import SQLTestCase from '../testHelper';
 
+import SQLDatabase from '../../../database/stores/sql';
 import { User } from '../../../app/moviesFreak/entities';
+import { UUID } from '../../../types/common';
 import { SQLDatabaseException } from '../../../database/stores/sql/errors';
 import {
   EmailAlreadyExists,
   UserNotFound,
   UsernameAlreadyExists
 } from '../../../database/stores/errors';
-import SQLDatabase from '../../../database/stores/sql';
-import { UUID } from '../../../typescript/customTypes';
 
 class UsersStoreTest extends SQLTestCase {
   database: SQLDatabase;
   users: User[];
+
+  constructor() {
+    super();
+
+    this.database = this.getDatabase();
+    this.users = [];
+  }
 
   async setUp() {
     super.setUp();
@@ -36,17 +43,16 @@ class UsersStoreTest extends SQLTestCase {
 export class CreateUserTest extends UsersStoreTest {
   user: User;
 
+  constructor() {
+    super();
+
+    this.user = this.buildUser();
+  }
+
   async setUp() {
     await super.setUp();
 
-    this.user = new User({
-      name: 'Peter',
-      lastName: 'Parker',
-      username: 'peterB',
-      email: 'peterb@gmail.com',
-      birthdate: new Date(1989, 7, 16)
-    });
-
+    this.user = this.buildUser();
     this.user.addPassword('Password1.');
   }
 
@@ -94,10 +100,26 @@ export class CreateUserTest extends UsersStoreTest {
       this.database.users.create(this.user)
     ).willBeRejectedWith(SQLDatabaseException);
   }
+
+  private buildUser() {
+    return new User({
+      name: 'Peter',
+      lastName: 'Parker',
+      username: 'peterB',
+      email: 'peterb@gmail.com',
+      birthdate: new Date(1989, 7, 16)
+    });
+  }
 }
 
 export class FindUserByIdTest extends UsersStoreTest {
   userId: UUID;
+
+  constructor() {
+    super();
+
+    this.userId = this.generateUUID();
+  }
 
   async setUp() {
     await super.setUp();

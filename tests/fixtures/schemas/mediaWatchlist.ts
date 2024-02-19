@@ -4,7 +4,7 @@ import {
   INTEGER,
   JSON,
   UUID
-} from '../types';
+} from './types';
 
 const mediaWatchlist = JSON(
   {

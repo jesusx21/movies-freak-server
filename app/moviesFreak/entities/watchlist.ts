@@ -1,16 +1,5 @@
 import Entity from './entity';
-import { MarathonType, UUID } from '../../../typescript/customTypes';
-
-export interface WatchlistParams {
-  id?: UUID;
-  name: string;
-  type: MarathonType;
-  description: string;
-  totalFilms?: number;
-  totalTVEpisodes?: number;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
+import { MarathonType, WatchlistEntity } from '../../../types/entities';
 
 class Watchlist extends Entity {
   name: string;
@@ -19,7 +8,7 @@ class Watchlist extends Entity {
   totalFilms?: number;
   totalTVEpisodes?: number;
 
-  constructor(args: WatchlistParams) {
+  constructor(args: WatchlistEntity) {
     super(args.id, args.createdAt, args.updatedAt);
 
     this.name = args.name;

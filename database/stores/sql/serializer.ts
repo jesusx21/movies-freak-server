@@ -1,4 +1,7 @@
-import { isNil } from 'lodash';
+import { isNil, get as getKey, set as setKey } from 'lodash';
+
+import { FieldObject, FieldOptions } from '../../../types/serializer';
+import { Json } from '../../../types/common';
 
 export class SerializerError extends Error {}
 
@@ -8,46 +11,40 @@ export class MissingSchema extends SerializerError {
   }
 }
 
-interface fieldOptions {
-  from?: string;
-  as?: string;
-}
-
-interface fieldObject {
-  name: string;
-  options?: fieldOptions;
-}
-
-class Schema {
+export class Schema {
   private fields: string[];
 
   constructor() {
     this.fields = [];
   }
 
-  addField(field: fieldObject) {
-    this[field.name] = field.options;
+  addField(field: FieldObject) {
+    setKey(this, field.name, field.options)
 
     this.fields.push(field.name);
   }
 
+  getField(fieldName: string) {
+    return getKey(this, fieldName)
+  }
+
   forEachField(callback: Function) {
-    this.fields.forEach((field: string) => callback(field, this[field]));
+    this.fields.forEach((field: string) => callback(field, getKey(this, field)));
   }
 }
 
 class Field {
-  readonly name: string:
-  readonly options: fieldOptions;
+  readonly name: string;
+  readonly options: FieldOptions;
 
-  constructor(name: string, options: fieldOptions = {}) {
+  constructor(name: string, options: FieldOptions = {}) {
     this.name = name;
     this.options = options;
   }
 }
 
 class Serializer<T> {
-  schema: Schema;
+  schema?: Schema;
   private target: T | any;
 
   constructor(target: T) {
@@ -61,7 +58,7 @@ class Serializer<T> {
   addSchema(...args: Field[]) {
     this.schema = new Schema();
 
-    args.forEach((field: Field) => this.schema.addField(field));
+    args.forEach((field: Field) => this.schema?.addField(field));
 
     return this;
   }
@@ -71,11 +68,11 @@ class Serializer<T> {
       throw new MissingSchema();
     }
 
-    const result = {};
+    const result: Json = {};
 
-    this.schema.forEachField((field, options) => {
+    this.schema.forEachField((field: string, options: FieldOptions) => {
       const key = options.from || field;
-      let value = data[field];
+      let value = getKey(data, field);
 
       if (options.as === 'array') {
         value = value?.split(',');
@@ -89,16 +86,16 @@ class Serializer<T> {
     return new this.target(result);
   }
 
-  toJSON(entity: T) {
+  toJSON(entity: T | Json): Json {
     if (!this.schema) {
       throw new MissingSchema();
     }
 
-    const result = {};
+    const result: Json = {};
 
-    this.schema.forEachField((field: string, options: fieldOptions) => {
+    this.schema.forEachField((field: string, options: FieldOptions) => {
       const key = options.from || field;
-      let value: any = entity[key];
+      let value = getKey(entity, key);
 
       if (isNil(value)) {
         value = undefined;
@@ -115,7 +112,7 @@ class Serializer<T> {
   }
 }
 
-export function field(name: string, options: fieldOptions = {}) {
+export function field(name: string, options: FieldOptions = {}) {
   return new Field(name, options);
 }
 

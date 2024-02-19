@@ -1,15 +1,12 @@
 import SQLTestCase from '../testHelper';
 
 import Serializer, { SerializerError } from '../../../database/stores/sql/serializer';
-import SQLDatabase from '../../../database/stores/sql';
 import { Film } from '../../../app/moviesFreak/entities';
-import { FilmNotFound } from '../../../database/stores/errors';
+import { FilmNotFound, IMDBIdAlreadyExists } from '../../../database/stores/errors';
 import { SQLDatabaseException } from '../../../database/stores/sql/errors';
-import { UUID } from '../../../typescript/customTypes';
+import { UUID } from '../../../types/common';
 
 class FilmsStoreTest extends SQLTestCase {
-  database: SQLDatabase;
-
   setUp() {
     super.setUp();
 
@@ -24,31 +21,10 @@ class FilmsStoreTest extends SQLTestCase {
 }
 
 export class CreateFilmTest extends FilmsStoreTest {
-  private film: Film;
-
-  setUp() {
-    super.setUp();
-
-    this.film = new Film({
-      name: 'It Chapter I',
-      plot: 'Is about a serial clown killer',
-      title: 'It',
-      year: '2017',
-      rated: 'pg-13',
-      runtime: '2 horas y media',
-      director: 'El Andy Muscchieti',
-      poster: 'www.film.com/poster',
-      production: 'Warner Bros',
-      genre: ['coming out of age', 'thriller', 'horror'],
-      writers: ['I dunno'],
-      actors: ['Billy', 'Tom', 'Mike'],
-      imdbId: '45s4d7fsd',
-      imdbRating: '10 out of 10'
-    });
-  }
-
   async testCreateFilm() {
-    const filmCreated = await this.database.films.create(this.film);
+    const filmCreated = await this.getDatabase()
+      .films
+      .create(this.buildFilm());
 
     this.assertThat(filmCreated).isInstanceOf(Film);
     this.assertThat(filmCreated.id).doesExist();
@@ -69,34 +45,55 @@ export class CreateFilmTest extends FilmsStoreTest {
   }
 
   async testThrowErrorWhenUniqueFieldIsRepeated() {
-    await this.database.films.create(this.film);
+    await this.getDatabase()
+      .films
+      .create(this.buildFilm());
 
-    const error: SQLDatabaseException = await this.assertThat(
-      this.database.films.create(this.film)
-    ).willBeRejectedWith(SQLDatabaseException);
-
-    this.assertThat(error.message).hasSubstring(
-      'duplicate key value violates unique constraint "films_imdb_id_unique"'
-    );
+    await this.assertThat(
+      this.getDatabase()
+        .films
+        .create(this.buildFilm())
+    ).willBeRejectedWith(IMDBIdAlreadyExists);
   }
 
   async testThrowErrorOnSerializationError() {
-    this.mockClass(Serializer<Film>, 'static')
+    this.mockClass(Serializer<Film>)
       .expects('fromJSON')
       .throws(new SerializerError());
 
     await this.assertThat(
-      this.database.films.create(this.film)
+      this.getDatabase()
+        .films
+        .create(this.buildFilm())
     ).willBeRejectedWith(SerializerError);
   }
 
   async testThrowErrorOnSQLException() {
-    this.stubFunction(this.database.films, 'connection')
+    this.stubFunction(this.getDatabase().films, 'connection')
       .throws(new SerializerError());
 
     await this.assertThat(
-      this.database.films.create(this.film)
+      this.getDatabase().films.create(this.buildFilm())
     ).willBeRejectedWith(SQLDatabaseException);
+  }
+
+  private buildFilm() {
+    return new Film({
+      name: 'It Chapter I',
+      plot: 'Is about a serial clown killer',
+      title: 'It',
+      year: '2017',
+      rated: 'pg-13',
+      runtime: '2 horas y media',
+      director: 'El Andy Muscchieti',
+      poster: 'www.film.com/poster',
+      production: 'Warner Bros',
+      genre: ['coming out of age', 'thriller', 'horror'],
+      writers: ['I dunno'],
+      actors: ['Billy', 'Tom', 'Mike'],
+      imdbId: '45s4d7fsd',
+      imdbRating: '10 out of 10'
+    });
   }
 }
 
@@ -104,11 +101,18 @@ export class FindByIdTest extends FilmsStoreTest {
   private films: Film[];
   private filmId: UUID;
 
+  constructor() {
+    super();
+
+    this.films = [];
+    this.filmId = this.generateUUID();
+  }
+
   async setUp() {
     super.setUp();
 
     this.films = await this.createFilms(
-      this.database,
+      this.getDatabase(),
       [
         { name: 'It Chapter I', plot: 'A Horror Movie' },
         { name: 'It Chapter III', plot: 'A Third Horror Movie' },
@@ -124,7 +128,9 @@ export class FindByIdTest extends FilmsStoreTest {
   }
 
   async testFindFilmById() {
-    const filmFound = await this.database.films.findById(this.filmId);
+    const filmFound = await this.getDatabase()
+      .films
+      .findById(this.filmId);
 
     this.assertThat(filmFound).isInstanceOf(Film);
     this.assertThat(filmFound.id).isEqual(this.films[2].id);
@@ -134,25 +140,31 @@ export class FindByIdTest extends FilmsStoreTest {
 
   async testThrowsErrorWhenFilmIsNotFound() {
     await this.assertThat(
-      this.database.films.findById(this.generateUUID())
+      this.getDatabase()
+        .films
+        .findById(this.generateUUID())
     ).willBeRejectedWith(FilmNotFound);
   }
 
   async testThrowsErrorOnUnexpectedError() {
-    this.stubFunction(this.database.films, 'connection')
+    this.stubFunction(this.getDatabase().films, 'connection')
       .throws(new SerializerError());
 
     await this.assertThat(
-      this.database.films.findById(this.filmId)
+      this.getDatabase()
+        .films
+        .findById(this.filmId)
     ).willBeRejectedWith(SQLDatabaseException);
   }
 }
 
 export class FindTest extends FilmsStoreTest {
   async testFindAllFilms() {
-    await this.createFilms(this.database, 5);
+    await this.createFilms(this.getDatabase(), 5);
 
-    const { totalItems, items: films } = await this.database.films.find();
+    const { totalItems, items: films } = await this.getDatabase()
+      .films
+      .find();
 
     this.assertThat(films).hasLengthOf(5);
     this.assertThat(totalItems).isEqual(5);
@@ -161,7 +173,7 @@ export class FindTest extends FilmsStoreTest {
 
   async testFindWithSkip() {
     await this.createFilms(
-      this.database,
+      this.getDatabase(),
       [
         { name: 'Midsomar' },
         { name: 'Nimona' },
@@ -171,7 +183,9 @@ export class FindTest extends FilmsStoreTest {
       ]
     );
 
-    const { totalItems, items: films } = await this.database.films.find({ skip: 2 });
+    const { totalItems, items: films } = await this.getDatabase()
+      .films
+      .find({ skip: 2 });
 
     this.assertThat(films).hasLengthOf(3);
     this.assertThat(totalItems).isEqual(5);
@@ -182,7 +196,7 @@ export class FindTest extends FilmsStoreTest {
 
   async testFindWithLimit() {
     await this.createFilms(
-      this.database,
+      this.getDatabase(),
       [
         { name: 'Midsomar' },
         { name: 'Nimona' },
@@ -192,7 +206,9 @@ export class FindTest extends FilmsStoreTest {
       ]
     );
 
-    const { totalItems, items: films } = await this.database.films.find({ limit: 3 });
+    const { totalItems, items: films } = await this.getDatabase()
+      .films
+      .find({ limit: 3 });
 
     this.assertThat(films).hasLengthOf(3);
     this.assertThat(totalItems).isEqual(5);
@@ -203,7 +219,7 @@ export class FindTest extends FilmsStoreTest {
 
   async testFindWithSkipAndLimit() {
     await this.createFilms(
-      this.database,
+      this.getDatabase(),
       [
         { name: 'Midsomar' },
         { name: 'Nimona' },
@@ -213,7 +229,9 @@ export class FindTest extends FilmsStoreTest {
       ]
     );
 
-    const { totalItems, items: films } = await this.database.films.find({ limit: 2, skip: 1 });
+    const { totalItems, items: films } = await this.getDatabase()
+      .films
+      .find({ limit: 2, skip: 1 });
 
     this.assertThat(films).hasLengthOf(2);
     this.assertThat(totalItems).isEqual(5);
@@ -222,18 +240,22 @@ export class FindTest extends FilmsStoreTest {
   }
 
   async testReturnEmptyListWhenThereIsNotFilms() {
-    const { totalItems, items: films } = await this.database.films.find();
+    const { totalItems, items: films } = await this.getDatabase()
+      .films
+      .find();
 
     this.assertThat(films).isEmpty();
     this.assertThat(totalItems).isEqual(0);
   }
 
   async testThrowErrorOnUnexpectedError() {
-    this.stubFunction(this.database.films, 'connection')
+    this.stubFunction(this.getDatabase().films, 'connection')
       .throws(new SerializerError());
 
     await this.assertThat(
-      this.database.films.find()
+      this.getDatabase()
+        .films
+        .find()
     ).willBeRejectedWith(SQLDatabaseException);
   }
 }

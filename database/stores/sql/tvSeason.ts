@@ -1,11 +1,11 @@
 import { Knex } from 'knex';
 
-import { QueryOptions, QueryResponse } from '../interfaces';
+import { Json, UUID } from '../../../types/common';
+import { QueryOptions, QueryResponse } from '../../../types/database';
 import { SQLDatabaseException } from './errors';
 import { TVSeason } from '../../../app/moviesFreak/entities';
 import { TVSeasonNotFound } from '../errors';
 import { TVSeasonSerializer } from './serializers';
-import { UUID } from '../../../typescript/customTypes';
 
 class SQLTVSeasonStore {
   private connection: Knex;
@@ -23,7 +23,7 @@ class SQLTVSeasonStore {
       [result] = await this.connection('tv_seasons')
         .returning('*')
         .insert(dataToInsert);
-    } catch (error) {
+    } catch (error: any) {
       throw new SQLDatabaseException(error);
     }
 
@@ -35,7 +35,7 @@ class SQLTVSeasonStore {
   }
 
   async findByTVSerieId(tvSerieId: UUID, options: QueryOptions = {}): Promise<QueryResponse<TVSeason>> {
-    let items: {}[];
+    let items: Json[];
 
     try {
       const query = this.connection('tv_seasons')
@@ -50,7 +50,7 @@ class SQLTVSeasonStore {
       }
 
       items = await query.orderBy('created_at');
-    } catch (error) {
+    } catch (error: any) {
       throw new SQLDatabaseException(error);
     }
 
@@ -68,7 +68,7 @@ class SQLTVSeasonStore {
         .first();
 
       return Number(result?.count);
-    } catch (error) {
+    } catch (error: any) {
       throw new SQLDatabaseException(error);
     }
   }
@@ -80,7 +80,7 @@ class SQLTVSeasonStore {
       result = await this.connection('tv_seasons')
         .where(query)
         .first();
-    } catch (error) {
+    } catch (error: any) {
       throw new SQLDatabaseException(error);
     }
 

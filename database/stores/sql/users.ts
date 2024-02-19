@@ -4,7 +4,7 @@ import { omit } from 'lodash';
 import { SQLDatabaseException } from './errors';
 import { User } from '../../../app/moviesFreak/entities';
 import { UserSerializer } from './serializers';
-import { UUID } from '../../../typescript/customTypes';
+import { UUID } from '../../../types/common';
 import {
   EmailAlreadyExists,
   UsernameAlreadyExists,
@@ -32,7 +32,7 @@ class SQLUsersStore {
       [result] = await this.connection('users')
         .returning('*')
         .insert(dataToInsert);
-    } catch (error) {
+    } catch (error: any) {
       if (error.constraint === 'users_email_unique') {
         throw new EmailAlreadyExists();
       }
@@ -65,7 +65,7 @@ class SQLUsersStore {
       result = await this.connection('users')
         .where(query)
         .first();
-    } catch (error) {
+    } catch (error: any) {
       throw new SQLDatabaseException(error);
     }
 

@@ -5,7 +5,7 @@ import {
   TVSerieResult
 } from './result';
 
-class IMDBGateway {
+class DummyIMDBGateway {
   async fetchFilmById(_imdbI: string) {
     return new FilmResult();
   }
@@ -23,4 +23,4 @@ class IMDBGateway {
   }
 }
 
-export default IMDBGateway;
+export default DummyIMDBGateway;

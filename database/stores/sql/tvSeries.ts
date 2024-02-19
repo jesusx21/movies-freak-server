@@ -1,11 +1,11 @@
 import { Knex } from 'knex';
 
-import { QueryOptions, QueryResponse } from '../interfaces';
+import { IMDBIdAlreadyExists, TVSerieNotFound } from '../errors';
+import { QueryOptions, QueryResponse } from '../../../types/database';
 import { SQLDatabaseException } from './errors';
 import { TVSerie } from '../../../app/moviesFreak/entities';
-import { TVSerieNotFound } from '../errors';
 import { TVSerieSerializer } from './serializers';
-import { UUID } from '../../../typescript/customTypes';
+import { UUID } from '../../../types/common';
 
 class SQLTVSeriesStore {
   private connection: Knex;
@@ -23,7 +23,11 @@ class SQLTVSeriesStore {
       [result] = await this.connection('tv_series')
         .returning('*')
         .insert(dataToInsert);
-    } catch (error) {
+    } catch (error: any) {
+      if (error.constraint === 'tv_series_imdb_id_unique') {
+        throw new IMDBIdAlreadyExists(tvSerie.imdbId);
+      }
+
       throw new SQLDatabaseException(error);
     }
 
@@ -49,7 +53,7 @@ class SQLTVSeriesStore {
       }
 
       items = await query.orderBy('created_at');
-    } catch (error) {
+    } catch (error: any) {
       throw new SQLDatabaseException(error);
     }
 
@@ -66,7 +70,7 @@ class SQLTVSeriesStore {
         .first();
 
       return Number(result?.count);
-    } catch (error) {
+    } catch (error: any) {
       throw new SQLDatabaseException(error);
     }
   }
@@ -78,7 +82,7 @@ class SQLTVSeriesStore {
       result = await this.connection('tv_series')
         .where(query)
         .first();
-    } catch (error) {
+    } catch (error: any) {
       throw new SQLDatabaseException(error);
     }
 

@@ -1,13 +1,18 @@
-import { Monopoly, MultipleRespponse, SingleResponse } from '../../../boardGame';
+import { Monopoly } from '../../../boardGame';
+import {
+  HTTPStatusCode,
+  MultipleRespponse,
+  Request,
+  SingleResponse
+} from '../../../boardGame/types';
 
 import CreateTVSerie from '../../../app/moviesFreak/createTVSerie';
-import { CREATED, HTTPInternalError, OK } from '../../httpResponses';
-import { QueryResponse } from '../../../database/stores/interfaces';
-import { Titles } from '../interfaces';
+import { HTTPInternalError } from '../../httpResponses';
+import { QueryResponse } from '../../../types/database';
 import { TVSerie } from '../../../app/moviesFreak/entities';
 
-class TVSeriesResource extends Monopoly<Titles> {
-  async onPost({ body }): Promise<SingleResponse> {
+class TVSeriesResource extends Monopoly {
+  async onPost({ body }: Request): Promise<SingleResponse> {
     const { database, imdb, presenters } = this.getTitles();
     const useCase = new CreateTVSerie(database, imdb, body.imdbId);
 
@@ -15,17 +20,17 @@ class TVSeriesResource extends Monopoly<Titles> {
 
     try {
       result = await useCase.execute();
-    } catch (error) {
+    } catch (error: any) {
       throw new HTTPInternalError(error);
     }
 
     return {
-      status: CREATED,
+      status: HTTPStatusCode.CREATED,
       data: presenters.presentTVSerie(result)
     };
   }
 
-  async onGet({ query }): Promise<MultipleRespponse> {
+  async onGet({ query }: Request): Promise<MultipleRespponse> {
     const skip = Number(query.skip || 0);
     const limit = Number(query.limit || 25);
     const { database, presenters } = this.getTitles();
@@ -34,12 +39,12 @@ class TVSeriesResource extends Monopoly<Titles> {
 
     try {
       result = await database.tvSeries.find({ skip, limit });
-    } catch (error) {
+    } catch (error: any) {
       throw new HTTPInternalError(error);
     }
 
     return {
-      status: OK,
+      status: HTTPStatusCode.OK,
       data: {
         skip,
         limit,

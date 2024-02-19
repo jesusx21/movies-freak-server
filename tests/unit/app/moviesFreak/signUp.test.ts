@@ -1,72 +1,81 @@
-import TestCase from '../../../testHelper';
+import MoviesFreakTestCase from './testHelper';
 
-import SignUp, { UserData } from '../../../../app/moviesFreak/signUp';
+import SignUp from '../../../../app/moviesFreak/signUp';
+import { Database } from '../../../../types/database';
+import { DatabaseError } from '../../../../database/stores/errors';
 import { Session, User } from '../../../../app/moviesFreak/entities';
+import { SignUpData } from '../../../../types/app';
 import {
   CouldNotSignUp,
   EmailAlreadyUsed,
   UsernameAlreadyUsed
 } from '../../../../app/moviesFreak/errors';
-import { DatabaseError } from '../../../../database/stores/errors';
-import { Database } from '../../../../database';
-import { UserParams } from '../../../../app/moviesFreak/entities/user';
 
-export class SignUpTest extends TestCase {
+export class SignUpTest extends MoviesFreakTestCase {
   database: Database;
-  useCase: SignUp;
-  userData: UserData;
 
-  setUp() {
+  constructor() {
+    super();
+
+    this.database = this.getDatabase();
+  }
+
+  async setUp() {
     super.setUp();
 
     this.database = this.getDatabase();
-    this.userData = {
-      name: 'Edward',
-      lastName: 'Cullen',
-      username: 'eddy',
-      email: 'eddy@yahoo.com',
-      password: 'Password1',
-      birthdate: new Date('1895-12-31')
-    };
-
-    this.useCase = new SignUp(this.database, this.userData);
   }
 
   async testSignUpUser() {
-    const session = await this.useCase.execute();
+    const userData = this.getUserData();
+    const session = await this.runUseCase(SignUp, this.database, userData);
 
     this.assertThat(session).isInstanceOf(Session);
-    this.assertThat(session.token).doesExist();
-    this.assertThat(session.expiresAt).isGreaterThan(new Date());
-    this.assertThat(session.isActive).isTrue();
+    this.assertThat(session?.token).doesExist();
+    this.assertThat(session?.expiresAt).isGreaterThan(new Date());
+    this.assertThat(session?.isActive()).isTrue();
 
-    this.assertThat(session.user).isInstanceOf(User);
-    this.assertThat(session.user?.name).isEqual('Edward');
-    this.assertThat(session.user?.lastName).isEqual('Cullen');
-    this.assertThat(session.user?.username).isEqual('eddy');
-    this.assertThat(session.user?.email).isEqual('eddy@yahoo.com');
-    this.assertThat(session.user?.birthdate).isEqual(this.userData.birthdate);
+    this.assertThat(session?.user).isInstanceOf(User);
+    this.assertThat(session?.user?.name).isEqual('Edward');
+    this.assertThat(session?.user?.lastName).isEqual('Cullen');
+    this.assertThat(session?.user?.username).isEqual('eddy');
+    this.assertThat(session?.user?.email).isEqual('eddy@yahoo.com');
+    this.assertThat(session?.user?.birthdate).isEqual(userData.birthdate);
   }
 
   async testThrowErrorOnEmailAlreadyUsed() {
-    await this.useCase.execute();
-    this.userData.username = 'edward';
+    const database = this.database;
 
-    const useCase = new SignUp(this.database, this.userData);
+    await this.runUseCase(
+      SignUp,
+      database,
+      this.getUserData()
+    );
+
+    const userData = {
+      ...this.getUserData(),
+      username: 'edward'
+    };
 
     await this.assertThat(
-      useCase.execute()
+      this.runUseCase(SignUp, database, userData)
     ).willBeRejectedWith(EmailAlreadyUsed);
   }
 
   async testThrowErrorOnUsernameAlreadyUsed() {
-    await this.useCase.execute();
-    this.userData.email = 'edddy@hotmail.com';
+    await this.runUseCase(
+      SignUp,
+      this.database,
+      this.getUserData()
+    );
 
-    const useCase = new SignUp(this.database, this.userData);
+    const userData = {
+      ...this.getUserData(),
+      email: 'edddy@hotmail.com'
+    };
 
     await this.assertThat(
-      useCase.execute()
+      this.runUseCase(SignUp, this.database, userData)
     ).willBeRejectedWith(UsernameAlreadyUsed);
   }
 
@@ -75,7 +84,7 @@ export class SignUpTest extends TestCase {
       .throws(new DatabaseError());
 
     await this.assertThat(
-      this.useCase.execute()
+      this.runUseCase(SignUp, this.database, this.getUserData())
     ).willBeRejectedWith(CouldNotSignUp);
   }
 
@@ -84,7 +93,18 @@ export class SignUpTest extends TestCase {
       .throws(new DatabaseError());
 
     await this.assertThat(
-      this.useCase.execute()
+      this.runUseCase(SignUp, this.database, this.getUserData())
     ).willBeRejectedWith(CouldNotSignUp);
+  }
+
+  private getUserData(): SignUpData {
+    return {
+      name: 'Edward',
+      lastName: 'Cullen',
+      username: 'eddy',
+      email: 'eddy@yahoo.com',
+      password: 'Password1',
+      birthdate: new Date('1895-12-31')
+    };
   }
 }

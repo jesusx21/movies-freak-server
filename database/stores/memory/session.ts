@@ -1,7 +1,7 @@
 import Store from './store';
 import { NotFound, SessionNotFound } from '../errors';
 import { Session } from '../../../app/moviesFreak/entities';
-import { UUID } from '../../../typescript/customTypes';
+import { UUID } from '../../../types/common';
 
 class InMemorySessionsStore {
   private store: Store<Session>;
@@ -17,7 +17,7 @@ class InMemorySessionsStore {
   async findActiveByUserId(userId: UUID) {
     try {
       return await this.store.findOne({ 'user.id': userId });
-    } catch (error) {
+    } catch (error: any) {
       if (error instanceof NotFound) {
         throw new SessionNotFound(userId);
       }
@@ -31,9 +31,9 @@ class InMemorySessionsStore {
 
     try {
       return await this.store.update(session);
-    } catch (error) {
+    } catch (error: any) {
       if (error instanceof NotFound) {
-        throw new SessionNotFound(session.id);
+        throw new SessionNotFound({ id: session.id });
       }
 
       throw error;

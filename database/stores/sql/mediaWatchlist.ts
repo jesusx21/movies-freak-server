@@ -22,7 +22,7 @@ class SQLMediaWatchlistsStore {
       [result] = await this.connection('media_watchlists')
         .returning('*')
         .insert(dataToInsert);
-    } catch (error) {
+    } catch (error: any) {
       throw new SQLDatabaseException(error);
     }
 

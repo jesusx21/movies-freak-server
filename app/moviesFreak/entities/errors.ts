@@ -15,3 +15,5 @@ export class ReadOnlyField extends EntityError {
     });
   }
 }
+
+export class UserHasNotPassword extends EntityError {}

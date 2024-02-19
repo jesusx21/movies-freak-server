@@ -1,11 +1,11 @@
 import { Knex } from 'knex';
-import { pick } from 'lodash';
+import { omit, pick } from 'lodash';
 
 import { Session } from '../../../app/moviesFreak/entities';
 import { SessionNotFound } from '../errors';
 import { SessionSerializer } from './serializers';
 import { SQLDatabaseException } from './errors';
-import { UUID } from '../../../typescript/customTypes';
+import { Json, UUID } from '../../../types/common';
 
 interface sessionRecord {
   user_id?: UUID
@@ -21,15 +21,16 @@ class SQLSessionsStore {
   }
 
   async create(session: Session) {
-    const dataToInsert = this.serialize(session);
+    const dataToInsert: Json = this.serialize(session);
 
     let result: sessionRecord;
 
     try {
       [result] = await this.connection('sessions')
-        .returning('*')
-        .insert(dataToInsert);
-    } catch (error) {
+      .returning('*')
+      .insert(dataToInsert)
+
+    } catch (error: any) {
       throw new SQLDatabaseException(error);
     }
 
@@ -56,7 +57,7 @@ class SQLSessionsStore {
           ...pick(data, ['token', 'expires_at', 'is_active']),
           updated_at: new Date()
         });
-    } catch (error) {
+    } catch (error: any) {
       throw new SQLDatabaseException(error);
     }
 
@@ -75,7 +76,7 @@ class SQLSessionsStore {
         .where(query)
         .orderBy('created_at', 'desc')
         .first();
-    } catch (error) {
+    } catch (error: any) {
       throw new SQLDatabaseException(error);
     }
 
@@ -88,8 +89,10 @@ class SQLSessionsStore {
 
   private serialize(session: Session): sessionRecord {
     const result = SessionSerializer.toJSON(session);
+    result.is_active = session.isActive();
+    result.expires_at = session.expiresAt;
 
-    return { ...result, user_id: session.user?.id };
+    return { ...omit(result, 'id'), user_id: session.user?.id };
   }
 
   private async deserialize(data: sessionRecord) {

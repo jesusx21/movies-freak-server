@@ -3,7 +3,7 @@ import TestCase from '../../../../testHelper';
 import { User } from '../../../../../app/moviesFreak/entities';
 
 export class UserTest extends TestCase {
-  user: User;
+  user?: User;
 
   setUp() {
     super.setUp();
@@ -18,23 +18,23 @@ export class UserTest extends TestCase {
   }
 
   testAddPassword() {
-    this.user.addPassword('Password1');
+    this.user?.addPassword('Password1');
 
-    this.assertThat(this.user.password).doesExist();
-    this.assertThat(this.user.password).hasKeys('salt', 'hash');
-    this.assertThat(this.user.password.salt).doesExist();
-    this.assertThat(this.user.password.hash).doesExist();
+    this.assertThat(this.user?.password).doesExist();
+    this.assertThat(this.user?.password).hasKeys('salt', 'hash');
+    this.assertThat(this.user?.password.salt).doesExist();
+    this.assertThat(this.user?.password.hash).doesExist();
   }
 
   testDoesPasswordMatchReturnsTrueWhenPasswordMatch() {
-    this.user.addPassword('Password1');
+    this.user?.addPassword('Password1');
 
-    this.assertThat(this.user.doesPasswordMatch('Password1')).isTrue();
+    this.assertThat(this.user?.doesPasswordMatch('Password1')).isTrue();
   }
 
   testDoesPasswordMatchReturnsFalseWhenPasswordDoesntMatch() {
-    this.user.addPassword('Password1');
+    this.user?.addPassword('Password1');
 
-    this.assertThat(this.user.doesPasswordMatch('Password')).isFalse();
+    this.assertThat(this.user?.doesPasswordMatch('Password')).isFalse();
   }
 }

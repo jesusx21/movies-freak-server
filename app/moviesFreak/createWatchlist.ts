@@ -1,8 +1,8 @@
 
 import { CouldNotCreateWatchlist } from './errors';
-import { Database } from '../../database';
-import { MarathonType } from '../../typescript/customTypes';
 import { Watchlist } from './entities';
+import { Database } from '../../types/database';
+import { MarathonType } from '../../types/entities';
 
 class CreateWatchlist {
   database: Database;
@@ -26,7 +26,7 @@ class CreateWatchlist {
 
     try {
       return await this.database.watchlists.create(watchlist);
-    } catch (error) {
+    } catch (error: any) {
       throw new CouldNotCreateWatchlist(error);
     }
   }

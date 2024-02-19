@@ -1,8 +1,8 @@
 import Store from './store';
 import { NotFound, TVSeasonNotFound } from '../errors';
-import { QueryOptions } from '../interfaces';
 import { TVSeason } from '../../../app/moviesFreak/entities';
-import { UUID } from '../../../typescript/customTypes';
+import { UUID } from '../../../types/common';
+import { QueryOptions } from '../../../types/database';
 
 class InMemoryTVSeasonStore {
   private store: Store<TVSeason>;
@@ -18,7 +18,7 @@ class InMemoryTVSeasonStore {
   async findById(tvSeasonId: UUID) {
     try {
       return await this.store.findById(tvSeasonId);
-    } catch (error) {
+    } catch (error: any) {
       if (error instanceof NotFound) {
         throw new TVSeasonNotFound(tvSeasonId);
       }

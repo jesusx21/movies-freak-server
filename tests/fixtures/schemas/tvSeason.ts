@@ -5,7 +5,7 @@ import {
   STRING,
   URL,
   UUID
-} from '../types';
+} from './types';
 
 const TVSeason = JSON(
   {

@@ -1,4 +1,4 @@
-import { UUID } from '../../../typescript/customTypes';
+import { UUID } from '../../../types/common';
 import { ReadOnlyField } from './errors';
 
 class Entity {

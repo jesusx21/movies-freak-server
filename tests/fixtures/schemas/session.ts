@@ -1,11 +1,11 @@
+import user from './user';
 import {
   BOOLEAN,
   DATETIME,
   JSON,
   REGEX,
   UUID
-} from '../types';
-import user from './user';
+} from './types';
 
 const session = JSON(
   {

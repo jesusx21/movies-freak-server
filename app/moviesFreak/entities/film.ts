@@ -1,8 +1,7 @@
 import Entity from './entity';
-import { UUID } from '../../../typescript/customTypes';
+import { FilmEntity } from '../../../types/entities';
 
-export interface FilmParams {
-  id?: UUID;
+class Film extends Entity implements FilmEntity {
   name: string;
   plot: string;
   title: string;
@@ -15,29 +14,10 @@ export interface FilmParams {
   genre: string[];
   writers: string[];
   actors: string[];
-  imdbId: string; //imdb
-  imdbRating: string;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
-
-class Film extends Entity {
-  name: string;
-  plot: string;
-  title: string;
-  year: string;
-  rated: string;
-  runtime: string;
-  director: string;
-  poster: string;
-  production: string;
-  genre: string[];
-  writers: string[];
-  actors: string[];
-  imdbId: string; //imdb
+  imdbId: string;
   imdbRating: string;
 
-  constructor(args: FilmParams) {
+  constructor(args: FilmEntity) {
     super(args.id, args.createdAt, args.updatedAt);
 
     this.name = args.name;

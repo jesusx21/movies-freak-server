@@ -2,34 +2,18 @@ import Crypto from 'crypto';
 import { isEmpty } from 'lodash';
 
 import Entity from './entity';
-import { UUID } from '../../../typescript/customTypes';
-import { ReadOnlyField } from './errors';
+import { Password, UserEntity } from '../../../types/entities';
+import { ReadOnlyField, UserHasNotPassword } from './errors';
 
-export interface PasswordHashed {
-  hash?: string;
-  salt?: string;
-}
-
-export interface UserParams {
-  id?: UUID;
+class User extends Entity implements UserEntity {
+  private _password: Password;
   name: string;
   username: string;
   lastName?: string;
   email: string; // email
-  birthdate: Date;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
+  birthdate?: Date;
 
-class User extends Entity {
-  private _password: PasswordHashed
-  name: string;
-  username: string;
-  lastName?: string;
-  email: string; // email
-  birthdate: Date;
-
-  constructor(args: UserParams) {
+  constructor(args: UserEntity) {
     super(args.id, args.createdAt, args.updatedAt);
 
     this.name = args.name;
@@ -45,8 +29,8 @@ class User extends Entity {
     return this._password;
   }
 
-  set password(password: PasswordHashed) {
-    if (isEmpty(this._password)) {
+  set password(password: Password) {
+    if (!isEmpty(this._password)) {
       throw new ReadOnlyField('password')
     }
 
@@ -61,6 +45,10 @@ class User extends Entity {
   }
 
   doesPasswordMatch(password: string) {
+    if (!this._password.salt) {
+      throw new UserHasNotPassword();
+    }
+
     const passwordHash = this.hashPassword(this._password.salt, password);
 
     return this._password.hash === passwordHash;
@@ -71,7 +59,7 @@ class User extends Entity {
       .toString('hex');
   }
 
-  private hashPassword(salt, password) {
+  private hashPassword(salt: string, password: string) {
     const hash = Crypto.createHmac('sha512', salt);
 
     hash.update(password);

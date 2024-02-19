@@ -47,6 +47,10 @@ class OMDBTVSeasonResult {
   }
 
   private loadEpisodes(): Episode[] {
+    if (!this.rawResponse.Episodes) {
+      return [];
+    }
+
     return this.rawResponse.Episodes.map((episode: EpisodeRawResponse) => new Episode(episode));
   }
 

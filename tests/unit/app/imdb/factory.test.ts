@@ -3,7 +3,7 @@ import TestCase from '../../../testHelper';
 import imdbFactory from '../../../../app/imdb/factory';
 import DummyGateway from '../../../../app/imdb/gateways/dummy/dummyGateway';
 import OMDBGateway from '../../../../app/imdb/gateways/omdb/omdbGateway';
-import { DriverNotSupported } from '../../../../app/imdb/errors';
+import { DriverNotSupported, MissingIMDBCredentials } from '../../../../app/imdb/errors';
 
 export class IMDBFactoryTest extends TestCase {
   testReturnDummyGateway() {
@@ -13,9 +13,15 @@ export class IMDBFactoryTest extends TestCase {
   }
 
   testReturnOMDBGateway() {
-    const gateway = imdbFactory('omdb');
+    const gateway = imdbFactory('omdb', 'http://fake-host.com', 'fake-api-key');
 
     this.assertThat(gateway).isInstanceOf(OMDBGateway);
+  }
+
+  testThrowErrorWhenCredentialsForOMDBAreNotSent() {
+    this.assertThat(
+      () => imdbFactory('omdb')
+    ).willThrow(MissingIMDBCredentials)
   }
 
   testThrowErrorOnUnsupportedDriver() {

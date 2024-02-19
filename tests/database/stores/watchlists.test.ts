@@ -1,14 +1,20 @@
 import SQLTestCase from '../testHelper';
 
 import SQLDatabase from '../../../database/stores/sql';
-import { MarathonType } from '../../../typescript/customTypes';
-import { SerializerError } from '../../../database/stores/sql/serializer';
+import Serializer, { SerializerError } from '../../../database/stores/sql/serializer';
 import { SQLDatabaseException } from '../../../database/stores/sql/errors';
 import { Watchlist } from '../../../app/moviesFreak/entities';
-import { WatchlistSerializer } from '../../../database/stores/sql/serializers';
+import { MarathonType } from '../../../types/entities';
+
 
 class WatchlistsStoreTest extends SQLTestCase {
   database: SQLDatabase;
+
+  constructor() {
+    super();
+
+    this.database = this.getDatabase();
+  }
 
   setUp() {
     super.setUp();
@@ -23,19 +29,20 @@ class WatchlistsStoreTest extends SQLTestCase {
   }
 }
 
+
 export class CreateWatchlistTest extends WatchlistsStoreTest {
   watchlist: Watchlist;
+
+  constructor() {
+    super();
+
+    this.watchlist = this.buildWatchlist();
+  }
 
   setUp() {
     super.setUp();
 
-    this.watchlist = new Watchlist({
-      name: 'Maraton de Halloween',
-      type: MarathonType.all,
-      description: 'This is a nice watchlist',
-      totalFilms: 0,
-      totalTVEpisodes: 0
-    });
+    this.watchlist = this.buildWatchlist();
   }
 
   async testCreateWatchlist() {
@@ -51,7 +58,7 @@ export class CreateWatchlistTest extends WatchlistsStoreTest {
   }
 
   async testThrowErrorOnSerializationError() {
-    this.mockClass(WatchlistSerializer, 'static')
+    this.mockClass(Serializer<Watchlist>)
       .expects('fromJSON')
       .throws(new SerializerError());
 
@@ -67,5 +74,15 @@ export class CreateWatchlistTest extends WatchlistsStoreTest {
     await this.assertThat(
       this.database.watchlists.create(this.watchlist)
     ).willBeRejectedWith(SQLDatabaseException);
+  }
+
+  private buildWatchlist() {
+    return new Watchlist({
+      name: 'Maraton de Halloween',
+      type: MarathonType.ALL,
+      description: 'This is a nice watchlist',
+      totalFilms: 0,
+      totalTVEpisodes: 0
+    });
   }
 }

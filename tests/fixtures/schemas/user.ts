@@ -4,7 +4,7 @@ import {
   JSON,
   STRING,
   UUID
-} from '../types';
+} from './types';
 
 const user = JSON(
   {
@@ -17,7 +17,7 @@ const user = JSON(
     createdAt: DATETIME,
     updatedAt: DATETIME
   },
-  ['id', 'name', 'lastName', 'username', 'email', 'password']
+  ['id', 'name', 'lastName', 'username', 'email']
 );
 
 export default user;

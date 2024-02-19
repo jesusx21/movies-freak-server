@@ -1,9 +1,4 @@
-interface ClasspuccinoErrorParams {
-  error?: Error;
-  name?: string;
-  message?: string;
-  info?: {};
-}
+import { ClasspuccinoErrorParams } from './type';
 
 export class ClasspuccinoError extends Error {
   readonly cause?: Error;

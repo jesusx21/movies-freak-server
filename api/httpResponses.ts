@@ -1,39 +1,38 @@
-export const OK = 200;
-export const CREATED = 201;
-export const NOT_FOUND = 404;
-export const CONFLICT = 409;
-export const SERVER_ERROR = 500;
+import { HTTPStatusCode } from '../boardGame/types';
+import { Error } from '../types/api';
+import { Json } from '../types/common';
 
-export enum HTTPErrorCodes {
-  badRequest = 400,
-  unauthorized = 401,
-  forbidden = 403,
-  notFound = 404,
-  conflict = 409,
-  preconditionFailed = 412,
-  serverError = 500
-}
-
-export interface ErrorPayload {
-  code: string,
-  error?: {}
+export enum ErrorCodes {
+  BAD_REQUEST = 'BAD_REQUEST',
+  UNAUTHORIZED = 'UNAUTHORIZED',
+  FORBIDDEN = 'FORBIDDEN',
+  NOT_FOUND = 'NOT_FOUND',
+  CONFLICT = 'CONFLICT',
+  PRECONDITION_FAILED = 'PRECONDITION_FAILED',
+  UNEXPECTED_ERROR = 'UNEXPECTED_ERROR'
 }
 
 export class HTTPError extends Error {
   private code: string;
-  private error?: Error;
-  readonly statusCode: HTTPErrorCodes
+  private error?: Json;
+  readonly statusCode: HTTPStatusCode
 
-  constructor(statusCode: HTTPErrorCodes, code: string, error?: Error) {
+  constructor(statusCode: HTTPStatusCode, code: string, error?: Json) {
     super('HTTP error');
 
     this.code = code;
-    this.error = error;
-    this.statusCode = SERVER_ERROR;
+    this.statusCode = statusCode;
+
+    if (error) {
+      this.error = {
+        name: error.name,
+        message: error.message
+      }
+    }
   }
 
   get payload() {
-    const payload: ErrorPayload = {
+    const payload: Error = {
       code: this.code
     };
 
@@ -60,19 +59,19 @@ export class HTTPError extends Error {
 }
 
 export class HTTPNotFound extends HTTPError {
-  constructor(code = 'RESOURCE_NOT_FOUND', cause?: Error) {
-    super(NOT_FOUND, code, cause);
+  constructor(code: string = ErrorCodes.NOT_FOUND, cause?: Json) {
+    super(HTTPStatusCode.NOT_FOUND, code, cause);
   }
 }
 
 export class HTTPConflict extends HTTPError {
-  constructor(code = 'CONFLICT', cause?: Error) {
-    super(CONFLICT, code, cause);
+  constructor(code: string = ErrorCodes.CONFLICT, cause?: Json) {
+    super(HTTPStatusCode.CONFLICT, code, cause);
   }
 }
 
 export class HTTPInternalError extends HTTPError {
-  constructor(error: Error) {
-    super(SERVER_ERROR, 'UNEXPECTED_ERROR', error);
+  constructor(error: Json) {
+    super(HTTPStatusCode.UNEXPECTED_ERROR, ErrorCodes.UNEXPECTED_ERROR, error);
   }
 }

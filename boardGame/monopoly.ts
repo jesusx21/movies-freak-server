@@ -1,42 +1,28 @@
 /* eslint-disable no-unused-vars */
+import { Json } from '../types/common';
 import { TitleNotFound, TokenNotUsed } from './errors';
+import { Request, Response, SingleResponse } from './types';
 
-export interface SingleResponse {
-  status: 200 | 201 | 204 | 400 | 401 | 403 | 404 | 409 | 412 | 500;
-  data: any;
-}
-
-export interface MultipleRespponse {
-  status: 200 | 201 | 204 | 400 | 401 | 403 | 404 | 409 | 412 | 500;
-  data: {
-    skip: number;
-    limit: number;
-    totalItems: number;
-    items: any[]
-  };
-}
-
-
-class Monopoly<TitleInterface> {
-  private titles: any;
+class Monopoly {
+  private titles: Json;
 
   constructor() {
     this.titles = {};
   }
 
-  async onPost(_request: object): Promise<SingleResponse | MultipleRespponse> {
+  async onPost(_request: Request): Promise<SingleResponse> {
     throw new TokenNotUsed();
   }
 
-  async onGet(_request: object): Promise<SingleResponse | MultipleRespponse> {
+  async onGet(_request: Request): Promise<Response> {
     throw new TokenNotUsed();
   }
 
-  async onPut(_request: object): Promise<SingleResponse> {
+  async onPut(_request: Request): Promise<SingleResponse> {
     throw new TokenNotUsed();
   }
 
-  async onDelete(_request: object): Promise<SingleResponse> {
+  async onDelete(_request: Request): Promise<SingleResponse> {
     throw new TokenNotUsed();
   }
 
@@ -65,7 +51,7 @@ class Monopoly<TitleInterface> {
    * See title as a dependency, so what getTitle does is to get all of the dependencies
    * from the boardgame
    */
-  getTitles(): TitleInterface {
+  getTitles() {
     return this.titles;
   }
 }

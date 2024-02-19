@@ -1,21 +1,27 @@
-import { Monopoly, SingleResponse } from '../../../boardGame';
+import { HTTPStatusCode, Request, SingleResponse } from '../../../boardGame/types';
+import { Monopoly } from '../../../boardGame';
 
-import { HTTPInternalError, HTTPNotFound, OK } from '../../httpResponses';
+import { HTTPInternalError, HTTPNotFound } from '../../httpResponses';
 import { Film } from '../../../app/moviesFreak/entities';
 import { FilmNotFound } from '../../../database/stores/errors';
-import { Titles } from '../interfaces';
-import { UUID } from '../../../typescript/customTypes';
+import { UUID } from '../../../types/common';
 
-class FilmResource extends Monopoly<Titles> {
-  async onGet({ params }): Promise<SingleResponse> {
+interface FilmRequest extends Request {
+  params: {
+    filmId: UUID
+  }
+}
+
+class FilmResource extends Monopoly {
+  async onGet(req: FilmRequest): Promise<SingleResponse> {
     const { database, presenters } = this.getTitles();
-    const { filmId }: { filmId: UUID} = params;
+    const { filmId }= req.params;
 
     let film: Film;
 
     try {
       film = await database.films.findById(filmId);
-    } catch (error) {
+    } catch (error: any) {
       if (error instanceof FilmNotFound) {
         throw new HTTPNotFound('FILM_NOT_FOUND');
       }
@@ -24,7 +30,7 @@ class FilmResource extends Monopoly<Titles> {
     }
 
     return {
-      status: OK,
+      status: HTTPStatusCode.OK,
       data: presenters.presentFilm(film)
     };
   }

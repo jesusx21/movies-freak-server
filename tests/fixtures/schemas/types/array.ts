@@ -1,4 +1,4 @@
-import { Type } from '../interface';
+import { Type } from '../../types';
 
 interface ArrayOptions {
   min?: number;

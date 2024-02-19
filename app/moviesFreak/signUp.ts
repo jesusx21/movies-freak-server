@@ -1,7 +1,8 @@
 import { omit } from 'lodash';
 
-import { Database } from '../../database';
+import { Database } from '../../types/database';
 import { Session, User } from './entities';
+import { SignUpData } from '../../types/app';
 import {
   EmailAlreadyExists,
   UsernameAlreadyExists
@@ -12,20 +13,11 @@ import {
   UsernameAlreadyUsed
 } from './errors';
 
-export interface UserData {
-  name: string;
-  username: string;
-  lastName: string;
-  password: string;
-  email: string;
-  birthdate: Date;
-}
-
 class SignUp {
   database: Database;
-  userData: UserData;
+  userData: SignUpData;
 
-  constructor(database: Database, userData: UserData) {
+  constructor(database: Database, userData: SignUpData) {
     this.database = database;
     this.userData = userData;
   }
@@ -38,7 +30,7 @@ class SignUp {
 
       user.addPassword(this.userData.password);
       userCreated = await this.database.users.create(user);
-    } catch (error) {
+    } catch (error: any) {
       if (error instanceof EmailAlreadyExists) {
         throw new EmailAlreadyUsed();
       }
@@ -57,7 +49,7 @@ class SignUp {
 
     try {
       return await this.database.sessions.create(session);
-    } catch (error) {
+    } catch (error: any) {
       throw new CouldNotSignUp(error);
     }
   }

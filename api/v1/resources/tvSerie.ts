@@ -1,12 +1,12 @@
-import { Monopoly, SingleResponse } from '../../../boardGame';
+import { Monopoly } from '../../../boardGame';
+import { HTTPStatusCode, Request, SingleResponse } from '../../../boardGame/types';
 
-import { HTTPInternalError, HTTPNotFound, OK } from '../../httpResponses';
-import { Titles } from '../interfaces';
+import { HTTPInternalError, HTTPNotFound } from '../../httpResponses';
 import { TVSerie } from '../../../app/moviesFreak/entities';
 import { TVSerieNotFound } from '../../../database/stores/errors';
 
-class TVSerieResource extends Monopoly<Titles> {
-  async onGet({ params }): Promise<SingleResponse> {
+class TVSerieResource extends Monopoly {
+  async onGet({ params }: Request): Promise<SingleResponse> {
     const { tvSerieId } = params;
     const { database, presenters } = this.getTitles();
 
@@ -14,7 +14,7 @@ class TVSerieResource extends Monopoly<Titles> {
 
     try {
       tvSerie = await database.tvSeries.findById(tvSerieId);
-    } catch (error) {
+    } catch (error: any) {
       if (error instanceof TVSerieNotFound) {
         throw new HTTPNotFound('TV_SERIE_NOT_FOUND');
       }
@@ -23,7 +23,7 @@ class TVSerieResource extends Monopoly<Titles> {
     }
 
     return {
-      status: OK,
+      status: HTTPStatusCode.OK,
       data: presenters.presentTVSerie(tvSerie)
     };
   }

@@ -2,41 +2,48 @@ import TestCase from '../../../testHelper';
 
 import CreateWatchlist from '../../../../app/moviesFreak/createWatchlist';
 import { CouldNotCreateWatchlist } from '../../../../app/moviesFreak/errors';
-import { MarathonType } from '../../../../typescript/customTypes';
+import { Database } from '../../../../types/database';
 import { Watchlist } from '../../../../app/moviesFreak/entities';
+import { MarathonType } from '../../../../types/entities';
 
 export default class CreateWatchlistTest extends TestCase {
-  useCase: CreateWatchlist;
+  database: Database
+  useCase?: CreateWatchlist;
+
+  constructor() {
+    super();
+
+    this.database = this.getDatabase();
+  }
 
   setUp() {
     super.setUp();
 
-    const database = this.getDatabase();
-
+    this.database = this.getDatabase();
     this.useCase = new CreateWatchlist(
-      database,
+      this.database,
       'Horroctober',
-      MarathonType.marathon,
+      MarathonType.MARATHON,
       'This is a decription'
     );
   }
 
   async testCreaateWatchlist() {
-    const watchlist = await this.useCase.execute();
+    const watchlist = await this.useCase?.execute();
 
     this.assertThat(watchlist).isInstanceOf(Watchlist);
-    this.assertThat(watchlist.id).doesExist();
-    this.assertThat(watchlist.name).isEqual('Horroctober');
-    this.assertThat(watchlist.type).isEqual('marathon');
-    this.assertThat(watchlist.description).isEqual('This is a decription');
+    this.assertThat(watchlist?.id).doesExist();
+    this.assertThat(watchlist?.name).isEqual('Horroctober');
+    this.assertThat(watchlist?.type).isEqual('marathon');
+    this.assertThat(watchlist?.description).isEqual('This is a decription');
   }
 
   async testThrowErrorWhenDatabaseFails() {
-    this.stubFunction(this.useCase.database.watchlists, 'create')
+    this.stubFunction(this.database.watchlists, 'create')
       .throws(new Error());
 
     await this.assertThat(
-      this.useCase.execute()
+      this.useCase?.execute()
     ).willBeRejectedWith(CouldNotCreateWatchlist);
   }
 }

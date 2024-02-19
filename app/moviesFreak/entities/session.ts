@@ -3,25 +3,15 @@ import Crypto from 'crypto';
 import Entity from './entity';
 import User from './user';
 import { ReadOnlyField, SessionAlreadyActive } from './errors';
-import { UUID } from '../../../typescript/customTypes';
-
-export interface SessionParams {
-  id?: UUID;
-  user: User;
-  token?: string;
-  expiresAt?: Date;
-  isActive?: boolean;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
+import SessionEntity from '../../../types/entities/session';
 
 class Session extends Entity {
   private _user?: User;
-  private _expiresAt?: Date;
-  private _isActive: boolean;
+  private _expiresAt?: Date | null;
+  private _isActive?: boolean;
   private _token?: string;
 
-  constructor(args: SessionParams) {
+  constructor(args: SessionEntity) {
     super(args.id, args.createdAt, args.updatedAt);
 
     this._user = args.user;
@@ -43,7 +33,7 @@ class Session extends Entity {
   }
 
   set user(user: User) {
-    if (!user) {
+    if (this._user) {
       throw new ReadOnlyField('user');
     }
 
@@ -58,7 +48,7 @@ class Session extends Entity {
     this._token = Crypto.randomBytes(32)
       .toString('hex');
 
-    this._expiresAt = undefined;
+    this._expiresAt =  null;
     this._isActive = false;
 
     return this;

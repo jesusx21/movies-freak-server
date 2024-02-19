@@ -5,13 +5,13 @@ import {
   JSON,
   STRING,
   UUID
-} from '../types';
+} from './types';
 
 const watchlist = JSON(
   {
     id: UUID,
     name: STRING({ min: 1, max: 100 }),
-    type: ENUM('films', 'tv-episodes', 'all'),
+    type: ENUM('all', 'saga', 'marathon'),
     description: STRING({ min: 10, max: 500 }),
     totalFilms: INTEGER({ min: 0, max: 250 }),
     totalTVEpisodes: INTEGER({ min: 0, max: 250 }),

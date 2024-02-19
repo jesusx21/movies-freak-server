@@ -1,34 +1,41 @@
-import { cloneDeep, get } from 'lodash';
+import { cloneDeep, get as getKey} from 'lodash';
 import { v4 as uuid } from 'uuid';
 
-import Entity from '../../../app/moviesFreak/entities/entity';
+import { Entity } from '../../../types/entities';
+import { Json, UUID } from '../../../types/common';
 import { NotFound } from '../errors';
-import { QueryOptions, QueryResponse } from '../interfaces';
-import { UUID } from '../../../typescript/customTypes';
+import { QueryOptions, QueryResponse } from '../../../types/database';
 
-class Store<T> {
-  private items: {};
+class Store<T extends Entity> {
+  private items: {
+    [key: UUID]: T
+  };
 
   constructor() {
     this.items = {};
   }
 
-  async create(entity: Entity): Promise<T> {
-    const entityToSave: Entity = cloneDeep(entity);
+  async create(entity: T): Promise<T> {
+    const entityToSave = cloneDeep(entity);
     const entityId = uuid();
 
-    entityToSave.id = entityId;
-    entityToSave.createdAt = new Date();
-    entityToSave.updatedAt = new Date();
+    Object.assign(
+      entityToSave,
+      {
+        _id: entityId,
+        _createdAt: new Date(),
+        _updatedAt: new Date()
+      }
+    );
 
     this.items[entityId] = entityToSave;
 
     return cloneDeep(entityToSave);
   }
 
-  async update(entity: Entity): Promise<T> {
+  async update(entity: T): Promise<T> {
     if (!entity.id || !this.items[entity.id]) {
-      throw new NotFound(entity.id);
+      throw new NotFound({ id: entity.id });
     }
 
     entity.updatedAt = new Date();
@@ -49,12 +56,12 @@ class Store<T> {
   }
 
   async find(options: QueryOptions = {}): Promise<QueryResponse<T>> {
-    const query = options.query || {};
-    const items: {}[] = Object.values(this.items);
+    const query: Json = options.query || {};
+    const items = Object.values(this.items);
     const skip = options.skip || 0;
     const limit = skip + (options.limit || items.length - 1);
 
-    const result = applyFilter(items, query);
+    const result = applyFilter<T>(items, query);
 
     return {
       items: result.slice(skip, limit),
@@ -65,31 +72,33 @@ class Store<T> {
   async findOne(query: {}): Promise<T> {
     const items = Object.values(this.items)
       .sort((a: any, b: any) => b.createdAt - a.createdAt);
-    const [entity]: [T] = applyFilter(items, query);
+
+    const [entity] = applyFilter<T>(items, query);
 
     if (!entity) {
-      throw new NotFound();
+      throw new NotFound(query);
     }
 
     return cloneDeep(entity);
   }
 
   async count(query = {}) {
-    const items: {}[] = Object.values(this.items);
+    const items = Object.values(this.items);
 
-    return applyFilter(items, query)
+    return applyFilter<T>(items, query)
       .length;
   }
 }
 
-function applyFilter(data: {}[], filter:{}) {
+function applyFilter<T>(data: T[], filter: Json) {
   const items = cloneDeep(data);
 
-  return items.filter((item: {}) => {
+  return items.filter((item) => {
     return Object.keys(filter)
-      .reduce((succeed, key) => {
-        return succeed && get(filter, key) === get(item, key);
-      }, true);
+      .reduce(
+        (succeed, key) => succeed && getKey(filter, key) === getKey(item, key),
+        true
+      );
   });
 }
 

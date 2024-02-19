@@ -12,7 +12,7 @@ import {
   URL,
   UUID,
   YEAR
-} from '../types';
+} from './types';
 
 const film = JSON(
   {

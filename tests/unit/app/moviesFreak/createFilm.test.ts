@@ -10,6 +10,15 @@ const IMDB_ID = 'tt0111161';
 export class CreateFilmTest extends TestCase {
   useCase: CreateFilm;
 
+  constructor() {
+    super();
+
+    const database = this.getDatabase();
+    const imdb = new DummyGateway();
+
+    this.useCase = new CreateFilm(database, imdb, IMDB_ID);
+  }
+
   setUp() {
     super.setUp();
 

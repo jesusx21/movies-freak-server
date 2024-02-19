@@ -1,10 +1,10 @@
-import { UUID } from '../../typescript/customTypes';
+import { UUID } from '../../types/common';
 
-export interface Type {
+export type Type = {
   type: string;
-}
+};
 
-export interface FilmFixture {
+export type FilmFixture = {
   id?: UUID;
   name?: string;
   plot?: string;
@@ -21,9 +21,9 @@ export interface FilmFixture {
   imdbRating?: string;
   createdAt?: Date;
   updatedAt?: Date;
-}
+};
 
-export interface MediaWatchlistFixture {
+export type MediaWatchlistFixture = {
   id?: UUID;
   watchlistId?: UUID;
   filmId?: UUID;
@@ -32,18 +32,18 @@ export interface MediaWatchlistFixture {
   watched?: boolean;
   createdAt?: Date;
   updatedAt?: Date;
-}
+};
 
-export interface SessionFixture {
+export type SessionFixture = {
   id?: UUID;
   token?: string;
   expiresAt?: Date;
   isActive?: boolean;
   createdAt?: Date;
   updatedAt?: Date;
-}
+};
 
-export interface TVEpisodeFixture {
+export type TVEpisodeFixture = {
   id?: UUID;
   imdbId?: string;
   name?: string;
@@ -65,10 +65,9 @@ export interface TVEpisodeFixture {
   tvSeasonId?: UUID;
   createdAt?: Date;
   updatedAt?: Date;
-}
+};
 
-export interface TVSeasonFixture
-{
+export type TVSeasonFixture = {
   id?: UUID;
   tvSerieId?: UUID;
   plot?: string;
@@ -77,9 +76,9 @@ export interface TVSeasonFixture
   releasedAt?: Date;
   createdAt?: Date;
   updatedAt?: Date;
-}
+};
 
-export interface TVSerieFixture {
+export type TVSerieFixture = {
   id?: UUID;
   name?: string;
   plot?: string;
@@ -97,9 +96,9 @@ export interface TVSerieFixture {
   };
   createdAt?: Date;
   updatedAt?: Date;
-}
+};
 
-export interface UserFixture {
+export type UserFixture = {
   id?: UUID;
   name?: string;
   username?: string;
@@ -112,9 +111,9 @@ export interface UserFixture {
   };
   createdAt?: Date;
   updatedAt?: Date;
-}
+};
 
-export interface WatchlistFixture {
+export type WatchlistFixture = {
   id?: UUID;
   name?: string;
   type?: string;
@@ -123,5 +122,4 @@ export interface WatchlistFixture {
   totalTVEpisodes?: string;
   createdAt?: Date;
   updatedAt?: Date;
-}
-
+};

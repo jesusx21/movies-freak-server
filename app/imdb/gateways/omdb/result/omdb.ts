@@ -30,7 +30,7 @@ class OMDBResult {
   private index: number;
   private rawResponse: any;
   protected currentResponse: any;
-  type: string;
+  type?: string;
 
   constructor(rawResponse: any) {
     this.rawResponse = rawResponse;

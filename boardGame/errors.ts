@@ -1,15 +1,15 @@
-import { BoardGameErrorParams } from './types';
+import { BoardGameErrorParams, HTTPMethods, Json } from './types';
 
 export class BoardGameError extends Error {
   readonly cause?: Error;
-  readonly info?: {};
+  readonly info?: Json;
 
   constructor(args: BoardGameErrorParams = {}) {
-    super(args.message || 'Something unexpected happened');
+    super(args.message ?? 'Something unexpected happened');
 
-    this.name = args.name || this.constructor.name;
+    this.name = args.name ?? this.constructor.name;
     this.cause = args.error;
-    this.info = args.info || {};
+    this.info = args.info ?? {};
   }
 }
 
@@ -19,21 +19,21 @@ export class MonopolyError extends BoardGameError {
   }
 }
 
-export class TokenNotUsed extends MonopolyError {
-  constructor() {
-    super({ message: 'Monopoly token not used' });
+export class MethodNotImplemented extends MonopolyError {
+  constructor(method: HTTPMethods) {
+    super({ message: `Method ${method} not implemented for resource` });
   }
 }
 
-export class TitleNotFound extends MonopolyError {
-  titleName: string;
+export class DependencyNotFound extends MonopolyError {
+  dependencyName: string;
 
-  constructor(titleName: string) {
+  constructor(dependencyName: string) {
     super({
-      message: `Monopoly title "${titleName}" was not found`,
-      info: { titleName }
+      message: `Monopoly dependency "${dependencyName}" was not found`,
+      info: { dependencyName }
     });
 
-    this.titleName = titleName;
+    this.dependencyName = dependencyName;
   }
 }

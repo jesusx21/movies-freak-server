@@ -8,7 +8,7 @@ import { TVSerieNotFound } from '../../../database/stores/errors';
 class TVSerieResource extends Monopoly {
   async onGet({ params }: Request): Promise<SingleResponse> {
     const { tvSerieId } = params;
-    const { database, presenters } = this.getTitles();
+    const { database, presenters } = this.getDependencies();
 
     let tvSerie: TVSerie;
 

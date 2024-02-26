@@ -19,7 +19,7 @@ interface SignUpRequest extends Request {
 
 class SignUp extends Monopoly {
   async onPost({ body }: SignUpRequest): Promise<SingleResponse> {
-    const database = this.getTitle('database');
+    const database = this.getDependency('database');
     const signUp = new Register(database, body);
 
     let session: Session;
@@ -38,7 +38,7 @@ class SignUp extends Monopoly {
       throw new HTTPInternalError(error);
     }
 
-    const presenter = this.getTitle('presenters');
+    const presenter = this.getDependency('presenters');
 
     return {
       status: HTTPStatusCode.CREATED,

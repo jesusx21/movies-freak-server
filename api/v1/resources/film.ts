@@ -14,7 +14,7 @@ interface FilmRequest extends Request {
 
 class FilmResource extends Monopoly {
   async onGet(req: FilmRequest): Promise<SingleResponse> {
-    const { database, presenters } = this.getTitles();
+    const { database, presenters } = this.getDependencies();
     const { filmId }= req.params;
 
     let film: Film;

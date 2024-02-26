@@ -12,7 +12,7 @@ import {
 
 class SignIn extends Monopoly {
   async onPost({ body }: Request): Promise<SingleResponse> {
-    const database = this.getTitle('database');
+    const database = this.getDependency('database');
     const login = new Login(database, body.username, body.password);
 
     let session: Session;
@@ -31,7 +31,7 @@ class SignIn extends Monopoly {
       throw new HTTPInternalError(error);
     }
 
-    const presenter = this.getTitle('presenters');
+    const presenter = this.getDependency('presenters');
 
     return {
       status: HTTPStatusCode.OK,

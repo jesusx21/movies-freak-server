@@ -1,7 +1,7 @@
 import { Monopoly } from '../../../boardGame';
 import {
   HTTPStatusCode,
-  MultipleRespponse,
+  MultipleResponse,
   Request,
   SingleResponse
 } from '../../../boardGame/types';
@@ -13,7 +13,7 @@ import { QueryResponse } from '../../../types/database';
 
 class FilmsResource extends Monopoly {
   async onPost(request: Request): Promise<SingleResponse> {
-    const { database, imdb, presenters } = this.getTitles();
+    const { database, imdb, presenters } = this.getDependencies();
     const useCase = new CreateFilm(database, imdb, request.body.imdbId);
 
     let result: Film;
@@ -30,8 +30,8 @@ class FilmsResource extends Monopoly {
     };
   }
 
-  async onGet({ query }: Request): Promise<MultipleRespponse> {
-    const { database, presenters } = this.getTitles();
+  async onGet({ query }: Request): Promise<MultipleResponse> {
+    const { database, presenters } = this.getDependencies();
     const skip = Number(query.skip || 0);
     const limit = Number(query.limit || 25);
 

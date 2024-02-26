@@ -1,11 +1,18 @@
-import { Json } from '../types/common';
+import express from 'express';
 
 export type BoardGameErrorParams = {
   error?: Error;
   name?: string;
   message?: string;
-  info?: {};
+  info?: Json;
 };
+
+export enum HTTPMethods {
+  DELETE = 'delete',
+  GET = 'get',
+  POST = 'post',
+  PUT = 'put'
+}
 
 export enum HTTPStatusCode {
   OK = 200,
@@ -20,12 +27,24 @@ export enum HTTPStatusCode {
   UNEXPECTED_ERROR = 500
 };
 
+export type Json = {
+  [key: string]: any
+};
+
+export type Header = {
+  header: string,
+  value: any
+};
+
+export interface BoardGameRequest extends express.Request {};
+export interface BoardGameResponse extends express.Response {};
+
 export interface SingleResponse {
   status: HTTPStatusCode;
   data: Json;
 };
 
-export interface MultipleRespponse {
+export interface MultipleResponse {
   status: HTTPStatusCode;
   data: {
     skip: number;
@@ -35,7 +54,7 @@ export interface MultipleRespponse {
   };
 };
 
-export type Response = SingleResponse | MultipleRespponse;
+export type Response = SingleResponse | MultipleResponse;
 
 export type Request = {
   body: { [key: string]: any };

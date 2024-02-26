@@ -1,58 +1,46 @@
-/* eslint-disable no-unused-vars */
 import { Json } from '../types/common';
-import { TitleNotFound, TokenNotUsed } from './errors';
-import { Request, Response, SingleResponse } from './types';
+import { DependencyNotFound, MethodNotImplemented } from './errors';
+import { HTTPMethods, Request, Response, SingleResponse } from './types';
 
 class Monopoly {
-  private titles: Json;
+  private dependencies: Json;
 
   constructor() {
-    this.titles = {};
+    this.dependencies = {};
   }
 
   async onPost(_request: Request): Promise<SingleResponse> {
-    throw new TokenNotUsed();
+    throw new MethodNotImplemented(HTTPMethods.POST);
   }
 
   async onGet(_request: Request): Promise<Response> {
-    throw new TokenNotUsed();
+    throw new MethodNotImplemented(HTTPMethods.GET);
   }
 
   async onPut(_request: Request): Promise<SingleResponse> {
-    throw new TokenNotUsed();
+    throw new MethodNotImplemented(HTTPMethods.PUT);
   }
 
   async onDelete(_request: Request): Promise<SingleResponse> {
-    throw new TokenNotUsed();
+    throw new MethodNotImplemented(HTTPMethods.DELETE);
   }
 
-  /**
-   * See title as a dependency, so what setTitle does is to set a dependency to boardgame
-   */
-  setTitle(titleName: string, titleValue: object) {
-    this.titles[titleName] = titleValue;
+  setDependency(dependencyName: string, dependencyValue: object) {
+    this.dependencies[dependencyName] = dependencyValue;
   }
 
-  /**
-   * See title as a dependency, so what getTitle does is to get a dependency
-   * from the boardgame by its name
-   */
-  getTitle(titleName: string) {
-    const title = this.titles[titleName];
+  getDependency(dependencyName: string) {
+    const dependency = this.dependencies[dependencyName];
 
-    if (!title) {
-      throw new TitleNotFound(titleName);
+    if (!dependency) {
+      throw new DependencyNotFound(dependencyName);
     }
 
-    return title;
+    return dependency;
   }
 
-  /**
-   * See title as a dependency, so what getTitle does is to get all of the dependencies
-   * from the boardgame
-   */
-  getTitles() {
-    return this.titles;
+  getDependencies() {
+    return this.dependencies;
   }
 }
 

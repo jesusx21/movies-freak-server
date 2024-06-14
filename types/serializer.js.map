@@ -1,0 +1,1 @@
+{"version":3,"file":"serializer.js","sourceRoot":"","sources":["serializer.ts"],"names":[],"mappings":"","sourcesContent":["export type FieldOptions = {\n  from?: string;\n  as?: string;\n};\n\nexport type FieldObject = {\n  name: string;\n  options?: FieldOptions;\n};\n"]}

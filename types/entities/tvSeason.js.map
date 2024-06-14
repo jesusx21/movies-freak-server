@@ -1,0 +1,1 @@
+{"version":3,"file":"tvSeason.js","sourceRoot":"","sources":["tvSeason.ts"],"names":[],"mappings":"","sourcesContent":["import { UUID } from '../common';\n\nexport default interface TVSeasonEntity {\n  id?: UUID;\n  tvSerieId?: UUID;\n  seasonNumber: number;\n  plot: string;\n  poster: string;\n  releasedAt?: Date;\n  createdAt?: Date;\n  updatedAt?: Date;\n}\n"]}

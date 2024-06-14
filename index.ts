@@ -1,4 +1,4 @@
-import MoviesFreakApp from './api';
+import MoviesFreakApp from './api/index2';
 
 import getDatabase from './database';
 import imdbFactory from './app/imdb/factory';

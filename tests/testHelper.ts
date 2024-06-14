@@ -5,7 +5,7 @@ import { v4 as uuid } from 'uuid';
 
 import buildFixtureGenerator from './fixtures';
 import getDatabase from '../database';
-import * as Classpuccino from '../classpuccino';
+import ClasspuccinoTestCase from '../Classpuccinos/testCase';
 import FixturesGenerator from './fixtures/generator';
 import { Environment, Json, UUID } from '../types/common';
 import {
@@ -40,7 +40,7 @@ class SandboxNotInitialized extends Error {
   }
 }
 
-class TestCase extends Classpuccino.TestCase {
+class TestCase extends ClasspuccinoTestCase {
   private fixturesGenerator: FixturesGenerator;
   private sandbox?: sinon.SinonSandbox;
 

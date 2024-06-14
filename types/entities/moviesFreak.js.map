@@ -1,0 +1,1 @@
+{"version":3,"file":"moviesFreak.js","sourceRoot":"","sources":["moviesFreak.ts"],"names":[],"mappings":"AAAA,MAAM,CAAN,IAAY,YAIX;AAJD,WAAY,YAAY;IACtB,qCAAqB,CAAA;IACrB,6BAAa,CAAA;IACb,2BAAW,CAAA;AACb,CAAC,EAJW,YAAY,KAAZ,YAAY,QAIvB;AAAA,CAAC","sourcesContent":["export enum MarathonType {\n  MARATHON = 'marathon',\n  SAGA = 'saga',\n  ALL = 'all'\n};\n"]}

@@ -3,7 +3,7 @@ import { Database } from './database';
 import { IMDBGateway } from './app';
 import { Json, UUID } from './common';
 
-export type Error = {
+export type APIError = {
   code: string,
   error?: Json
 };

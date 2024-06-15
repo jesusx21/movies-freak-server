@@ -1,7 +1,7 @@
 import APITestCase from '../apiTestHelper';
 import SignUp from '../../../app/moviesFreak/signUp';
 import { Json } from '../../../types/common';
-import { Error, Session } from '../../../types/api';
+import { APIError, Session } from '../../../types/api';
 
 export class SignUpTest extends APITestCase {
   private userData: Json
@@ -50,7 +50,7 @@ export class SignUpTest extends APITestCase {
 
     this.userData.username = 'pete';
 
-    const result = await this.simulatePost<Error>({
+    const result = await this.simulatePost<APIError>({
       path: '/sign-up',
       payload: this.userData,
       statusCode: 409
@@ -67,7 +67,7 @@ export class SignUpTest extends APITestCase {
 
     this.userData.email = 'pete@gmail.com';
 
-    const result = await this.simulatePost<Error>({
+    const result = await this.simulatePost<APIError>({
       path: '/sign-up',
       payload: this.userData,
       statusCode: 409
@@ -81,7 +81,7 @@ export class SignUpTest extends APITestCase {
       .expects('execute')
       .throws(new Error('database fails'));
 
-    const result = await this.simulatePost<Error>({
+    const result = await this.simulatePost<APIError>({
       path: '/sign-up',
       payload: this.userData,
       statusCode: 500

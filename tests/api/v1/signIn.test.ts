@@ -1,6 +1,6 @@
 import SignIn from '../../../app/moviesFreak/signIn';
 import APITestCase from '../apiTestHelper';
-import { Error, Session } from '../../../types/api';
+import { APIError, Session } from '../../../types/api';
 import { Json } from '../../../types/common';
 import { SignUpData } from '../../../types/app';
 
@@ -64,7 +64,7 @@ export class SignInTest extends APITestCase {
   }
 
   async testReturnErrorWhenUsernameIsNotRegister() {
-    const body = await this.simulatePost<Error>({
+    const body = await this.simulatePost<APIError>({
       path: '/sign-in',
       payload: {
         username: 'jon',
@@ -77,7 +77,7 @@ export class SignInTest extends APITestCase {
   }
 
   async testReturnErrorWhenEmailIsNotRegister() {
-    const body = await this.simulatePost<Error>({
+    const body = await this.simulatePost<APIError>({
       path: '/sign-in',
       payload: {
         username: 'jon@gmail.com',
@@ -94,7 +94,7 @@ export class SignInTest extends APITestCase {
       .expects('execute')
       .throws(new Error());
 
-    const body = await this.simulatePost<Error>({
+    const body = await this.simulatePost<APIError>({
       path: '/sign-in',
       payload: {
         username: 'jon@gmail.com',

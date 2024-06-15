@@ -1,5 +1,5 @@
 import { HTTPStatusCode } from '../boardGame/types';
-import { Error } from '../types/api';
+import { APIError } from '../types/api';
 import { Json } from '../types/common';
 
 export enum ErrorCodes {
@@ -32,7 +32,7 @@ export class HTTPError extends Error {
   }
 
   get payload() {
-    const payload: Error = {
+    const payload: APIError = {
       code: this.code
     };
 

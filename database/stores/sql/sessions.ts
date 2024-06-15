@@ -44,6 +44,13 @@ class SQLSessionsStore {
     });
   }
 
+  findCurrentSessionByToken(token: string) {
+    return this.findOne({
+      token,
+      is_active: true,
+    })
+  }
+
   async update(session: Session) {
     const data = this.serialize(session);
 

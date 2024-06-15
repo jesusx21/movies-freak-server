@@ -26,6 +26,18 @@ class InMemorySessionsStore {
     }
   }
 
+  async findCurrentSessionByToken(token: string) {
+    try {
+      return await this.store.findOne({ token });
+    } catch (error: any) {
+      if (error instanceof NotFound) {
+        throw new SessionNotFound(token);
+      }
+
+      throw error;
+    }
+  }
+
   async update(session: Session) {
     let sessionToUpdate: Session;
 

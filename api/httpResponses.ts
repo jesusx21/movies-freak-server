@@ -75,3 +75,9 @@ export class HTTPInternalError extends HTTPError {
     super(HTTPStatusCode.UNEXPECTED_ERROR, ErrorCodes.UNEXPECTED_ERROR, error);
   }
 }
+
+export class HTTPUnauthorized extends HTTPError {
+  constructor(code: string = ErrorCodes.UNAUTHORIZED) {
+    super(HTTPStatusCode.UNAUTHORIZED, code);
+  }
+}

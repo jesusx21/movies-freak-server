@@ -4,7 +4,7 @@ import { Json } from './types';
 
 class Classpuccino {
   async run() {
-    const configPath = `${process.cwd()}/../classpuccino.config.json`;
+    const configPath = `${process.cwd()}/classpuccino.config.json`;
 
     let config: Json;
 
@@ -18,7 +18,8 @@ class Classpuccino {
       throw new ClasspuccinoUnknownError(error);
     }
 
-    const testRunner = new TestRunner(config);
+    const customTestsPath = process.argv[2];
+    const testRunner = new TestRunner(config, customTestsPath);
 
     return testRunner.run();
   }

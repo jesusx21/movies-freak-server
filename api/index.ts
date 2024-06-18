@@ -146,7 +146,7 @@ class MoviesFreakApp {
           const middlewaresBuilt = middlewares.map((middleware) => {
             return async (req: express.Request, res: express.Response, next: Function) => {
               try {
-                return await middleware(req, this, resourceInstance);
+                await middleware(req, this, resourceInstance);
               } catch(error: any) {
                 if (error instanceof HTTPError) {
                   return res.status(error.statusCode).send(error.payload);

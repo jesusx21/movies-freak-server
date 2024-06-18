@@ -2,10 +2,9 @@ import Entity from './entity';
 import Film from './film';
 import TVEpisode from './tvEpisode';
 import { FilmAlreadySet, TVEpisodeAlreadySet } from './errors';
-import { MediaWatchlistEntity } from '../../../types/entities';
-import { UUID } from '../../../types/common';
+import { Json, UUID } from '../../../types/common';
 
-class MediaWatchlist extends Entity implements MediaWatchlistEntity {
+class MediaWatchlist extends Entity {
   private _filmId?: UUID;
   private _tvEpisodeId?: UUID;
 
@@ -15,7 +14,7 @@ class MediaWatchlist extends Entity implements MediaWatchlistEntity {
   film?: Film;
   tvEpisode?: TVEpisode;
 
-  constructor(args: MediaWatchlistEntity) {
+  constructor(args: Json) {
     super(args.id, args.createdAt, args.updatedAt);
 
     this.watchlistId = args.watchlistId;

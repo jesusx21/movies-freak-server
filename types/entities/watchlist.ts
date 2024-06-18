@@ -1,10 +1,11 @@
 import { UUID } from '../common';
-import { MarathonType } from './moviesFreak';
+import { Privacity } from './moviesFreak';
 
 type WatchlistEntity = {
   id?: UUID;
   name: string;
-  type: MarathonType;
+  privacity: Privacity;
+  userId: UUID;
   description: string;
   totalFilms?: number;
   totalTVEpisodes?: number;

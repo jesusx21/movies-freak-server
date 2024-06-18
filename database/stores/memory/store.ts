@@ -24,7 +24,7 @@ class Store<T extends Entity> {
       {
         _id: entityId,
         _createdAt: new Date(),
-        _updatedAt: new Date()
+        updatedAt: new Date()
       }
     );
 

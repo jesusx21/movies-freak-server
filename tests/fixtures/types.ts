@@ -116,7 +116,7 @@ export type UserFixture = {
 export type WatchlistFixture = {
   id?: UUID;
   name?: string;
-  type?: string;
+  privacity?: string;
   description?: string;
   totalFilms?: number;
   totalTVEpisodes?: string;

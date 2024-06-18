@@ -13,7 +13,7 @@ import { UserEntity } from '../../types/entities';
 
 interface RequestParams {
   path: string;
-  token?: string;
+  authorization?: string;
   statusCode?: HTTPStatusCode;
 }
 
@@ -53,12 +53,19 @@ class APITestCase extends TestCase {
   async simulatePost<T>(params: PostRequestParams): Promise<T> {
     const {
       path,
+      authorization,
       payload = {},
       statusCode = 201
     } = params;
 
-    const { body } = await request(this.moviesFreakApp.getExpressApp())
+    const requestBuilder = request(this.moviesFreakApp.getExpressApp())
       .post(`/movies-freak/api/v1${path}`)
+
+    if (!!authorization) {
+      requestBuilder.set('Authorization', authorization)
+    }
+
+    const { body } = await requestBuilder
       .send(payload)
       .expect(statusCode);
 

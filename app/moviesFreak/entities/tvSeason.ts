@@ -1,15 +1,14 @@
-import { UUID } from '../../../types/common';
-import { TVSeasonEntity } from '../../../types/entities';
+import { Json, UUID } from '../../../types/common';
 import Entity from './entity';
 
-class TVSeason extends Entity implements TVSeasonEntity {
+class TVSeason extends Entity {
   tvSerieId?: UUID;
   seasonNumber: number;
   plot: string;
   poster: string;
   releasedAt?: Date;
 
-  constructor(args: TVSeasonEntity) {
+  constructor(args: Json) {
     super(args.id, args.createdAt, args.updatedAt);
 
     this.tvSerieId = args.tvSerieId;

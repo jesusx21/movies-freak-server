@@ -4,7 +4,7 @@ import SQLDatabase from '../../../database/stores/sql';
 import Serializer, { SerializerError } from '../../../database/stores/sql/serializer';
 import { SQLDatabaseException } from '../../../database/stores/sql/errors';
 import { Watchlist } from '../../../app/moviesFreak/entities';
-import { MarathonType } from '../../../types/entities';
+import { Privacity } from '../../../types/entities';
 
 
 class WatchlistsStoreTest extends SQLTestCase {
@@ -51,7 +51,7 @@ export class CreateWatchlistTest extends WatchlistsStoreTest {
     this.assertThat(watchlistCreated).isInstanceOf(Watchlist);
     this.assertThat(watchlistCreated.id).doesExist();
     this.assertThat(watchlistCreated.name).isEqual('Maraton de Halloween');
-    this.assertThat(watchlistCreated.type).isEqual('all');
+    this.assertThat(watchlistCreated.privacity).isEqual(Privacity.SHARED);
     this.assertThat(watchlistCreated.description).isEqual('This is a nice watchlist');
     this.assertThat(watchlistCreated.totalFilms).isEqual(0);
     this.assertThat(watchlistCreated.totalTVEpisodes).isEqual(0);
@@ -79,7 +79,7 @@ export class CreateWatchlistTest extends WatchlistsStoreTest {
   private buildWatchlist() {
     return new Watchlist({
       name: 'Maraton de Halloween',
-      type: MarathonType.ALL,
+      privacity: Privacity.SHARED,
       description: 'This is a nice watchlist',
       totalFilms: 0,
       totalTVEpisodes: 0

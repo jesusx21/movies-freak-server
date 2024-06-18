@@ -3,7 +3,7 @@ import Crypto from 'crypto';
 import Entity from './entity';
 import User from './user';
 import { ReadOnlyField, SessionAlreadyActive } from './errors';
-import SessionEntity from '../../../types/entities/session';
+import { Json } from '../../../types/common';
 
 class Session extends Entity {
   private _user?: User;
@@ -11,7 +11,7 @@ class Session extends Entity {
   private _isActive?: boolean;
   private _token?: string;
 
-  constructor(args: SessionEntity) {
+  constructor(args: Json) {
     super(args.id, args.createdAt, args.updatedAt);
 
     this._user = args.user;

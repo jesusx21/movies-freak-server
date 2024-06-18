@@ -1,27 +1,36 @@
 
 import { CouldNotCreateWatchlist } from './errors';
-import { Watchlist } from './entities';
+import { User, Watchlist } from './entities';
 import { Database } from '../../types/database';
-import { MarathonType } from '../../types/entities';
+import { Privacity } from '../../types/entities';
 
 class CreateWatchlist {
   database: Database;
+  user: User;
   name: string;
-  type: MarathonType;
+  privacity: Privacity;
   description: string;
 
-  constructor(database: Database, name: string, type: MarathonType, description?: string) {
+  constructor(
+    database: Database,
+    user: User,
+    name: string,
+    privacity: Privacity,
+    description?: string
+  ) {
     this.database = database;
+    this.user = user;
     this.name = name;
-    this.type = type;
+    this.privacity = privacity;
     this.description = description || '';
   }
 
   async execute() {
     const watchlist = new Watchlist({
       name: this.name,
-      type: this.type,
-      description: this.description
+      privacity: this.privacity,
+      description: this.description,
+      userId: this.user.id
     });
 
     try {

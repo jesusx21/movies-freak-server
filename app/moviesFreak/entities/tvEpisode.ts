@@ -1,8 +1,7 @@
 import Entity from './entity';
-import { TVEpisodeEntity } from '../../../types/entities';
-import { UUID } from '../../../types/common';
+import { Json, UUID } from '../../../types/common';
 
-class TVEpisode extends Entity implements TVEpisodeEntity {
+class TVEpisode extends Entity {
   imdbId: string;
   name: string;
   year: number;
@@ -23,7 +22,7 @@ class TVEpisode extends Entity implements TVEpisodeEntity {
   readonly tvSerieId?: UUID;
   readonly tvSeasonId?: UUID;
 
-  constructor(args: TVEpisodeEntity) {
+  constructor(args: Json) {
     super(args.id, args.createdAt, args.updatedAt);
 
     this.imdbId = args.imdbId;

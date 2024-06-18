@@ -7,7 +7,7 @@ exports.up = function (knex) {
     table.uuid('id').primary().defaultTo(knex.raw('uuid_generate_v4()'));
     table.string('name').notNull();
     table.string('description');
-    table.text('type').notNull();
+    table.text('privacity').notNull();
 
     table.timestamps(true, true);
   });

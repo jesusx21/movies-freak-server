@@ -4,7 +4,7 @@ import CreateWatchlist from '../../../../app/moviesFreak/createWatchlist';
 import { CouldNotCreateWatchlist } from '../../../../app/moviesFreak/errors';
 import { Database } from '../../../../types/database';
 import { Watchlist } from '../../../../app/moviesFreak/entities';
-import { MarathonType } from '../../../../types/entities';
+import { Privacity } from '../../../../types/entities';
 
 export default class CreateWatchlistTest extends TestCase {
   database: Database
@@ -23,7 +23,7 @@ export default class CreateWatchlistTest extends TestCase {
     this.useCase = new CreateWatchlist(
       this.database,
       'Horroctober',
-      MarathonType.MARATHON,
+      Privacity.SHARED,
       'This is a decription'
     );
   }
@@ -34,7 +34,7 @@ export default class CreateWatchlistTest extends TestCase {
     this.assertThat(watchlist).isInstanceOf(Watchlist);
     this.assertThat(watchlist?.id).doesExist();
     this.assertThat(watchlist?.name).isEqual('Horroctober');
-    this.assertThat(watchlist?.type).isEqual('marathon');
+    this.assertThat(watchlist?.privacity).isEqual(Privacity.SHARED);
     this.assertThat(watchlist?.description).isEqual('This is a decription');
   }
 

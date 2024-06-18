@@ -2,10 +2,11 @@ import Crypto from 'crypto';
 import { isEmpty } from 'lodash';
 
 import Entity from './entity';
-import { Password, UserEntity } from '../../../types/entities';
+import { Password } from '../../../types/entities';
 import { ReadOnlyField, UserHasNotPassword } from './errors';
+import { Json } from '../../../types/common';
 
-class User extends Entity implements UserEntity {
+class User extends Entity {
   private _password: Password;
   name: string;
   username: string;
@@ -13,7 +14,7 @@ class User extends Entity implements UserEntity {
   email: string; // email
   birthdate?: Date;
 
-  constructor(args: UserEntity) {
+  constructor(args: Json) {
     super(args.id, args.createdAt, args.updatedAt);
 
     this.name = args.name;

@@ -11,7 +11,7 @@ const watchlist = JSON(
   {
     id: UUID,
     name: STRING({ min: 1, max: 100 }),
-    type: ENUM('all', 'saga', 'marathon'),
+    privacity: ENUM('public', 'private', 'shared'),
     description: STRING({ min: 10, max: 500 }),
     totalFilms: INTEGER({ min: 0, max: 250 }),
     totalTVEpisodes: INTEGER({ min: 0, max: 250 }),

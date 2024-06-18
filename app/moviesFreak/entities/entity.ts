@@ -2,11 +2,11 @@ import { UUID } from '../../../types/common';
 import { ReadOnlyField } from './errors';
 
 class Entity {
-  private _id?: UUID;
+  private _id: UUID;
   private _createdAt?: Date;
   updatedAt?: Date;
 
-  constructor(id?: UUID, createdAt?: Date, updatedAt?: Date) {
+  constructor(id: UUID, createdAt?: Date, updatedAt?: Date) {
     this._id = id;
     this._createdAt = createdAt;
     this.updatedAt = updatedAt;

@@ -38,9 +38,9 @@ export default class TestsRunner {
   private testResult: TestResult;
   private logger: Logger;
 
-  constructor(config: Json) {
+  constructor(config: Json, customTestsPath?: string) {
     this.config = config;
-    this.testFilesPaths = this.config.paths;
+    this.testFilesPaths = customTestsPath ? [customTestsPath] : this.config.paths;
     this.functionTestFailures = [];
     this.logger = new Logger();
     this.testResult = new TestResult();
@@ -124,12 +124,11 @@ export default class TestsRunner {
   }
 
   private async getTestFilesPath(testPath: string) {
-    const directoryPath = path.join(process.cwd(), testPath);
-
-    if (directoryPath.endsWith('.test.js') || directoryPath.endsWith('.test.ts')) {
-      return [directoryPath];
+    if (testPath.endsWith('.test.js') || testPath.endsWith('.test.ts')) {
+      return [testPath];
     }
 
+    const directoryPath = path.join(process.cwd(), testPath);
     const folders = readdirSync(directoryPath);
 
     let testFiles: string[] = [];

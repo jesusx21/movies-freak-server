@@ -1,6 +1,7 @@
 import SQLTestCase from '../testHelper';
 
 import { Film, MediaWatchlist, TVEpisode, Watchlist } from '../../../app/moviesFreak/entities';
+import { Privacity } from '../../../types/entities';
 
 class MediaWatchlistsTest extends SQLTestCase {
   film?: Film;
@@ -12,7 +13,10 @@ class MediaWatchlistsTest extends SQLTestCase {
 
     this.film = await this.createFilm(this.getDatabase(), { name: 'Harry Potter' });
     this.tvEpisode = await this.createTVEpisode(this.getDatabase(), { name: 'Friends' });
-    this.watchlist = await this.createWatchlist(this.getDatabase(), { type: 'saga' });
+    this.watchlist = await this.createWatchlist(
+      this.getDatabase(),
+      { privacity: Privacity.PUBLIC }
+    );
   }
 
   async tearDown() {

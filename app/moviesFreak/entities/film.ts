@@ -1,7 +1,7 @@
 import Entity from './entity';
-import { FilmEntity } from '../../../types/entities';
+import { Json } from '../../../types/common';
 
-class Film extends Entity implements FilmEntity {
+class Film extends Entity {
   name: string;
   plot: string;
   title: string;
@@ -17,7 +17,7 @@ class Film extends Entity implements FilmEntity {
   imdbId: string;
   imdbRating: string;
 
-  constructor(args: FilmEntity) {
+  constructor(args: Json) {
     super(args.id, args.createdAt, args.updatedAt);
 
     this.name = args.name;

@@ -1,9 +1,10 @@
 import Entity from './entity';
 import TVSeason from './tvSeason';
 import { TVSerieEntity } from '../../../types/entities';
+import { Json } from '../../../types/common';
 
 
-class TVSerie extends Entity implements TVSerieEntity {
+class TVSerie extends Entity {
   imdbId: string;
   name: string;
   plot: string;
@@ -22,7 +23,7 @@ class TVSerie extends Entity implements TVSerieEntity {
 
   private tvSeasons: TVSeason[];
 
-  constructor(args: TVSerieEntity) {
+  constructor(args: Json) {
     super(args.id, args.createdAt, args.updatedAt);
 
     this.imdbId = args.imdbId;

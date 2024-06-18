@@ -1,4 +1,4 @@
-import { Film, Session, TVSerie } from '../../app/moviesFreak/entities';
+import { Film, Session, TVSerie, Watchlist } from '../../app/moviesFreak/entities';
 
 class Presenters {
   presentFilm(film: Film) {
@@ -57,6 +57,21 @@ class Presenters {
         id: session.user?.id,
         name: session.user?.name
       }
+    };
+  }
+
+  // TODO: add user
+  presentWatchlist(watchlist: Watchlist) {
+    return {
+      id: watchlist.id,
+      name: watchlist.name,
+      userId: watchlist.userId,
+      description: watchlist.description,
+      privacity: watchlist.privacity,
+      totalFilms: watchlist.totalFilms,
+      totalTVEpisodes: watchlist.totalTVEpisodes,
+      createdAt: watchlist.createdAt,
+      updatedAt: watchlist.updatedAt
     };
   }
 }

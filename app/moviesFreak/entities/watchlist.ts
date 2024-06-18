@@ -1,19 +1,22 @@
 import Entity from './entity';
-import { MarathonType, WatchlistEntity } from '../../../types/entities';
+import { Privacity } from '../../../types/entities';
+import { Json, UUID } from '../../../types/common';
 
 class Watchlist extends Entity {
   name: string;
-  type: MarathonType;
+  privacity: Privacity;
   description: string;
+  userId: UUID;
   totalFilms?: number;
   totalTVEpisodes?: number;
 
-  constructor(args: WatchlistEntity) {
+  constructor(args: Json) {
     super(args.id, args.createdAt, args.updatedAt);
 
     this.name = args.name;
-    this.type = args.type;
+    this.privacity = args.privacity;
     this.description = args.description;
+    this.userId = args.userId;
     this.totalFilms = args.totalFilms;
     this.totalTVEpisodes = args.totalTVEpisodes;
   }

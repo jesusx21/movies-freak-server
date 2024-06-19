@@ -344,14 +344,21 @@ class TestCase extends Classpuccino.TestCase {
     return result;
   }
 
-  async createWatchlist(database: Database, data?: WatchlistFixture) {
-    const recipe = data ? [data] : [];
-    const [watchlistData] = await this.generateFixtures<WatchlistEntity>({
+  async createWatchlist(database: Database, data?: Json) {
+    let { user, ...watchlistData } = data ?? {};
+    const recipe = isEmpty(watchlistData) ? [watchlistData] : [];
+    const [watchlistFixture] = await this.generateFixtures<WatchlistEntity>({
       recipe,
       type: 'watchlist'
     });
 
-    const watchlist = new Watchlist(watchlistData);
+    const watchlist = new Watchlist(watchlistFixture);
+
+    if (!!user) {
+      user = await this.createUser(database);
+    }
+
+    watchlist.setUser(user);
 
     return database.watchlists.create(watchlist);
   }

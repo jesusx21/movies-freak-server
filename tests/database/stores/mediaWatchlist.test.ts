@@ -1,21 +1,23 @@
 import SQLTestCase from '../testHelper';
 
-import { Film, MediaWatchlist, TVEpisode, Watchlist } from '../../../app/moviesFreak/entities';
+import { Film, MediaWatchlist, TVEpisode, User, Watchlist } from '../../../app/moviesFreak/entities';
 import { Privacity } from '../../../types/entities';
 
 class MediaWatchlistsTest extends SQLTestCase {
   film?: Film;
   tvEpisode?: TVEpisode;
   watchlist?: Watchlist;
+  user?: User;
 
   async setUp() {
     super.setUp();
 
     this.film = await this.createFilm(this.getDatabase(), { name: 'Harry Potter' });
     this.tvEpisode = await this.createTVEpisode(this.getDatabase(), { name: 'Friends' });
+    this.user = await this.createUser(this.getDatabase());
     this.watchlist = await this.createWatchlist(
       this.getDatabase(),
-      { privacity: Privacity.PUBLIC }
+      { privacity: Privacity.PUBLIC, user: this.user }
     );
   }
 

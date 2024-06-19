@@ -12,7 +12,7 @@ class Entity {
     this.updatedAt = updatedAt;
   }
 
-  get id(): UUID | undefined {
+  get id(): UUID {
     return this._id;
   }
 

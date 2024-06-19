@@ -1,4 +1,5 @@
 import Entity from './entity';
+import User from './user';
 import { Privacity } from '../../../types/entities';
 import { Json, UUID } from '../../../types/common';
 
@@ -7,6 +8,7 @@ class Watchlist extends Entity {
   privacity: Privacity;
   description: string;
   userId: UUID;
+  user?: User;
   totalFilms?: number;
   totalTVEpisodes?: number;
 
@@ -19,6 +21,11 @@ class Watchlist extends Entity {
     this.userId = args.userId;
     this.totalFilms = args.totalFilms;
     this.totalTVEpisodes = args.totalTVEpisodes;
+  }
+
+  setUser(user: User) {
+    this.user = user;
+    this.userId = user.id;
   }
 }
 

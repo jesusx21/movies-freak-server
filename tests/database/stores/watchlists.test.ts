@@ -3,7 +3,7 @@ import SQLTestCase from '../testHelper';
 import SQLDatabase from '../../../database/stores/sql';
 import Serializer, { SerializerError } from '../../../database/stores/sql/serializer';
 import { SQLDatabaseException } from '../../../database/stores/sql/errors';
-import { Watchlist } from '../../../app/moviesFreak/entities';
+import { User, Watchlist } from '../../../app/moviesFreak/entities';
 import { Privacity } from '../../../types/entities';
 
 
@@ -32,6 +32,7 @@ class WatchlistsStoreTest extends SQLTestCase {
 
 export class CreateWatchlistTest extends WatchlistsStoreTest {
   watchlist: Watchlist;
+  user?: User;
 
   constructor() {
     super();
@@ -39,10 +40,13 @@ export class CreateWatchlistTest extends WatchlistsStoreTest {
     this.watchlist = this.buildWatchlist();
   }
 
-  setUp() {
+  async setUp() {
     super.setUp();
 
+    this.user = await this.createUser(this.database);
     this.watchlist = this.buildWatchlist();
+
+    this.watchlist.setUser(this.user);
   }
 
   async testCreateWatchlist() {
@@ -50,6 +54,7 @@ export class CreateWatchlistTest extends WatchlistsStoreTest {
 
     this.assertThat(watchlistCreated).isInstanceOf(Watchlist);
     this.assertThat(watchlistCreated.id).doesExist();
+    this.assertThat(watchlistCreated.userId).isEqual(this.user?.id);
     this.assertThat(watchlistCreated.name).isEqual('Maraton de Halloween');
     this.assertThat(watchlistCreated.privacity).isEqual(Privacity.SHARED);
     this.assertThat(watchlistCreated.description).isEqual('This is a nice watchlist');

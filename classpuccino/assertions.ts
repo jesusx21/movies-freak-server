@@ -1,4 +1,5 @@
 import { difference, isEqual, isNil } from 'lodash';
+
 import { AssertionError } from './errors';
 
 class Assertions {

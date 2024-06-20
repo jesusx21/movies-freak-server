@@ -1,4 +1,5 @@
 import InMemoryFilmsStore from './films';
+import InMemoryMediaWatchlist from './mediaWatchlist';
 import InMemorySessionsStore from './session';
 import InMemoryTVEpisodesStore from './tvEpisodes';
 import InMemoryTVSeasonStore from './tvSeasons';
@@ -8,6 +9,7 @@ import InMemoryWatchlistStore from './watchlists';
 
 class InMemoryDatabase {
   readonly films: InMemoryFilmsStore;
+  readonly mediaWatchlists: InMemoryMediaWatchlist;
   readonly sessions: InMemorySessionsStore;
   readonly tvEpisodes: InMemoryTVEpisodesStore;
   readonly tvSeasons: InMemoryTVSeasonStore;
@@ -17,6 +19,7 @@ class InMemoryDatabase {
 
   constructor() {
     this.films = new InMemoryFilmsStore();
+    this.mediaWatchlists = new InMemoryMediaWatchlist();
     this.sessions = new InMemorySessionsStore();
     this.tvEpisodes = new InMemoryTVEpisodesStore();
     this.tvSeasons = new InMemoryTVSeasonStore();

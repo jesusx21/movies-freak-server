@@ -33,6 +33,10 @@ class InMemoryTVEpisodesStore {
     return this.store.find(options);
   }
 
+  findByIMDBId(imdbId: string) {
+    return this.store.findOne({ imdbId });
+  }
+
   async countByTVSeasonId(tvSeasonId: UUID) {
     return this.store.count({ tvSeasonId });
   }

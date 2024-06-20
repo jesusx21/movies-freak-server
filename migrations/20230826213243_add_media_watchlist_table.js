@@ -8,6 +8,7 @@ exports.up = function (knex) {
     table.uuid('watchlist_id').notNull();
     table.uuid('film_id');
     table.uuid('tv_episode_id');
+    table.string('media_type');
     table.integer('index');
     table.boolean('watched').defaultTo(false);
 

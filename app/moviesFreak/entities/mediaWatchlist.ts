@@ -1,16 +1,26 @@
 import Entity from './entity';
 import Film from './film';
 import TVEpisode from './tvEpisode';
-import { FilmAlreadySet, TVEpisodeAlreadySet } from './errors';
 import { Json, UUID } from '../../../types/common';
+import {
+  FilmAlreadySet,
+  InvalidMediaType,
+  TVEpisodeAlreadySet
+} from './errors';
 
-class MediaWatchlist extends Entity {
+export enum MediaType {
+  tvEpisode,
+  film
+}
+
+export default class MediaWatchlist extends Entity {
   private _filmId?: UUID;
   private _tvEpisodeId?: UUID;
 
   watchlistId: UUID;
   index: number;
   watched: boolean;
+  mediaType: MediaType;
   film?: Film;
   tvEpisode?: TVEpisode;
 
@@ -20,6 +30,7 @@ class MediaWatchlist extends Entity {
     this.watchlistId = args.watchlistId;
     this._filmId = args.filmId;
     this._tvEpisodeId = args.tvEpisodeId;
+    this.mediaType = args.mediaType
     this.index = args.index;
     this.watched = args.watched;
   }
@@ -32,25 +43,21 @@ class MediaWatchlist extends Entity {
     return this._tvEpisodeId;
   }
 
-  get mediaType() {
-    if (this._filmId) {
-      return 'film';
-    }
+  isFilm() {
+    return this.mediaType === MediaType.film;
+  }
 
-    if (this.tvEpisode) {
-      return 'tvEpisode';
-    }
-
-    return 'N/A';
+  isTVEpisode() {
+    return this.mediaType === MediaType.tvEpisode;
   }
 
   setFilm(film: Film) {
-    if (this.film) {
-      throw new FilmAlreadySet();
+    if (!this.isFilm()) {
+      throw new InvalidMediaType();
     }
 
-    if (this.tvEpisode) {
-      throw new TVEpisodeAlreadySet();
+    if (this.film) {
+      throw new FilmAlreadySet();
     }
 
     this.film = film;
@@ -58,8 +65,8 @@ class MediaWatchlist extends Entity {
   }
 
   setTVEpisode(tvEpisode: TVEpisode) {
-    if (this.film) {
-      throw new FilmAlreadySet();
+    if (!this.isTVEpisode()) {
+      throw new InvalidMediaType();
     }
 
     if (this.tvEpisode) {
@@ -70,5 +77,3 @@ class MediaWatchlist extends Entity {
     this._tvEpisodeId = tvEpisode.id;
   }
 }
-
-export default MediaWatchlist;

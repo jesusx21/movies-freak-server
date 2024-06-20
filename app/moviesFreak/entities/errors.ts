@@ -5,6 +5,8 @@ export class EntityError extends MoviesFreakError {}
 export class FilmAlreadySet extends EntityError {}
 export class TVEpisodeAlreadySet extends EntityError {}
 
+export class InvalidMediaType extends EntityError {}
+
 export class SessionAlreadyActive extends EntityError {}
 
 export class ReadOnlyField extends EntityError {

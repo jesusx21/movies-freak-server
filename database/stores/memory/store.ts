@@ -69,6 +69,10 @@ class Store<T extends Entity> {
     };
   }
 
+  async findAll() {
+    return Object.values(this.items);
+  }
+
   async findOne(query: {}): Promise<T> {
     const items = Object.values(this.items)
       .sort((a: any, b: any) => b.createdAt - a.createdAt);

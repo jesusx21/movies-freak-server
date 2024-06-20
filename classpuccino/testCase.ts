@@ -1,10 +1,10 @@
 import Assertions from './assertions';
 
-abstract class TestCase {
+export default abstract class TestCase {
   private assertions: Assertions;
 
   constructor() {
-    this.assertions = new Assertions();
+    this.assertions = new Assertions()
   }
 
   abstract setUp(): void | Promise<void>;
@@ -14,5 +14,3 @@ abstract class TestCase {
     return this.assertions.assertThat(actual);
   }
 }
-
-export default TestCase;

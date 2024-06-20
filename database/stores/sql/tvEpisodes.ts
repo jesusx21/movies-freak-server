@@ -60,6 +60,10 @@ class SQLTVEpisodeStore {
     };
   }
 
+  findByIMDBId(imdbId: string) {
+    return this.findOne({ imdbId });
+  }
+
   async countByTvSeasonId(tvSeasonId: UUID) {
     try {
       const result = await this.connection('tv_episodes')

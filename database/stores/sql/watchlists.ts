@@ -4,7 +4,8 @@ import { omit } from 'lodash';
 import { SQLDatabaseException } from './errors';
 import { Watchlist } from '../../../app/moviesFreak/entities';
 import { WatchlistSerializer } from './serializers';
-import { Json } from '../../../types/common';
+import { Json, UUID } from '../../../types/common';
+import { WatchlistNotFound } from '../errors';
 
 class SQLWatchlistsStore {
   private connection: Knex;
@@ -25,6 +26,28 @@ class SQLWatchlistsStore {
     } catch (error: any) {
       console.log(error)
       throw new SQLDatabaseException(error);
+    }
+
+    return this.deserialize(result);
+  }
+
+  findById(watchlistId: UUID) {
+    return this.findOne({ id: watchlistId });
+  }
+
+  private async findOne(query: {}) {
+    let result: {};
+
+    try {
+      result = await this.connection('watchlists')
+        .where(query)
+        .first();
+    } catch (error: any) {
+      throw new SQLDatabaseException(error);
+    }
+
+    if (!result) {
+      throw new WatchlistNotFound(query);
     }
 
     return this.deserialize(result);

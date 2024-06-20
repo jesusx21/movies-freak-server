@@ -38,6 +38,10 @@ class SQLFilmsStore {
     return this.findOne({ id: filmId });
   }
 
+  findByIMDBId(imdbId: string) {
+    return this.findOne({ imdbId });
+  }
+
   async find(options: QueryOptions = {}): Promise<QueryResponse<Film>> {
     let items: {}[];
 

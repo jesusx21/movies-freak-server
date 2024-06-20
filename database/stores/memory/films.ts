@@ -27,6 +27,10 @@ class InMemoryFilmsStore {
     }
   }
 
+  findByIMDBId(imdbId: string) {
+    return this.store.findOne({ imdbId });
+  }
+
   find(options: QueryOptions = {}) {
     return this.store.find(options);
   }

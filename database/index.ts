@@ -8,7 +8,7 @@ import { DatabaseDriver } from '../types/database';
 
 export class UnsupportedDatabaseDriver extends Error {}
 
-function getDatabase(driverName: DatabaseDriver, environment: Environment) {
+export default function getDatabase(driverName: DatabaseDriver, environment: Environment) {
   if (driverName === DatabaseDriver.SQL) {
     const config = knexfile[environment];
     const connection = knex(config);
@@ -22,5 +22,3 @@ function getDatabase(driverName: DatabaseDriver, environment: Environment) {
 
   throw new UnsupportedDatabaseDriver(driverName);
 }
-
-export default getDatabase;

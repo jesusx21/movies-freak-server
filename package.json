@@ -14,7 +14,7 @@
     "migrate:make": "knex migrate:make $1",
     "migrate:latest": "knex migrate:latest && knex migrate:latest --env test",
     "migrate:rollback": "knex migrate:rollback && knex migrate:rollback --env test",
-    "test": "NODE_ENV=test yarn ts-node Classpuccinos"
+    "test": "NODE_ENV=test yarn ts-node classpuccino"
   },
   "repository": "git@github.com:jesusx21/movies-freak-server.git",
   "author": "Jesús Agustín Peña Meza",

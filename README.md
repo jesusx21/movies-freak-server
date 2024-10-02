@@ -1,9 +1,15 @@
-# Movies Freak Server
-This project is the server of the `Movies Freak` app, It is made with express, typescript, postgresql and love, so be nice and have fun. :) <3
+# 🚀 Welcome to your new awesome project!
 
-## Set Up
-### Installation
+This project has been created using **webpack-cli**, you can now run
 
-### Tests
+```
+npm run build
+```
 
-### NPM Scripts
+or
+
+```
+yarn build
+```
+
+to bundle your application

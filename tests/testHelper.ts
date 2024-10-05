@@ -111,12 +111,12 @@ class TestCase extends ClasspuccinoTestCase {
     this.sandbox.restore();
   }
 
-  stubFunction(target: any, fn: string) {
+  stubFunction(instance: any, functionName: string) {
     if (!this.sandbox) {
       throw new SandboxNotInitialized();
     }
 
-    return this.sandbox.stub(target, fn);
+    return this.sandbox.stub(instance, functionName);
   }
 
   generateUUID(): UUID {

@@ -11,7 +11,7 @@ export default class MoviesFreakError extends Error {
   cause?: Json;
   info?: Json;
 
-  constructor(params: ErrorParams) {
+  constructor(params: ErrorParams = {}) {
     super();
 
     this.message = params.message;

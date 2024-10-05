@@ -1,9 +1,9 @@
-import MemoryFilmsStore from './movies';
+import MemoryMoviesStore from './movies';
 
 export default class MemoryDatabase {
-  readonly films: MemoryFilmsStore;
+  readonly movies: MemoryMoviesStore;
 
   constructor() {
-    this.films = new MemoryFilmsStore();
+    this.movies = new MemoryMoviesStore();
   }
 }

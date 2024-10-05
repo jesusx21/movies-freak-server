@@ -39,8 +39,7 @@ const config = Object.freeze({
   database: { driver: env.DATABASE_DRIVER },
   server: {
     host: env.HOST,
-    port: Number(env.PORT),
-    secretKey: env.SECRET_KEY
+    port: Number(env.PORT)
   }
 });
 
